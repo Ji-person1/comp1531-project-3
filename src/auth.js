@@ -26,8 +26,14 @@ function adminUserDetails (authUserId) {
             numFailedPasswordsSinceLastLogin: 1,
         }
     }
+}
 
-// Update the description of the relevant quiz.
-function adminquizDescriptionUpdate(authUserId, quizId, description){
-    
+//Given an admin user's authUserId and a set of properties, this function updates the properties of this logged in admin user.
+function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
+    return {}; 
+}
+
+//Given details relating to a password change, this function updates the password of a logged in user.
+function adminUserPasswordUpdate (authUserId, oldPassword, newPassword) {
+    return {}; 
 }
