@@ -3,6 +3,11 @@ function adminQuizDescriptionUpdate (authUserId, quizId, name) {
     return {}
 }
 
+//Update the name of the relevant quiz.
+function adminQuizNameUpdate (authUserId, quizId, name) { 
+    return {}
+}
+
 
 //Get all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
