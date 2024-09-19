@@ -26,4 +26,8 @@ function adminUserDetails (authUserId) {
             numFailedPasswordsSinceLastLogin: 1,
         }
     }
+
+// Update the description of the relevant quiz.
+function adminquizDescriptionUpdate(authUserId, quizId, description){
+    
 }
