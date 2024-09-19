@@ -1,7 +1,10 @@
-function adminQuizDescriptionUpdate (authUserId, quizId, name) {
+//Update the description of the relevant quiz.
+function adminQuizDescriptionUpdate (authUserId, quizId, name) { 
     return {}
 }
 
+
+//Get all of the relevant information about the current quiz.
 function adminQuizInfo(authUserId, quizId) {
     return {
         quizId: 1,
@@ -12,7 +15,8 @@ function adminQuizInfo(authUserId, quizId) {
     }
 }
 
-function adminQuizList( authUserId ) // Provides a list of all quizzes that are owned by the currently logged in user.
+// Provides a list of all quizzes that are owned by the currently logged in user.
+function adminQuizList( authUserId ) 
 {
     return { quizzes: [
         {
@@ -23,17 +27,19 @@ function adminQuizList( authUserId ) // Provides a list of all quizzes that are 
     }
 }
 
-function adminQuizCreate ( authUserId, name, description ) //Given basic details about a new quiz, create one for the logged in user.
+//Given basic details about a new quiz, create one for the logged in user.
+function adminQuizCreate ( authUserId, name, description ) 
 {
     return {
         quizId: 2
     }
 }
 
+//Given a particular quiz, permanently remove the quiz.
 function adminQuizRemove ( authUserId, quizId ) 
 {
     return {
-        
+
     }
 
 }
