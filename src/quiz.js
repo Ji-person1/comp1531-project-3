@@ -7,3 +7,9 @@ function adminQuizInfo(authUserId, quizId) {
         description: 'This is my quiz',
     }
 }
+
+function adminQuizDescriptionUpdate (authUserId, quizId, name) {
+    return {
+        
+    }
+}
