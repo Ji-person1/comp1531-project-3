@@ -1,3 +1,5 @@
+// Sample stub for the adminUsrDetails function
+// returns user details based on the authUserId given
 function adminUserDetails (authUserId) {
     return { user:
         {
