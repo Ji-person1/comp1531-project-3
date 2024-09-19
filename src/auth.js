@@ -1,3 +1,11 @@
+// Sample stub for the adminAuthLogin function
+// returns the authUserId if given an account's email and password
+function adminAuthLogin (email, password) {
+    return {
+        authUserId: 1
+    }
+}
+
 // Sample stub for the adminUsrDetails function
 // returns user details based on the authUserId given
 function adminUserDetails (authUserId) {
