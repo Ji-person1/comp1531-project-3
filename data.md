@@ -1,13 +1,19 @@
 ```javascript
 let data = {
-    // TODO: insert your data structure that contains 
-    // users + quizzes here
-    {
-        uID : 5281040,
-        nameFirst : 'Hao',
-        nameLast : 'Wu',
-        email : 'q1259227701@gmail.com',
-    }
+    users: [{
+        userId: 1,
+        name: "john",
+        email: "john@gmail.com"
+        numSuccessfulLogins: number,
+        numFailedPasswordsSinceLastLogin: number,
+    }],
+    quizzes: [{
+        quizId: number,
+        name: string,
+        timeCreated: number,
+        timeLastEdited: number,
+        description: string,
+    }],
 }
 ```
 
