@@ -1,5 +1,5 @@
 // YOU MAY MODIFY THIS OBJECT BELOW
-let data = {
+export let data = {
   users : [],
   quiezzes : []
 };
