@@ -1,5 +1,8 @@
 // YOU MAY MODIFY THIS OBJECT BELOW
-let data = {};
+let data = {
+  users : [],
+  quiezzes : []
+};
 
 // YOU MAY MODIFY THIS OBJECT ABOVE
 
