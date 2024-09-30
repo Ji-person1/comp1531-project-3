@@ -1,8 +1,17 @@
 import validator from 'validator';
 import {getData} from './dataStore.js'
 
-// Sample stub for the adminAuthRegister function
-// creates a user and returns an authUserId linked with a newly created user. 
+/**
+ * Creates a new user when given the email, first name, last name and password
+ * validates the passed in variables
+ * returns an error object if any validation fails.
+ * 
+ * @param {string} email - The email address of a user.
+ * @param {string} password - The password for the account.
+ * @param {string} nameFirst - first name of the user.
+ * @param {string} nameLast - the last name of the user
+ * @returns {number|object} error if failed, number if successful
+ */
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
     const data = getData()
 
