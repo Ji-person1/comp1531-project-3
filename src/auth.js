@@ -51,9 +51,22 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
 // Sample stub for the adminAuthLogin function
 // returns the authUserId if given an account's email and password
 export function adminAuthLogin (email, password) {
-    return {
-        authUserId: 1
+    const data = getData()
+
+    const user = data.users.find(user => user.email === email)
+
+    if (!user) {
+        return { error: "email not found" }
     }
+
+    if (user.password !== password) {
+        user.numFailedPasswordsSinceLastLogin++
+        return { error: "wrong password" }
+    }
+
+    user.numSuccessfulLogins++
+    user.numFailedPasswordsSinceLastLogin = 0
+    return user.id
 }
 
 // Sample stub for the adminUsrDetails function
