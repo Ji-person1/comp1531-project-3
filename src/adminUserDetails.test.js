@@ -34,7 +34,7 @@ describe('Success cases', () => {
         adminAuthRegister("z5394791@unsw.edu.au", "1234abcd", "Mij", "Zheng")
         expect(adminUserDetails(userId)).toEqual({user: {
             userId: userId,
-            name: "Mij Zheng",
+            name: "Jim Zheng",
             email: "jim.zheng123@icloud.com",
             numSuccessfulLogins: 0,
             numFailedPasswordsSinceLastLogin: 0

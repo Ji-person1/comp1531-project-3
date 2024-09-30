@@ -59,13 +59,21 @@ function adminAuthLogin (email, password) {
 // Sample stub for the adminUsrDetails function
 // returns user details based on the authUserId given
 export function adminUserDetails (authUserId) {
-    return { user:
-        {
-            userId: 1,
-            name: 'Hayden Smith',
-            email: 'hayden.smith@unsw.edu.au',
-            numSuccessfulLogins: 3,
-            numFailedPasswordsSinceLastLogin: 1,
+    const data = getData();
+
+    const user = data.users.find(user => user.id === authUserId)
+
+    if (!user) {
+        return {error: 'invalid userId'}
+    }
+
+    return { 
+        user: {
+            userId: user.id,
+            name: user.nameFirst + " " + user.nameLast,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
     }
 }
