@@ -4,7 +4,7 @@ import { adminAuthRegister } from './auth.js';
 import { adminQuizCreate } from './quiz.js';
 
 describe(('2 tests function "clear"'), () => {
-    test('empty_test', () => {
+    test('1: empty_test', () => {
         clear();
         expect({users: [], quizzes: []}).toStrictEqual(data);
     });
@@ -13,21 +13,21 @@ describe(('2 tests function "clear"'), () => {
         adminQuizCreate(0, 'this is name', 'this is description');
         
     });
-    test('fill something and clean it', () => {
+    test('2: fill something and clean it', () => {
         clear();
         expect({users: [], quizzes: []}).toStrictEqual(data);
     });
-    test('fill more things and clean it', () => {
+    test('3: fill more things and clean it', () => {
         adminAuthRegister('mail2@gmail.com', 'this is password', 'first-name2', 'last-name2');
         adminQuizCreate(1, 'this is name', 'this is description');
         clear();
         expect({users: [], quizzes: []}).toStrictEqual(data);
     });
-    test('clean and then fill it', () => {
+    test('4: clean and then fill it', () => {
         clear();
         adminAuthRegister('mail2@gmail.com', 'this is password', 'first-name2', 'last-name2');
         adminQuizCreate(0, 'this is name', 'this is description');
-        let user = data.users[0];
-        expect(Object.keys(user).length).toStrictEqual(5);
+        expect(data.users.length).toStrictEqual(1);
+        expect(data.quiezzes.length).toStrictEqual(1);
     });
 });
