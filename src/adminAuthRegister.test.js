@@ -3,7 +3,7 @@ import { clear } from './other.js';
 
 const ERROR = { error: expect.any(String) };
 
-beforEach(() => {
+beforeEach(() => {
     clear()
 })
 
