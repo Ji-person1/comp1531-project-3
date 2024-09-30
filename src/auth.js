@@ -50,7 +50,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
 
 // Sample stub for the adminAuthLogin function
 // returns the authUserId if given an account's email and password
-function adminAuthLogin (email, password) {
+export function adminAuthLogin (email, password) {
     return {
         authUserId: 1
     }
