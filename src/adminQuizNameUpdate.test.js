@@ -53,7 +53,7 @@ describe('Success cases', () => {
     test('successful name update', () => {
         const userId = adminAuthRegister("swapnav.saikia@gmail.com", "1234abcd", "Swapnav", "Saikia");
         const quizId = adminQuizCreate(userId, "quiz1", "This is my quiz");
-        expect(adminQuizNameUpdate(userId, quizId, "Updated Quiz Name")).toEqual({});
+        expect(adminQuizNameUpdate(userId, quizId.quizId, "Updated Quiz Name")).toEqual({});
     });
 });
     
