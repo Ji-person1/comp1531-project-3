@@ -57,25 +57,56 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
     return authUserId
 }
 
+/**
+ * given the password and email of the user, returns the userId
+ * if the two do not match, returns an error object
+ * 
+ * @param {string} email - The email address of a user.
+ * @param {string} password - The password for the account.
+ * @returns {number|object} error if failed, number if successful
+ */
+export function adminAuthLogin (email, password) {
+    const data = getData()
 
-// Sample stub for the adminAuthLogin function
-// returns the authUserId if given an account's email and password
-function adminAuthLogin (email, password) {
-    return {
-        authUserId: 1
+    const user = data.users.find(user => user.email === email)
+
+    if (!user) {
+        return { error: "email not found" }
     }
+
+    if (user.password !== password) {
+        user.numFailedPasswordsSinceLastLogin++
+        return { error: "wrong password" }
+    }
+
+    user.numSuccessfulLogins++
+    user.numFailedPasswordsSinceLastLogin = 0
+    return user.id
 }
 
-// Sample stub for the adminUsrDetails function
-// returns user details based on the authUserId given
-function adminUserDetails (authUserId) {
-    return { user:
-        {
-            userId: 1,
-            name: 'Hayden Smith',
-            email: 'hayden.smith@unsw.edu.au',
-            numSuccessfulLogins: 3,
-            numFailedPasswordsSinceLastLogin: 1,
+/**
+ * finds details on an account based on the userid passed in
+ * returns error if the account cannot be found. 
+ * 
+ * @param {string} authUserId - the user id of the account being searched
+ * @returns {object} error if failed, the details of the account otherwise
+ */
+export function adminUserDetails (authUserId) {
+    const data = getData();
+
+    const user = data.users.find(user => user.id === authUserId)
+
+    if (!user) {
+        return {error: 'invalid userId'}
+    }
+
+    return { 
+        user: {
+            userId: user.id,
+            name: user.nameFirst + " " + user.nameLast,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
     }
 }
