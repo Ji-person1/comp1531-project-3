@@ -1,14 +1,15 @@
-import { data } from "./dataStore";
+import { getData } from "./dataStore";
 //Update the description of the relevant quiz.
 /**
  * 
  * @param {number} authUserId 
  * @param {number} quizId 
  * @param {string} description 
- * @param {Array} allMembers
+ * @param {Array<number>} allMembers
  * @returns {{}}
  */
 function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
+    const data = getData();
     if (authUserId >= data.users.length) {
         return { error: 'specific error message here' };
     }
