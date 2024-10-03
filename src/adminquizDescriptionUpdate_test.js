@@ -6,10 +6,10 @@ import { getdata } from './dataStore.js';
 describe(('test_adminQuizDescriptionUpdate'), () => {
     beforeEach(() => {
         clear();
-        const data = getdata();
         adminAuthRegister('sampleEmail@gmail.com', 'password123', 'nameFirst', 'nameLast');
         adminQuizCreate(data.users[0].authUserId, 'quizName1', 'description');
     });
+    const data = getdata();
     test(('AuthUserId is not a valid user'), () => {
         let result = adminQuizDescriptionUpdate(data.users[0].authUserId + 1, data.quiezzes[0].quizId, 'description_new');
         expect(result).toStricEqual({error: expect.any(String)});
@@ -44,3 +44,5 @@ describe(('test_adminQuizDescriptionUpdate'), () => {
     });
     clear();
 });
+
+
