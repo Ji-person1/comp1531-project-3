@@ -1,29 +1,112 @@
-// Sample stub for the adminAuthRegister function
-// creates a user and returns an authUserId linked with a newly created user. 
-function adminAuthRegister (email, password, nameFirst, nameLast) {
-    return {
-        authUserId: 1
+import validator from 'validator';
+import {getData} from './dataStore.js'
+
+/**
+ * Creates a new user when given the email, first name, last name and password
+ * validates the passed in variables
+ * returns an error object if any validation fails.
+ * 
+ * @param {string} email - The email address of a user.
+ * @param {string} password - The password for the account.
+ * @param {string} nameFirst - first name of the user.
+ * @param {string} nameLast - the last name of the user
+ * @returns {number|object} error if failed, number if successful
+ */
+export function adminAuthRegister (email, password, nameFirst, nameLast) {
+    const data = getData()
+
+    if (!validator.isEmail(email)) {
+        return { error: 'invalid email address' }
     }
+    
+    if (data.users.some(user => user.email === email)) {
+        return { error: 'email already in use' }
+    }
+    const nameTest = /^[a-zA-Z\s'-]+$/
+
+    if (!nameTest.test(nameFirst)) {
+        return { error: 'invalid characters in first name' }
+    }
+    else if (nameFirst.length < 2 || nameFirst.length > 20) {
+        return { error: 'invalid first name length' }
+    }
+
+    if (!nameTest.test(nameLast)) {
+        return { error: 'invalid characters in last name' }
+    }
+    else if (nameLast.length < 2 || nameLast.length > 20) {
+        return { error: 'invalid last name length' }
+    }
+
+    const passwordTest = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+    if (!passwordTest.test(password)) {
+        return { error: 'password must be at least 8 characters long and contain at least one letter and one number.' }
+    }
+    const authUserId = data.users.length > 0 ? data.users[data.users.length - 1].id + 1 : 1
+
+    const newUser = {
+        id: authUserId,
+        email: email,
+        nameFirst: nameFirst,
+        nameLast: nameLast,
+        password: password,
+        numSuccessfulLogins: 0,
+        numFailedPasswordsSinceLastLogin: 0
+    }
+    data.users.push(newUser)
+    return authUserId
 }
 
-// Sample stub for the adminAuthLogin function
-// returns the authUserId if given an account's email and password
-function adminAuthLogin (email, password) {
-    return {
-        authUserId: 1
+/**
+ * given the password and email of the user, returns the userId
+ * if the two do not match, returns an error object
+ * 
+ * @param {string} email - The email address of a user.
+ * @param {string} password - The password for the account.
+ * @returns {number|object} error if failed, number if successful
+ */
+export function adminAuthLogin (email, password) {
+    const data = getData()
+
+    const user = data.users.find(user => user.email === email)
+
+    if (!user) {
+        return { error: "email not found" }
     }
+
+    if (user.password !== password) {
+        user.numFailedPasswordsSinceLastLogin++
+        return { error: "wrong password" }
+    }
+
+    user.numSuccessfulLogins++
+    user.numFailedPasswordsSinceLastLogin = 0
+    return user.id
 }
 
-// Sample stub for the adminUsrDetails function
-// returns user details based on the authUserId given
-function adminUserDetails (authUserId) {
-    return { user:
-        {
-            userId: 1,
-            name: 'Hayden Smith',
-            email: 'hayden.smith@unsw.edu.au',
-            numSuccessfulLogins: 3,
-            numFailedPasswordsSinceLastLogin: 1,
+/**
+ * finds details on an account based on the userid passed in
+ * returns error if the account cannot be found. 
+ * 
+ * @param {string} authUserId - the user id of the account being searched
+ * @returns {object} error if failed, the details of the account otherwise
+ */
+export function adminUserDetails (authUserId) {
+    const data = getData();
+
+    const user = data.users.find(user => user.id === authUserId)
+
+    if (!user) {
+        return {error: 'invalid userId'}
+    }
+
+    return { 
+        user: {
+            userId: user.id,
+            name: user.nameFirst + " " + user.nameLast,
+            email: user.email,
+            numSuccessfulLogins: user.numSuccessfulLogins,
+            numFailedPasswordsSinceLastLogin: user.numFailedPasswordsSinceLastLogin,
         }
     }
 }
