@@ -33,9 +33,37 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
 }
 
 //Update the name of the relevant quiz.
-function adminQuizNameUpdate (authUserId, quizId, name) { 
-    return {}
+function adminQuizNameUpdate (authUserId, quizId, name) {
+    if (!isValidUserId(authUserId)) {
+        return {error: 'User Id is not Valid!'};
+    }
+    if (!isValidQuizId(quizId)) {
+        return {error: 'Quiz is not Valid!'};
+    }
+    if (!userQuizNamecheck(authUserId, quizId)) {
+        return {error: 'Quiz name does not exist'};
+    }  
+    const validNamePattern = /^[a-zA-Z0-9 ]+$/;
+    if (!validNamePattern.test(name)) {
+        return {error: 'Name contains invalid characters'};
+    }
+    if (name.length < 3 || name.length > 30) {
+        return {error: 'Name has an invalid length (<3 or >30)'};
+    }
+
+    const currentQuiz = data.quizzes.filter(q => q.authUserId === authUserId && q.name === name);
+    if (currentQuiz.length > 0) {
+        return {error: 'Name is already used'};
+    }
+   
+    const quiz = data.quizzes.find(q => q.quizId === quizId);
+    if (quiz) {
+        quiz.name = name;
+    }
+
+    return {};
 }
+
 
 
 //Get all of the relevant information about the current quiz.
