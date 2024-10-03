@@ -50,24 +50,57 @@ function adminQuizInfo(authUserId, quizId) {
 }
 
 // Provides a list of all quizzes that are owned by the currently logged in user.
-function adminQuizList( authUserId ) 
-{
-    return { quizzes: [
-        {
-        quizId: 1,
-        name: 'My Quiz',
-        }
-    ]
+export function adminQuizList(authUserId) {
+    const data = getData();
+    const user = data.users.find(user => user.id === authUserId);
+
+
+    if (!user) {
+        return { error: 'Invalid authUserId' };
     }
+
+
+    const userQuizzes = data.quizzes.filter(quiz => quiz.creatorId === authUserId);
+    return {
+        quizzes: userQuizzes.map(quiz => ({
+            quizId: quiz.quizId,
+            name: quiz.name
+        }))
+    };
 }
 
+
 //Given basic details about a new quiz, create one for the logged in user.
-function adminQuizCreate ( authUserId, name, description ) 
-{
-    return {
-        quizId: 2
+export function adminQuizCreate(authUserId, name, description) {
+    const data = getData();
+    const user = data.users.find(user => user.id === authUserId);
+
+    if (!user) {
+        return { error: 'Invalid authUserId' };
     }
+    if (name.length < 3 || name.length > 30 || !/^[a-zA-Z0-9 ]+$/.test(name)) {
+        return { error: 'Invalid quiz name' };
+    }
+    if (description.length > 100) {
+        return { error: 'Description too long' };
+    }
+    if (data.quizzes.some(quiz => quiz.creatorId === authUserId && quiz.name === name)) {
+        return { error: 'Quiz name already used by this user' };
+    }
+    const newQuizId = data.quizzes.length > 0 ? Math.max(...data.quizzes.map(q => q.quizId)) + 1 : 1;
+    const newQuiz = {
+        quizId: newQuizId,
+        creatorId: authUserId,
+        name,
+        description,
+        timeCreated: Math.floor(Date.now() / 1000),
+        timeLastEdited: Math.floor(Date.now() / 1000)
+    };
+
+    data.quizzes.push(newQuiz);
+    return { quizId: newQuizId };
 }
+
 
 //Given a particular quiz, permanently remove the quiz.
 function adminQuizRemove ( authUserId, quizId ) 
