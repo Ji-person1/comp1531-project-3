@@ -1,6 +1,35 @@
+import { getData } from "./dataStore";
 //Update the description of the relevant quiz.
+/**
+ * 
+ * @param {number} authUserId 
+ * @param {number} quizId 
+ * @param {string} description 
+ * @param {Array<number>} allMembers
+ * @returns {{}}
+ */
 function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
-    return {}
+    const data = getData();
+    if (authUserId >= data.users.length) {
+        return { error: 'specific error message here' };
+    }
+    if (quizId >= data.quiezzes.length) {
+        return { error: 'specific error message here' };
+    }
+    const allMembers = data.quiezzes.allMembers;
+
+    if (description.length > 100) {
+        return { error: 'specific error message here' };
+    }
+
+    for (let i of allMembers) {
+        if (quizId == i) {
+            data.quiezzes.description = description;
+            return {};
+        }
+    }
+    
+    return { error: 'specific error message here' };
 }
 
 //Update the name of the relevant quiz.
