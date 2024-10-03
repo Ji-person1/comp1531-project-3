@@ -114,7 +114,7 @@ export function adminQuizRemove(authUserId, quizId) {
         return { error: 'Invalid quizId' };
     }
     if (data.quizzes[quizIndex].creatorId !== authUserId) {
-        return { error: 'Quiz does not belong to this user' };
+        return { error: 'Quiz does not belong to this user' }; 
     }
     data.quizzes.splice(quizIndex, 1);
     return {};
