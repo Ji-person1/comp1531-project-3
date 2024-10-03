@@ -103,10 +103,19 @@ export function adminQuizCreate(authUserId, name, description) {
 
 
 //Given a particular quiz, permanently remove the quiz.
-function adminQuizRemove ( authUserId, quizId ) 
-{
-    return {
-
+export function adminQuizRemove(authUserId, quizId) {
+    const data = getData();
+    const user = data.users.find(user => user.id === authUserId);
+    if (!user) {
+        return { error: 'Invalid authUserId' };
     }
-
+    const quizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    if (quizIndex === -1) {
+        return { error: 'Invalid quizId' };
+    }
+    if (data.quizzes[quizIndex].creatorId !== authUserId) {
+        return { error: 'Quiz does not belong to this user' }; 
+    }
+    data.quizzes.splice(quizIndex, 1);
+    return {};
 }
