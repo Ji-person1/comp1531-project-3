@@ -1,5 +1,5 @@
 import { clear } from './other.js';
-import { getData } from '.dataStore.js';
+import { getData } from './dataStore.js';
 import { adminAuthRegister } from './auth.js';
 import { adminQuizCreate } from './quiz.js';
 
