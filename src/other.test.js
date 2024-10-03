@@ -8,12 +8,10 @@ describe(('2 tests function "clear"'), () => {
         clear();
         expect({users: [], quizzes: []}).toStrictEqual(getData());
     });
+    const data = getData();
     beforeEach(() => {
-
         adminAuthRegister('mail@gmail.com', 'this is password', 'first-name', 'last-name');
         adminQuizCreate(0, 'this is name', 'this is description');
-        const data = getData();
-        
     });
     test('2: fill something and clean it', () => {
         clear();
