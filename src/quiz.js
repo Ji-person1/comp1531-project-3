@@ -39,14 +39,30 @@ function adminQuizNameUpdate (authUserId, quizId, name) {
 
 
 //Get all of the relevant information about the current quiz.
-function adminQuizInfo(authUserId, quizId) {
+export function adminQuizInfo(authUserId, quizId) {
+    const data = getData();
+
+    const user = data.users.find(user => user.id === authUserId);
+    if (!user) {
+        return { error: 'User Id is not valid!' };
+    }
+
+    const quizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    if (quizIndex === -1) {
+        return { error: 'Invalid quizId' };
+    }
+    if (data.quizzes[quizIndex].creatorId !== authUserId) {
+        return { error: 'Quiz does not exist or does not belong to this user' };
+    }
+
+    const quiz = data.quizzes[quizIndex]
     return {
-        quizId: 1,
-        name: 'My Quiz',
-        timeCreated: 1683125870,
-        timeLastEdited: 1683125871,
-        description: 'This is my quiz',
-      }
+        quizId: data.quizzes[quizIndex].creatorId,
+        name: quiz.name,
+        timeCreated: quiz.timeCreated,
+        timeLastEdited: quiz.timeLastEdited,
+        description: quiz.description
+    };
 }
 
 // Provides a list of all quizzes that are owned by the currently logged in user.

@@ -21,7 +21,7 @@ describe('Error cases', () => {
     test ('invalid quizId', () => {
         const userId = adminAuthRegister("swapnav.saikia@icloud.com", "1234abcd", "Swapnav", "Saikia")
         const quizId = adminQuizCreate(userId, "quiz1", "This is my quiz")
-        expect(adminQuizInfo(userId, -quizId)).toEqual(ERROR);
+        expect(adminQuizInfo(userId, -quizId.quizId)).toEqual(ERROR);
     });
     test ('Quiz name does not exist', () => {
         const userId = adminAuthRegister("swapnav.saikia@icloud.com", "1234abcd", "Swapnav", "Saikia")
@@ -35,8 +35,8 @@ describe ('Success cases', () => {
     test('Sucessful view', () => {
         const userId = adminAuthRegister("swapnav.saikia@gmail.com", "1234abcd", "Swapnav", "Saikia")
         const quizId = adminQuizCreate(userId, "quiz1", "This is my quiz")
-        expect(adminQuizInfo(userId, quizId)).toEqual({
-            quizId: quizId,
+        expect(adminQuizInfo(userId, quizId.quizId)).toEqual({
+            quizId: quizId.quizId,
             name: "quiz1",
             timeCreated: expect.any(Number),  
             timeLastEdited: expect.any(Number),
