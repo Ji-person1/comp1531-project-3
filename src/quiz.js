@@ -9,7 +9,7 @@ import { getData } from "./dataStore";
  */
 export function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
     const data = getData();
-    const user = data.users.find(user => user.authUserId === authUserId);
+    const user = data.users.find(user => user.id === authUserId);
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
     if (!user) {
         return { error: 'no user provided' };
