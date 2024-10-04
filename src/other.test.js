@@ -4,30 +4,34 @@ import { adminAuthRegister } from './auth.js';
 import { adminQuizCreate } from './quiz.js';
 
 describe(('2 tests function "clear"'), () => {
-    test('1: empty_test', () => {
+    beforeEach(() => {
         clear();
+    });
+    test('1: empty_test', () => {
         expect({users: [], quizzes: []}).toStrictEqual(getData());
     });
-    const data = getData();
-    beforeEach(() => {
-        adminAuthRegister('mail@gmail.com', 'this is password', 'first-name', 'last-name');
-        adminQuizCreate(0, 'this is name', 'this is description');
-    });
+    
     test('2: fill something and clean it', () => {
+        const userId = adminAuthRegister('mail@gmail.com', 'aaaaa111', 'firstName', 'lastName');
+        const quizId = adminQuizCreate(userId.authUserId, 'this is name', 'this is description');
         clear();
         expect({users: [], quizzes: []}).toStrictEqual(getData());
     });
     test('3: fill more things and clean it', () => {
-        adminAuthRegister('mail2@gmail.com', 'this is password', 'first-name2', 'last-name2');
-        adminQuizCreate(1, 'this is name', 'this is description');
+        const userId = adminAuthRegister('mail@gmail.com', 'aaaaa111', 'firstName', 'lastName');
+        const quizId = adminQuizCreate(userId.authUserId, 'this is name', 'this is description');
+        const userId2 = adminAuthRegister('mail2@gmail.com', 'aaaaa111', 'firstName', 'lastName');
+        const quizId2 = adminQuizCreate(userId2.authUserId, 'this is name', 'this is description');
         clear();
         expect({users: [], quizzes: []}).toStrictEqual(getData());
     });
     test('4: clean and then fill it', () => {
+        const userId = adminAuthRegister('mail@gmail.com', 'aaaaa111', 'firstName', 'lastName');
+        const quizId = adminQuizCreate(userId.authUserId, 'this is name', 'this is description');
         clear();
-        adminAuthRegister('mail2@gmail.com', 'this is password', 'first-name2', 'last-name2');
-        adminQuizCreate(0, 'this is name', 'this is description');
-        expect(data.users.length).toStrictEqual(1);
-        expect(data.quiezzes.length).toStrictEqual(1);
+        const userId2 = adminAuthRegister('mail2@gmail.com', 'aaaaa111', 'firstName', 'lastName');
+        const quizId2 = adminQuizCreate(userId2.authUserId, 'this is name', 'this is description');
+        expect(userId2).toStrictEqual({authUserId: 1});
+        expect(quizId2).toStrictEqual({quizId: 1});
     });
 });
