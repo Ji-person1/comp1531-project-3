@@ -7,28 +7,28 @@ import { getData } from "./dataStore";
  * @param {string} description - the new description of the quiz
  * @returns {number|object} error if failed, empty if successful
  */
-function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
+export function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
     const data = getData();
-    if (authUserId >= data.users.length) {
-        return { error: 'specific error message here' };
+    const user = data.users.find(user => user.authUserId === authUserId);
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!user) {
+        return { error: 'no user provided' };
     }
-    if (quizId >= data.quiezzes.length) {
-        return { error: 'specific error message here' };
+    if (!quiz) {
+        return { error: 'no quiz provided' };
     }
-    const allMembers = data.quiezzes.allMembers;
 
     if (description.length > 100) {
-        return { error: 'specific error message here' };
+        return { error: 'decscription is too long' };
     }
 
-    for (let i of allMembers) {
-        if (quizId == i) {
-            data.quiezzes.description = description;
-            return {};
-        }
+    if (quiz.creatorId == authUserId) {
+        quiz.description = description;
+        return {};
     }
     
-    return { error: 'specific error message here' };
+    
+    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
 }
 
 /**
