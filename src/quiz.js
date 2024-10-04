@@ -1,12 +1,11 @@
 import { getData } from "./dataStore";
-//Update the description of the relevant quiz.
 /**
+ * Update the description of the relevant quiz.
  * 
- * @param {number} authUserId 
- * @param {number} quizId 
- * @param {string} description 
- * @param {Array<number>} allMembers
- * @returns {{}}
+ * @param {number} authUserId - the id of the user
+ * @param {number} quizId - the id of the quiz being updated
+ * @param {string} description - the new description of the quiz
+ * @returns {number|object} error if failed, empty if successful
  */
 function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
     const data = getData();
@@ -32,7 +31,14 @@ function adminQuizDescriptionUpdate (authUserId, quizId, description) {
     return { error: 'specific error message here' };
 }
 
-//Update the name of the relevant quiz.
+/**
+ * Updates the name of a quiz when given the correct authUserId, quizId and name
+ * 
+ * @param {string} authUserId - The id of the user.
+ * @param {string} quizId - The id of the quiz.
+ * @param {string} name - the name of the quiz.
+ * @returns {object} error if failed, empty if successful.
+ */
 export function adminQuizNameUpdate (authUserId, quizId, name) { 
     const data = getData()
     if (!data.users.find(user => user.id === authUserId)) {
@@ -60,7 +66,14 @@ export function adminQuizNameUpdate (authUserId, quizId, name) {
 }
 
 
-//Get all of the relevant information about the current quiz.
+/**
+ * Get all of the relevant information about the current quiz. Returning an error if
+ * either adminauthuserid doesn't work or quizid
+ * 
+ * @param {string} authUserId - The email address of a user.
+ * @param {string} quizId - The password for the account.
+ * @returns {number|object} error if failed, number if successful
+ */
 export function adminQuizInfo(authUserId, quizId) {
     const data = getData();
 
@@ -87,7 +100,13 @@ export function adminQuizInfo(authUserId, quizId) {
     };
 }
 
-// Provides a list of all quizzes that are owned by the currently logged in user.
+/**
+ * Provides a list of all quizzes that are owned by the currently logged in user.
+ * 
+ * @param {string} authUserId - The email address of a user.
+ * @param {string} quizId - The password for the account.
+ * @returns {number|object} error if failed, number if successful
+ */
 export function adminQuizList(authUserId) {
     const data = getData();
     const user = data.users.find(user => user.id === authUserId);
@@ -108,7 +127,14 @@ export function adminQuizList(authUserId) {
 }
 
 
-//Given basic details about a new quiz, create one for the logged in user.
+/**
+ * Given basic details about a new quiz, create one for the logged in user.
+ * 
+ * @param {string} authUserId - The email address of a user.
+ * @param {string} name - The name of the new quiz.
+ * @param {string} description - The description of the new quiz.
+ * @returns {object} error object if failed, object containing a number if successful
+ */
 export function adminQuizCreate(authUserId, name, description) {
     const data = getData();
     const user = data.users.find(user => user.id === authUserId);
