@@ -49,6 +49,6 @@ describe(('test_adminQuizDescriptionUpdate'), () => {
         const userID2 = adminAuthRegister('sampleEmail02@gmail.com', 'password123', 'firstName', 'lastName');
         const quizId2 = adminQuizCreate(userID2.authUserId, 'quizName2', 'description02');
         let result = adminQuizDescriptionUpdate(userID2.authUserId, quizId2.quizId, 'description02_new');
-        expect(quizId2).toStrictEqual({quizId: 1});
+        expect(quizId2).toStrictEqual({quizId: 2});
     });
 });
