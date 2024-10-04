@@ -1,7 +1,7 @@
 // YOU MAY MODIFY THIS OBJECT BELOW
 export let data = {
   users : [],
-  quiezzes : []
+  quizzes : []
 };
 
 // YOU MAY MODIFY THIS OBJECT ABOVE
