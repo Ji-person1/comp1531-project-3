@@ -1,5 +1,6 @@
 import validator from 'validator';
-import {getData} from './datastore.ts'
+import {getData, setData} from './datastore.ts'
+import { generateSessionId } from './helper.ts';
 
 interface UserDetails {
     user : {
@@ -33,31 +34,31 @@ export function adminAuthRegister (email: string, password: string, nameFirst: s
     const data = getData()
 
     if (!validator.isEmail(email)) {
-        return { error: 'invalid email address' }
+        return { error: '400 invalid email address' }
     }
     
     if (data.users.find(user => user.email === email)) {
-        return { error: 'email already in use' }
+        return { error: '400 email already in use' }
     }
     const nameTest = /^[a-zA-Z\s'-]+$/
 
     if (!nameTest.test(nameFirst)) {
-        return { error: 'invalid characters in first name' }
+        return { error: '400 invalid characters in first name' }
     }
     else if (nameFirst.length < 2 || nameFirst.length > 20) {
-        return { error: 'invalid first name length' }
+        return { error: '400 vvinvalid first name length' }
     }
 
     if (!nameTest.test(nameLast)) {
-        return { error: 'invalid characters in last name' }
+        return { error: '400 invalid characters in last name' }
     }
     else if (nameLast.length < 2 || nameLast.length > 20) {
-        return { error: 'invalid last name length' }
+        return { error: '400 invalid last name length' }
     }
 
     const passwordTest = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
     if (!passwordTest.test(password)) {
-        return { error: 'password must be at least 8 characters long and contain at least one letter and one number.' }
+        return { error: '400 password must be at least 8 characters long and contain at least one letter and one number.' }
     }
     const authUserId = data.users.length > 0 ? data.users[data.users.length - 1].id + 1 : 1
 
@@ -68,10 +69,21 @@ export function adminAuthRegister (email: string, password: string, nameFirst: s
         nameLast: nameLast,
         password: password,
         numSuccessfulLogins: 0,
-        numFailedPasswordsSinceLastLogin: 0
+        numFailedPasswordsSinceLastLogin: 0,
+        prevPasswords: []
     }
+
+    const sessionId = generateSessionId()
+    const newSession = {
+        sessionId: sessionId,
+        authUserId: authUserId,
+        createdAt: Math.floor(Date.now() / 1000)
+    }
+
+    data.sessions.push(newSession)
     data.users.push(newUser)
-    return {token: authUserId}
+    setData(data)
+    return {token: sessionId}
 }
 
 /**
@@ -88,17 +100,26 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
     const user = data.users.find(user => user.email === email)
 
     if (!user) {
-        return { error: "email not found" }
+        return { error: "400 email not found" }
     }
 
     if (user.password !== password) {
         user.numFailedPasswordsSinceLastLogin++
-        return { error: "wrong password" }
+        return { error: "400 wrong password" }
     }
 
     user.numSuccessfulLogins++
     user.numFailedPasswordsSinceLastLogin = 0
-    return {token: user.id}
+    const sessionId = generateSessionId()
+    const newSession = {
+        sessionId: sessionId,
+        authUserId: user.id,
+        createdAt: Math.floor(Date.now() / 1000)
+    }
+
+    data.sessions.push(newSession)
+    setData(data)
+    return {token: sessionId}
 }
 
 /**
@@ -108,13 +129,17 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
  * @param {string} authUserId - the user id of the account being searched
  * @returns {object} error if failed, the details of the account otherwise
  */
-export function adminUserDetails (authUserId: number): errorObject | UserDetails {
+export function adminUserDetails (token: number): errorObject | UserDetails {
     const data = getData();
 
-    const user = data.users.find(user => user.id === authUserId)
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
 
+    const user = data.users.find(user => user.id === session.authUserId);
     if (!user) {
-        return {error: 'invalid userId'}
+        return { error: '401 invalid userId' };
     }
 
     return { 
@@ -138,39 +163,48 @@ export function adminUserDetails (authUserId: number): errorObject | UserDetails
  * @param {string} nameLast - the new last name of the user
  * @returns {object} error if failed, empty object if successful
  */
-export function adminUserDetailsUpdate (authUserId: number, email: string, nameFirst: string, nameLast: string): 
+export function adminUserDetailsUpdate (token: number, email: string, nameFirst: string, nameLast: string): 
     errorObject | {} {
     const data = getData();
-    const user = data.users.find(user => user.id === authUserId); 
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid token' };
+    }
+    
+    const user = data.users.find(user => user.id === session.authUserId);
     if (!user) {
-        return { error: 'user id not found' }
+        return { error: '400 user id not found' }
     }
 
     if (user.email === email) {
-        return { error: 'email already in use' }
+        return { error: '400 email already in use' }
+    }
+    if (!validator.isEmail(email)) {
+        return { error: '400 invalid email address' }
     }
     if (/[^a-zA-Z\s'-]/.test(nameFirst) == true) {
-        return {error: "nameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"};
+        return {error: "400 nameFirst contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"};
     }
     if (nameFirst.length < 2) {
-        return {error: "namefirst is less than two characters"};
+        return {error: "400 namefirst is less than two characters"};
     }
     if (nameFirst.length > 20) {
-        return {error: "nameFkirst is more than twenty characters"};
+        return {error: "400 nameFkirst is more than twenty characters"};
     }
     if (/[^a-zA-Z\s'-]/.test(nameLast) == true) {
-        return {error: "nameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"};
+        return {error: "400 nameLast contains characters other than lowercase letters, uppercase letters, spaces, hyphens, or apostrophes"};
     }
     if (nameLast.length < 2) {
-        return {error: "nameLast is less than two characters"};
+        return {error: "400 nameLast is less than two characters"};
     }
     if (nameLast.length > 20) {
-        return {error: "nameLast is more than twenty characters"};
+        return {error: "400 nameLast is more than twenty characters"};
     }
 
-    user.email = email
-    user.nameFirst = nameFirst
-    user.nameLast = nameLast
+    user.email = email;
+    user.nameFirst = nameFirst;
+    user.nameLast = nameLast;
+    setData(data);
     return {}; 
 }
 
@@ -183,27 +217,39 @@ export function adminUserDetailsUpdate (authUserId: number, email: string, nameF
  * @param {string} newPassword - The new password for the account.
  * @returns {object} error if failed, empty object if successful
  */
-export function adminUserPasswordUpdate (authUserId: number, oldPassword: string, newPassword: string): errorObject | {} {
+export function adminUserPasswordUpdate (token: number, oldPassword: string, newPassword: string): errorObject | {} {
     const data = getData();
-    const user = data.users.find(user => user.id === authUserId)
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
+    
+    const user = data.users.find(user => user.id === session.authUserId);
     if (!user) {
-        return { error: "Invalid user id" }
+        return { error: '400 user id not found' }
     }
     else if (oldPassword != user.password) {
-        return {error: "Old Password is not the correct old password"}
+        return {error: "400 Old Password is not the correct old password"}
     }
     else if (oldPassword == newPassword) {
-        return {error: "Old Password and New Password match exactly"}
+        return {error: "400 Old Password and New Password match exactly"}
     }
     else if (newPassword.length < 8) {
-        return {error: "New Password is less than 8 characters"}
+        return {error: "400 New Password is less than 8 characters"}
     }
     const hasLetter = /[a-zA-Z]/.test(newPassword);
     const hasNumber = /[0-9]/.test(newPassword);
     if (!hasLetter || !hasNumber) {
-        return {error: "New Password does not contain at least one number and at least one letter"};
+        return {error: "400 New Password does not contain at least one number and at least one letter"};
+    }
+
+    const prevSearch = user.prevPasswords.find(prevPasswords => prevPasswords === newPassword)
+    if (prevSearch) {
+        return {error: "password has been used before"}; 
     }
 
     user.password = newPassword
+    user.prevPasswords.push(oldPassword)
+    setData(data)
     return {}; 
 }

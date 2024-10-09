@@ -14,7 +14,7 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove
  } from './quiz.ts';
-import { clear } from './other';
+import { clear } from './other.ts';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -45,8 +45,13 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(result);
 });
 
+//adminAuthRegister
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
+  console.log('Received email:', email);
+  console.log('Received password:', password);
+  console.log('Received nameFirst:', nameFirst);
+  console.log('Received nameLast:', nameLast);
   const result = adminAuthRegister(email, password, nameFirst, nameLast)
   if ('error' in result) {
     res.status(400).json(result);
@@ -55,6 +60,7 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
+//adminAuthLogin
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
   const result = adminAuthLogin(email, password)
@@ -65,32 +71,47 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
-app.post('/v1/admin/auth/details', (req: Request, res: Response) => {
+//adminUserDetails
+app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminUserDetails(token)
   if ('error' in result) {
-    res.status(400).json(result);
+    res.status(401).json(result);
     return
   }
   res.status(200).json(result);
 });
 
+//adminUserDetailUpdate
 app.put('/v1/admin/auth/details', (req: Request, res: Response) => {
   const { token, email, nameFirst, nameLast } = req.body;
   const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
 });
 
+//adminUserPasswordUpdate
 app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
   const { token, oldPassword, newPassword } = req.body;
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword)
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
 });

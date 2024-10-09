@@ -1,5 +1,5 @@
 import * as fs from 'fs'
-const DATA_PATH = "data.json"
+const DATA_PATH = "./src/data.json"
 
 interface User {
     id: number;
@@ -8,7 +8,8 @@ interface User {
     nameLast: string;
     password: string;
     numSuccessfulLogins: number;
-    numFailedPasswordsSinceLastLogin: number
+    numFailedPasswordsSinceLastLogin: number;
+    prevPasswords: string[]
 }
 
 interface Quiz {
@@ -32,10 +33,18 @@ interface Answer {
     answer: string;
     correct: boolean;
 }
+
+interface Session {
+    sessionId: number;
+    authUserId: number;
+    createdAt: number; 
+}
+
 interface DataStore {
     users: User[];
     quizzes: Quiz[];
     bin: Quiz[];
+    sessions: Session[]; 
 }
 
 export function getData(): DataStore {
