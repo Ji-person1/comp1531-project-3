@@ -8,7 +8,13 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-
+import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
+    adminUserPasswordUpdate 
+  } from './auth.ts';
+import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
+  adminQuizRemove
+ } from './quiz.ts';
+import { clear } from './other';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -39,6 +45,128 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(result);
 });
 
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  const result = adminAuthRegister(email, password, nameFirst, nameLast)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.post('/v1/admin/auth/details', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminUserDetails(token)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.put('/v1/admin/auth/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
+  const { token, oldPassword, newPassword } = req.body;
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminQuizList(token)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid as string);
+  const { token } = req.body;
+  const result = adminQuizRemove(token, quizid)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizid = req.params.quizid as string
+  const { token } = req.body;
+  const result = adminQuizInfo(token, quizid)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizid = req.params.quizid as string
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(quizid, token, name)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.put('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid as string)
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizid, description)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  const result = clear()
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
