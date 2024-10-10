@@ -11,37 +11,37 @@ beforeEach(() => {
 describe('adminQuizRemove', () => {
     test('Invalid authUserId', () => {
         const authUserId = adminAuthRegister('swastik@example.com', 'password123', 'swastik', 'mishra');
-        const quiz = adminQuizCreate(authUserId, 'Test Quiz', 'A test quiz');
+        const quiz = adminQuizCreate(authUserId.authUserId, 'Test Quiz', 'A test quiz');
         expect(adminQuizRemove(999, quiz.quizId)).toEqual(ERROR);
     });
 
     test('Invalid quizId', () => {
         const authUserId = adminAuthRegister('swastik@example.com', 'password123', 'swastik', 'mishra');
-        expect(adminQuizRemove(authUserId, 999)).toEqual(ERROR);
+        expect(adminQuizRemove(authUserId.authUserId, 999)).toEqual(ERROR);
     });
 
     test('Quiz does not belong to user', () => {
         const user1 = adminAuthRegister('swastik@example.com', 'password123', 'swastik', 'mishra');
         const user2 = adminAuthRegister('neo@example.com', 'password321', 'neo', 'smith');
-        const quiz = adminQuizCreate(user1, 'User 1 Quiz', 'Quiz for user 1');
-        expect(adminQuizRemove(user2, quiz.quizId)).toEqual(ERROR);
+        const quiz = adminQuizCreate(user1.authUserId, 'User 1 Quiz', 'Quiz for user 1');
+        expect(adminQuizRemove(user2.authUserId, quiz.quizId)).toEqual(ERROR);
     });
 
     test('Successfully remove a quiz', () => {
         const authUserId = adminAuthRegister('swastik@example.com', 'password123', 'swastik', 'mishra');
-        const quiz = adminQuizCreate(authUserId, 'Test Quiz', 'A test quiz');
+        const quiz = adminQuizCreate(authUserId.authUserId, 'Test Quiz', 'A test quiz');
         
-        expect(adminQuizRemove(authUserId, quiz.quizId)).toEqual({});
-        expect(adminQuizList(authUserId)).toEqual({ quizzes: [] });
+        expect(adminQuizRemove(authUserId.authUserId, quiz.quizId)).toEqual({});
+        expect(adminQuizList(authUserId.authUserId)).toEqual({ quizzes: [] });
     });
 
     test('Remove one of multiple quizzes', () => {
         const authUserId = adminAuthRegister('swastik@example.com', 'password123', 'swastik', 'mishra');
-        const quiz1 = adminQuizCreate(authUserId, 'Quiz 1', 'First quiz');
-        const quiz2 = adminQuizCreate(authUserId, 'Quiz 2', 'Second quiz');
+        const quiz1 = adminQuizCreate(authUserId.authUserId, 'Quiz 1', 'First quiz');
+        const quiz2 = adminQuizCreate(authUserId.authUserId, 'Quiz 2', 'Second quiz');
         
-        expect(adminQuizRemove(authUserId, quiz1.quizId)).toEqual({});
-        expect(adminQuizList(authUserId)).toEqual({
+        expect(adminQuizRemove(authUserId.authUserId, quiz1.quizId)).toEqual({});
+        expect(adminQuizList(authUserId.authUserId)).toEqual({
             quizzes: [
                 { quizId: quiz2.quizId, name: 'Quiz 2' }
             ]

@@ -13,15 +13,15 @@ describe('Error cases', () => {
     });
     test('invalid userId', () => {
         const userId = adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim", "Zheng")
-        expect(adminUserDetails(-userId)).toEqual(ERROR);
+        expect(adminUserDetails(-userId.authUserId)).toEqual(ERROR);
     });
 });
 
 describe('Success cases', () => {
     test('Sucessful view', () => {
         const userId = adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim", "Zheng")
-        expect(adminUserDetails(userId)).toEqual({user: {
-            userId: userId,
+        expect(adminUserDetails(userId.authUserId)).toEqual({user: {
+            userId: userId.authUserId,
             name: "Jim Zheng",
             email: "jim.zheng123@icloud.com",
             numSuccessfulLogins: 0,
@@ -32,8 +32,8 @@ describe('Success cases', () => {
     test('Sucessful view wit multiple users', () => {
         const userId = adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim", "Zheng")
         adminAuthRegister("z5394791@unsw.edu.au", "1234abcd", "Mij", "Zheng")
-        expect(adminUserDetails(userId)).toEqual({user: {
-            userId: userId,
+        expect(adminUserDetails(userId.authUserId)).toEqual({user: {
+            userId: userId.authUserId,
             name: "Jim Zheng",
             email: "jim.zheng123@icloud.com",
             numSuccessfulLogins: 0,

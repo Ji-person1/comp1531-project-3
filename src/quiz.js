@@ -1,83 +1,115 @@
 import { getData } from "./dataStore";
-//Update the description of the relevant quiz.
 /**
+ * Update the description of the relevant quiz.
  * 
- * @param {number} authUserId 
- * @param {number} quizId 
- * @param {string} description 
- * @param {Array<number>} allMembers
- * @returns {{}}
+ * @param {number} authUserId - the id of the user
+ * @param {number} quizId - the id of the quiz being updated
+ * @param {string} description - the new description of the quiz
+ * @returns {number|object} error if failed, empty if successful
  */
-function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
+export function adminQuizDescriptionUpdate (authUserId, quizId, description) { 
     const data = getData();
-    if (authUserId >= data.users.length) {
-        return { error: 'specific error message here' };
+    const user = data.users.find(user => user.id === authUserId);
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!user) {
+        return { error: 'no user provided' };
     }
-    if (quizId >= data.quiezzes.length) {
-        return { error: 'specific error message here' };
+    if (!quiz) {
+        return { error: 'no quiz provided' };
     }
-    const allMembers = data.quiezzes.allMembers;
 
     if (description.length > 100) {
-        return { error: 'specific error message here' };
+        return { error: 'decscription is too long' };
     }
 
-    for (let i of allMembers) {
-        if (quizId == i) {
-            data.quiezzes.description = description;
-            return {};
-        }
+    if (quiz.creatorId == authUserId) {
+        quiz.description = description;
+        return {};
     }
     
-    return { error: 'specific error message here' };
+    
+    return { error: 'Quiz ID does not refer to a quiz that this user owns' };
 }
 
-//Update the name of the relevant quiz.
-function adminQuizNameUpdate (authUserId, quizId, name) {
-    if (!isValidUserId(authUserId)) {
-        return {error: 'User Id is not Valid!'};
+/**
+ * Updates the name of a quiz when given the correct authUserId, quizId and name
+ * 
+ * @param {string} authUserId - The id of the user.
+ * @param {string} quizId - The id of the quiz.
+ * @param {string} name - the name of the quiz.
+ * @returns {object} error if failed, empty if successful.
+ */
+export function adminQuizNameUpdate (authUserId, quizId, name) { 
+    const data = getData()
+    if (!data.users.find(user => user.id === authUserId)) {
+        return {error: 'AuthUserId is not a valid user.'};
     }
-    if (!isValidQuizId(quizId)) {
-        return {error: 'Quiz is not Valid!'};
+    const quizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    if (quizIndex === -1) {
+        return { error: 'Invalid quizId' };
     }
-    if (!userQuizNamecheck(authUserId, quizId)) {
-        return {error: 'Quiz name does not exist'};
-    }  
-    const validNamePattern = /^[a-zA-Z0-9 ]+$/;
-    if (!validNamePattern.test(name)) {
-        return {error: 'Name contains invalid characters'};
+    if (data.quizzes[quizIndex].creatorId !== authUserId) {
+        return {error: 'Quiz ID does not refer to a quiz that this user owns.'};
+    }
+    const quiz = data.quizzes[quizIndex]
+    if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
+        return {error: 'Name contains invalid characters. Valid characters are alphanumeric and spaces.'};
     }
     if (name.length < 3 || name.length > 30) {
-        return {error: 'Name has an invalid length (<3 or >30)'};
+        return {error: 'Name is either less than 3 characters long or more than 30 characters long.'};
     }
-
-    const currentQuiz = data.quizzes.filter(q => q.authUserId === authUserId && q.name === name);
-    if (currentQuiz.length > 0) {
-        return {error: 'Name is already used'};
+    if (data.quizzes.find(quiz => quiz.ownerId === authUserId && quiz.name === name)) {
+        return {error: 'Name is already used by the current logged in user for another quiz.'};
     }
-   
-    const quiz = data.quizzes.find(q => q.quizId === quizId);
-    if (quiz) {
-        quiz.name = name;
-    }
-
+    quiz.name = name
     return {};
 }
 
 
 
-//Get all of the relevant information about the current quiz.
-function adminQuizInfo(authUserId, quizId) {
+
+/**
+ * Get all of the relevant information about the current quiz. Returning an error if
+ * either adminauthuserid doesn't work or quizid
+ * 
+ * @param {string} authUserId - The email address of a user.
+ * @param {string} quizId - The password for the account.
+ * @returns {number|object} error if failed, number if successful
+ */
+export function adminQuizInfo(authUserId, quizId) {
+    const data = getData();
+
+    const user = data.users.find(user => user.id === authUserId);
+    if (!user) {
+        return { error: 'User Id is not valid!' };
+    }
+
+    const quizIndex = data.quizzes.findIndex(quiz => quiz.quizId === quizId);
+    if (quizIndex === -1) {
+        return { error: 'Invalid quizId' };
+    }
+    if (data.quizzes[quizIndex].creatorId !== authUserId) {
+        return { error: 'Quiz does not exist or does not belong to this user' };
+    }
+
+    const quiz = data.quizzes[quizIndex]
+
     return {
-        quizId: 1,
-        name: 'My Quiz',
-        timeCreated: 1683125870,
-        timeLastEdited: 1683125871,
-        description: 'This is my quiz',
-      }
+        quizId: data.quizzes[quizIndex].creatorId,
+        name: quiz.name,
+        timeCreated: quiz.timeCreated,
+        timeLastEdited: quiz.timeLastEdited,
+        description: quiz.description
+    };
 }
 
-// Provides a list of all quizzes that are owned by the currently logged in user.
+/**
+ * Provides a list of all quizzes that are owned by the currently logged in user.
+ * 
+ * @param {string} authUserId - The email address of a user.
+ * @param {string} quizId - The password for the account.
+ * @returns {number|object} error if failed, number if successful
+ */
 export function adminQuizList(authUserId) {
     const data = getData();
     const user = data.users.find(user => user.id === authUserId);
@@ -98,7 +130,14 @@ export function adminQuizList(authUserId) {
 }
 
 
-//Given basic details about a new quiz, create one for the logged in user.
+/**
+ * Given basic details about a new quiz, create one for the logged in user.
+ * 
+ * @param {string} authUserId - The email address of a user.
+ * @param {string} name - The name of the new quiz.
+ * @param {string} description - The description of the new quiz.
+ * @returns {object} error object if failed, object containing a number if successful
+ */
 export function adminQuizCreate(authUserId, name, description) {
     const data = getData();
     const user = data.users.find(user => user.id === authUserId);

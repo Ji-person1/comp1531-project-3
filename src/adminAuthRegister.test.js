@@ -34,12 +34,15 @@ describe('Error cases', () => {
 
 describe('Success cases', () => {
     test('Correct basic case', () => {
-        expect(adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim", "Zheng")).toEqual(expect.any(Number));
+        const registerRet = adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim", "Zheng")
+        expect(registerRet.authUserId).toEqual(expect.any(Number));
     });
     test('Correct long password case', () => {
-        expect(adminAuthRegister("jim.zheng123@icloud.com", "123456789ABCDEFGhijklmno", "Jim", "Zheng")).toEqual(expect.any(Number));
+        const registerRet = adminAuthRegister("jim.zheng123@icloud.com", "123456789ABCDEFGhijklmno", "Jim", "Zheng")
+        expect(registerRet.authUserId).toEqual(expect.any(Number));
     });
     test('Correct weird names case', () => {
-        expect(adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim-ello", "What is my last name")).toEqual(expect.any(Number));
+        const registerRet = adminAuthRegister("jim.zheng123@icloud.com", "1234abcd", "Jim-ello", "What is my last name")
+        expect(registerRet.authUserId).toEqual(expect.any(Number));
     });
 });

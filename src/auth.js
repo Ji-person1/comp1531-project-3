@@ -10,7 +10,7 @@ import {getData} from './dataStore.js'
  * @param {string} password - The password for the account.
  * @param {string} nameFirst - first name of the user.
  * @param {string} nameLast - the last name of the user
- * @returns {number|object} error if failed, number if successful
+ * @returns {number|object} error if failed, object containing a number if successful
  */
 export function adminAuthRegister (email, password, nameFirst, nameLast) {
     const data = getData()
@@ -54,7 +54,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
         numFailedPasswordsSinceLastLogin: 0
     }
     data.users.push(newUser)
-    return authUserId
+    return {authUserId: authUserId}
 }
 
 /**
@@ -63,7 +63,7 @@ export function adminAuthRegister (email, password, nameFirst, nameLast) {
  * 
  * @param {string} email - The email address of a user.
  * @param {string} password - The password for the account.
- * @returns {number|object} error if failed, number if successful
+ * @returns {object} error if failed, object containing a number number if successful
  */
 export function adminAuthLogin (email, password) {
     const data = getData()
@@ -81,7 +81,7 @@ export function adminAuthLogin (email, password) {
 
     user.numSuccessfulLogins++
     user.numFailedPasswordsSinceLastLogin = 0
-    return user.id
+    return {authUserId: user.id}
 }
 
 /**
@@ -119,7 +119,7 @@ export function adminUserDetails (authUserId) {
  * @param {string} email - The new email address of a user.
  * @param {string} nameFirst - the new first name of the user.
  * @param {string} nameLast - the new last name of the user
- * @returns {object|{}} error object if failed, nothing if successful
+ * @returns {object} error if failed, empty object if successful
  */
 export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) {
     const data = getData();
@@ -163,7 +163,7 @@ export function adminUserDetailsUpdate (authUserId, email, nameFirst, nameLast) 
  * @param {string} authUserId - The user id of the account
  * @param {string} oldPassword - The former password for the account.
  * @param {string} newPassword - The new password for the account.
- * @returns {object|{}} error if failed, number if successful
+ * @returns {object} error if failed, empty object if successful
  */
 export function adminUserPasswordUpdate (authUserId, oldPassword, newPassword) {
     const data = getData();
