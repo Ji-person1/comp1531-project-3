@@ -5,6 +5,7 @@ export function clear(): {} {
     data.users = []
     data.quizzes = []
     data.sessions = []
+    data.bin = []
 
     setData(data);
     return {}

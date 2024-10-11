@@ -139,7 +139,7 @@ export function adminUserDetails (token: number): errorObject | UserDetails {
 
     const user = data.users.find(user => user.id === session.authUserId);
     if (!user) {
-        return { error: '401 invalid userId' };
+        return { error: '400  user not found' };
     }
 
     return { 

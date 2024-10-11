@@ -19,6 +19,7 @@ interface Quiz {
     description: string;
     timeCreated: number;
     timeLastEdited: number;
+    numQuestions: number;
     questions: Questions[]
 }
 

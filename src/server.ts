@@ -116,70 +116,120 @@ app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
+//adminquizList
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
   const { token } = req.body;
   const result = adminQuizList(token)
   if ('error' in result) {
-    res.status(400).json(result);
+    res.status(401).json(result);
     return
   }
   res.status(200).json(result);
 });
 
+//adminQuizCreate
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { token, name, description } = req.body;
   const result = adminQuizCreate(token, name, description)
+  console.log('Received token:', token);
+  console.log('Received name:', name);
+  console.log('Received description:', description);
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
+  console.log('Received result:', result.quizId);
 });
 
+//adminQuizRemove
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid as string);
   const { token } = req.body;
+  console.log('Received token:', token);
+  console.log('Received quizid:', quizid);
+  console.log('Received original:', parseInt(req.params.quizid as string));
   const result = adminQuizRemove(token, quizid)
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
 });
 
+//adminQuizInfo
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizid = req.params.quizid as string
+  const quizid = parseInt(req.params.quizid)
   const { token } = req.body;
   const result = adminQuizInfo(token, quizid)
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
 });
 
+//adminNameUpdate
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
-  const quizid = req.params.quizid as string
+  const quizid = parseInt(req.params.quizid)
   const { token, name } = req.body;
-  const result = adminQuizNameUpdate(quizid, token, name)
+  const result = adminQuizNameUpdate(token, quizid, name)
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
 });
 
-app.put('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizid = parseInt(req.params.quizid as string)
+//adminDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid)
   const { token, description } = req.body;
   const result = adminQuizDescriptionUpdate(token, quizid, description)
   if ('error' in result) {
-    res.status(400).json(result);
-    return
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
   }
   res.status(200).json(result);
 });
 
+//clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear()
   if ('error' in result) {

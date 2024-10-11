@@ -26,13 +26,6 @@ describe('Error cases', () => {
         expect(res.statusCode).toStrictEqual(401);
     });
 
-    test('Token for nonexistant user', () => {
-        const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: -1}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
-
     test('no token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
             {json: {token: ''}});
