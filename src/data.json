@@ -1,0 +1,43 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "jim.zheng123@icloud.com",
+      "nameFirst": "Jim",
+      "nameLast": "Zheng",
+      "password": "1234abcd",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    },
+    {
+      "id": 2,
+      "email": "z5394791@unsw.edu.au",
+      "nameFirst": "Zim",
+      "nameLast": "Zheng",
+      "password": "6789mnbv",
+      "numSuccessfulLogins": 0,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    }
+  ],
+  "quizzes": [],
+  "sessions": [
+    {
+      "sessionId": 58244,
+      "authUserId": 1,
+      "createdAt": 1728653375
+    },
+    {
+      "sessionId": 41141,
+      "authUserId": 2,
+      "createdAt": 1728653375
+    },
+    {
+      "sessionId": 31887,
+      "authUserId": 1,
+      "createdAt": 1728653375
+    }
+  ],
+  "bin": []
+}
