@@ -8,7 +8,13 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-
+import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
+    adminUserPasswordUpdate 
+  } from './auth.ts';
+import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
+  adminQuizRemove
+ } from './quiz.ts';
+import { clear } from './other.ts';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -39,6 +45,199 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(result);
 });
 
+//adminAuthRegister
+app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+  const { email, password, nameFirst, nameLast } = req.body;
+  console.log('Received email:', email);
+  console.log('Received password:', password);
+  console.log('Received nameFirst:', nameFirst);
+  console.log('Received nameLast:', nameLast);
+  const result = adminAuthRegister(email, password, nameFirst, nameLast)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+//adminAuthLogin
+app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  const result = adminAuthLogin(email, password)
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+//adminUserDetails
+app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminUserDetails(token)
+  if ('error' in result) {
+    res.status(401).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+//adminUserDetailUpdate
+app.put('/v1/admin/auth/details', (req: Request, res: Response) => {
+  const { token, email, nameFirst, nameLast } = req.body;
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
+  if ('error' in result) {
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
+
+//adminUserPasswordUpdate
+app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
+  const { token, oldPassword, newPassword } = req.body;
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword)
+  if ('error' in result) {
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
+
+//adminquizList
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminQuizList(token)
+  if ('error' in result) {
+    res.status(401).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
+
+//adminQuizCreate
+app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+  const { token, name, description } = req.body;
+  const result = adminQuizCreate(token, name, description)
+  console.log('Received token:', token);
+  console.log('Received name:', name);
+  console.log('Received description:', description);
+  if ('error' in result) {
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+  console.log('Received result:', result.quizId);
+});
+
+//adminQuizRemove
+app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid as string);
+  const { token } = req.body;
+  console.log('Received token:', token);
+  console.log('Received quizid:', quizid);
+  console.log('Received original:', parseInt(req.params.quizid as string));
+  const result = adminQuizRemove(token, quizid)
+  if ('error' in result) {
+    if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    }
+    else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
+
+//adminQuizInfo
+app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid)
+  const { token } = req.body;
+  const result = adminQuizInfo(token, quizid)
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
+
+//adminNameUpdate
+app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid)
+  const { token, name } = req.body;
+  const result = adminQuizNameUpdate(token, quizid, name)
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
+
+//adminDescriptionUpdate
+app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid)
+  const { token, description } = req.body;
+  const result = adminQuizDescriptionUpdate(token, quizid, description)
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
+
+//clear
+app.delete('/v1/clear', (req: Request, res: Response) => {
+  const result = clear()
+  if ('error' in result) {
+    res.status(400).json(result);
+    return
+  }
+  res.status(200).json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
