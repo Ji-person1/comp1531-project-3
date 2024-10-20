@@ -10,11 +10,11 @@ import path from 'path';
 import process from 'process';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
     adminUserPasswordUpdate 
-  } from './auth.ts';
+  } from './auth';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove
- } from './quiz.ts';
-import { clear } from './other.ts';
+ } from './quiz';
+import { clear } from './other';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
