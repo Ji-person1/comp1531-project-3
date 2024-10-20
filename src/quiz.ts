@@ -1,4 +1,4 @@
-import { getData, setData } from "./datastore.ts";
+import { getData, setData } from "./datastore";
 
 interface errorObject {
     error: string
@@ -240,7 +240,7 @@ export function adminQuizCreate(token: number, name: string, description: string
 }
 
 /**
- * Given a particular quiz, permanently remove the quiz.
+ * Given a particular quiz, move the quiz into trash
  * 
  * @param {number} authUserId - The email address of a user.
  * @param {number} quizId - The name of the new quiz.
@@ -270,5 +270,17 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
     data.bin.push(quiz); 
     data.quizzes = data.quizzes.filter(quiz => quiz.quizId !== quizId);
     setData(data); 
+    return {};
+}
+
+/**
+ * Given a particular quiz, permanently remove the quiz.
+ * 
+ * @param {number} token - The token of the user
+ * @param {number} quizId - The name of the new quiz.
+ * @returns {object} error object if failed, empty object if successful
+ */
+export function adminQuizRestore(token: number, quizId: number): errorObject | {} {
+    //stub function
     return {};
 }
