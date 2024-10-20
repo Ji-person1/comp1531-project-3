@@ -240,7 +240,7 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 });
 
 //adminQuizRestore
-app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid)
   const { token } = req.body;
   const result = adminQuizRestore(token, quizid)

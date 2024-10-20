@@ -41,20 +41,20 @@ describe('Error cases', () => {
         expect(res.statusCode).toStrictEqual(400);
     });
 
-    test('Invalid token', () => {
-        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
-        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
-
     test('Invalid quizId', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
             {json: {token: UserToken.token}});
         const res = request('POST', SERVER_URL + `/v1/admin/quiz/${-quizId.quizId}/restore`, 
             {json: {token: UserToken.token}});
+        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
+        expect(res.statusCode).toStrictEqual(400);
+    });
+
+    test('Invalid token', () => {
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
+            {json: {token: UserToken.token}});
+        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
+            {json: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });

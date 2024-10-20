@@ -281,6 +281,33 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
  * @returns {object} error object if failed, empty object if successful
  */
 export function adminQuizRestore(token: number, quizId: number): errorObject | {} {
-    //stub function
+    const data = getData();
+
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
+
+    const user = data.users.find(user => user.id === session.authUserId);
+    if (!user) {
+        return { error: '400  user not found' };
+    }
+
+    const restoreQuiz = data.bin.find(quiz => quiz.quizId === quizId);
+    if (!restoreQuiz) {
+        return { error: '400 quizId does not refer to a valid quiz'}
+    }
+    const searchQuiz = data.quizzes.find(quiz => quiz.name === restoreQuiz.name)
+    if (searchQuiz && searchQuiz.creatorId === user.id) {
+        return { error: '400 user currently has a quiz of the same name'}
+    }
+
+    if (user.id !== restoreQuiz.creatorId) {
+        return { error: '403 token is not the owner of the quiz being restored'}
+    }
+
+    data.quizzes.push(restoreQuiz)
+    setData(data); 
+
     return {};
 }
