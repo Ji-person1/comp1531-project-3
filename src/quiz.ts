@@ -15,6 +15,14 @@ interface quizDetails {
 }
 
 interface Questions {
+    questionId: number;
+    question: string;
+    timeLimit: number;
+    points: number;
+    answerOptions: Answer[];
+}
+
+interface QuestionBody {
     question: string;
     timeLimit: number;
     points: number;
@@ -24,7 +32,10 @@ interface Questions {
 interface Answer {
     answer: string;
     correct: boolean;
+    colour?: string;
 }
+
+const colours = ['red', 'orange', 'yellow', 'blue', 'green', 'purple', 'brown'];
 
 interface quizList {
     quizzes: QuizListInfo[]
@@ -36,7 +47,11 @@ interface QuizListInfo {
 }
 
 interface QuizId {
-    quizId: number
+    quizId: number;
+}
+
+interface DuplicatedId {
+    duplicatedQuestionId: number;
 }
 
 /**
