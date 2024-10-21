@@ -14,7 +14,7 @@ describe('Error Cases', () => {
 
     beforeEach(() => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng" } });
+            { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Swapnav", nameLast: "Saikia" } });
         UserToken = JSON.parse(res.body.toString());
     });
 
@@ -44,13 +44,13 @@ describe('Success Cases', () => {
 
     beforeEach(() => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng" } });
+            { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Swapnav", nameLast: "Saikia" } });
         UserToken = JSON.parse(res.body.toString());
     });
 
     test('Valid token', () => {
         expect(UserToken).toHaveProperty('token');
-        expect(typeof UserToken.token).toBe('string');
+        expect(typeof UserToken.token).toBe('number');
 
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
             qs: { token: UserToken.token }, 
