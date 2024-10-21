@@ -12,7 +12,8 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
     adminUserPasswordUpdate, 
   } from './auth';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove
+  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
+  adminQuestionDuplicate
  } from './quiz';
 import { clear } from './other';
 // Set up web app
@@ -318,6 +319,28 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   
   console.log('Received questionId:', questionId);
   const result = adminQuestionMove(token, quizId, questionId, newPosition);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//questionDuplicate
+app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  
+  console.log('Received questionId:', questionId);
+  const result = adminQuestionDuplicate(token, quizId, questionId);
   
   if ('error' in result) {
     if (result.error.startsWith('403')) {

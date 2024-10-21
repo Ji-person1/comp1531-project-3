@@ -433,10 +433,6 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     return { error: '403: Token is valid, but user is not an owner of this quiz or quiz doesnt exist' };
   }
 
-  if (questionId < 1 || questionId > quiz.questions.length) {
-    return { error: '400: Question Id does not refer to a valid question in the quiz' };
-  }
-
   if (question.length < 5 || question.length > 50) {
     return { error: '400: Question is less than length 5 or greater than length 50' };
   }
@@ -470,7 +466,12 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     return { error: '400: There are no correct answers' };
   }
 
-  quiz.questions[questionId - 1] = {
+  const questionIndex = quiz.questions.findIndex(q => q.questionId === questionId)
+  if (questionIndex === -1) {
+    return { error: "400: questionId not found/invalid"}
+  }
+
+  quiz.questions[questionIndex] = {
     questionId,
     question,
     timeLimit: duration,
@@ -479,8 +480,6 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
   };
 
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
-  quiz.numQuestions += 1
-
   setData(data);
 
   return {};
@@ -532,4 +531,55 @@ export function adminQuestionMove (token: number, quizid: number, questionId: nu
     quiz.questions = quiz.questions.filter(question => question.questionId !== questionId)
     quiz.questions.splice(newPosition, 0, question)
     return {}; 
+}
+
+/**
+ * updates the password of a user to a new password, if given the user id and 
+ * former password of the user to a new password passed in.
+ * 
+ * @param {string} authUserId - The user id of the account
+ * @param {string} oldPassword - The former password for the account.
+ * @param {string} newPassword - The new password for the account.
+ * @returns {object} error if failed, empty object if successful
+ */
+export function adminQuestionDuplicate (token: number, quizid: number, questionId: number): errorObject | {} {
+  const data = getData();
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+      return { error: '401 invalid session' };
+  }
+  
+  const user = data.users.find(user => user.id === session.authUserId);
+  if (!user) {
+      return { error: '400 user id not found' }
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizid)
+  if (!quiz) {
+      return { error: '403 quiz not found/quizId is invalid'}
+  }
+  else if (quiz.creatorId !== user.id) {
+      return { error: '403 user token provided is not the owner of the quiz'}
+  }
+
+  const question = quiz.questions.find(quiz => quiz.questionId === questionId)
+  if (!question) {
+      return { error: '400 question not found/questionId is invalid'}
+  }
+
+  const newIndex = quiz.questions.findIndex(quiz => quiz.questionId === questionId) + 1
+  const newQuestion = {
+    quizid: Math.floor(10000 + Math.random() * 90000),
+    question: question.question,
+    timeLimit: question.timeLimit,
+    points: question.points,
+    answerOptions: question.answerOptions
+  };
+
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  quiz.numQuestions += 1
+
+  setData(data);
+  quiz.questions.splice(newIndex, 0, question)
+  return {}; 
 }
