@@ -302,7 +302,7 @@ export function adminQuizTransfer(token: number, quizId: number, userEmail: stri
       return { error: '400: UserEmail is the current logged in user' };
     }
     
-    if (data.quizzes.some(quiz => quiz.creatorId === targetUser.id && quiz.name === quiz.name)) {
+    if (data.quizzes.some(existingQuiz => existingQuiz.creatorId === targetUser.id && existingQuiz.name === quiz.name)) {
       return { error: '400: Quiz ID refers to a quiz that has a name that is already used by the target user' };
     }
     
