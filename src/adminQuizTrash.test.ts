@@ -10,7 +10,7 @@ beforeEach(() => {
 });
 
 describe('Error Cases', () => {
-    let UserToken: { token: string };
+    let UserToken: { token: number };
 
     beforeEach(() => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
@@ -40,7 +40,7 @@ describe('Error Cases', () => {
 });
 
 describe('Success Cases', () => {
-    let UserToken: { token: string };
+    let UserToken: { token: number };
 
     beforeEach(() => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
