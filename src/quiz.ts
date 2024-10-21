@@ -15,6 +15,14 @@ interface quizDetails {
 }
 
 interface Questions {
+    questionId: number;
+    question: string;
+    timeLimit: number;
+    points: number;
+    answerOptions: Answer[];
+}
+
+interface QuestionBody {
     question: string;
     timeLimit: number;
     points: number;
@@ -24,7 +32,10 @@ interface Questions {
 interface Answer {
     answer: string;
     correct: boolean;
+    colour?: string;
 }
+
+const colours = ['red', 'orange', 'yellow', 'blue', 'green', 'purple', 'brown'];
 
 interface quizList {
     quizzes: QuizListInfo[]
@@ -36,7 +47,11 @@ interface QuizListInfo {
 }
 
 interface QuizId {
-    quizId: number
+    quizId: number;
+}
+
+interface DuplicatedId {
+    duplicatedQuestionId: number;
 }
 
 /**
@@ -271,4 +286,199 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
     data.quizzes = data.quizzes.filter(quiz => quiz.quizId !== quizId);
     setData(data); 
     return {};
+}
+
+/**
+ * Transfer ownership of a quiz to another user based on their email.
+ * 
+ * @param {number} quizId - The ID of the quiz to be transferred.
+ * @param {{ token: number; userEmail: string }} transferBody - An object containing the token and userEmail.
+ * @returns {object} An empty object if successful, or an error object if unsuccessful.
+ */
+export function adminQuizTransfer(quizId: number, transferBody: { token: number; userEmail: string }): {} | errorObject {
+    const data = getData();
+    
+    const session = data.sessions.find(session => session.sessionId === transferBody.token);
+    if (!session) {
+      return { error: '401: Token is invalid or empty' };
+    }
+    
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!quiz || quiz.creatorId !== session.authUserId) {
+      return { error: '403: User not an owner of this quiz or quiz doesnt exist' };
+    }
+    
+    const targetUser = data.users.find(user => user.email === transferBody.userEmail);
+    if (!targetUser) {
+      return { error: '400: UserEmail is not a real user' };
+    }
+    if (targetUser.id === session.authUserId) {
+      return { error: '400: UserEmail is the current logged in user' };
+    }
+    
+    if (data.quizzes.some(existingQuiz => existingQuiz.creatorId === targetUser.id && existingQuiz.name === quiz.name)) {
+      return { error: '400: Quiz ID refers to a quiz that has a name already in use by the target user' };
+    }
+    
+    quiz.creatorId = targetUser.id;
+    setData(data);
+    
+    return {};
+}
+
+
+/**
+ * Creates a new question for a quiz.
+ * 
+ * @param {number} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz to add the question to
+ * @param {string} question - The question text
+ * @param {number} duration - The time limit for the question in seconds
+ * @param {number} points - The points that the queston is worth
+ * @param {Answer[]} answers - An array of answers
+ * @returns {object} An object with the new questionId if successful, or an error object if unsuccessful
+ */
+export function adminQuizCreateQuestion(token: number, quizId: number, question: string, duration: number, points: number, answers: Answer[]): { questionId: number } | errorObject {
+    const data = getData();
+    
+    // Check if token is valid
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+      return { error: '401: Token is invalid or empty' };
+    }
+  
+    // Check if quiz exists and user owns it
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!quiz || quiz.creatorId !== session.authUserId) {
+      return { error: '403: User is not an owner of this quiz or quiz doesnt exist' };
+    }
+  
+    // Validate question
+    if (question.length < 5 || question.length > 50) {
+      return { error: '400: Question string is less than length 5 or greater length 50' };
+    }
+  
+    // Validate answers
+    if (answers.length < 2 || answers.length > 6) {
+      return { error: '400: The question has less than 2 answers or more than 6 answers' };
+    }
+  
+    if (duration <= 0) {
+      return { error: '400: The question time limit is not positive' };
+    }
+  
+    const totalDuration = quiz.questions.reduce((sum, question) => sum + question.timeLimit, 0) + duration;
+    if (totalDuration > 180) {
+      return { error: '400: The quiz is longer than 3 minutes' };
+    }
+  
+    if (points < 1 || points > 10) {
+      return { error: '400: The points awarded for the question are less than 1 or greater than 10' };
+    }
+  
+    if (answers.some(answer => answer.answer.length < 1 || answer.answer.length > 30)) {
+      return { error: '400: The length of any answer is shorter than 1 character long, or longer than 30 characters long' };
+    }
+  
+    if (answers.length !== new Set(answers.map(answer => answer.answer)).size) {
+      return { error: '400: Any answer strings are duplicates of one another (within the same question)' };
+    }
+  
+    if (!answers.some(answer => answer.correct)) {
+      return { error: '400: There are no correct answers' };
+    }
+  
+    // Create new question
+    const newQuestion: Questions = {
+      question,
+      timeLimit: duration,
+      points,
+      answerOptions: answers
+    };
+  
+    quiz.questions.push(newQuestion);
+    quiz.numQuestions++;
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  
+    setData(data);
+  
+    return { questionId: quiz.questions.length };
+  }
+
+
+/**
+ * Updates the details of a particular question within a quiz.
+ * 
+ * @param {number} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz containing the question.
+ * @param {number} questionId - The ID of the question to be updated.
+ * @param {string} question - The new question text.
+ * @param {number} duration - The new time limit for the question in seconds.
+ * @param {number} points - The new points awarded for the question.
+ * @param {Answer[]} answers - An array of new answer options.
+ * @returns {object} An empty object if successful, or an error object if unsuccessful.
+ */
+
+export function adminQuizUpdateQuestion(token: number, quizId: number, questionId: number, question: string, duration: number, points: number, answers: Answer[]): {} | errorObject {
+  const data = getData();
+  
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+    return { error: '401: Token is invalid or empty' };
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== session.authUserId) {
+    return { error: '403: Token is valid, but user is not an owner of this quiz or quiz doesnt exist' };
+  }
+
+  if (questionId < 1 || questionId > quiz.questions.length) {
+    return { error: '400: Question Id does not refer to a valid question in the quiz' };
+  }
+
+  if (question.length < 5 || question.length > 50) {
+    return { error: '400: Question is less than length 5 or greater than length 50' };
+  }
+
+  if (answers.length < 2 || answers.length > 6) {
+    return { error: '400: The question has more than 6 answers or less than 2 answers' };
+  }
+
+  if (duration <= 0) {
+    return { error: '400: The question timeLimit is not positive' };
+  }
+
+  const totalDuration = quiz.questions.reduce((sum, q, index) => sum + (index === questionId - 1 ? duration : q.timeLimit), 0);
+  if (totalDuration > 180) {
+    return { error: '400: The quiz is longer than 3 minutes' };
+  }
+
+  if (points < 1 || points > 10) {
+    return { error: '400: The points awarded for the question are less than 1 or greater than 10' };
+  }
+
+  if (answers.some(answer => answer.answer.length < 1 || answer.answer.length > 30)) {
+    return { error: '400: The length of an answer is shorter than 1 character long, or longer than 30 characters long' };
+  }
+
+  if (answers.length !== new Set(answers.map(answer => answer.answer)).size) {
+    return { error: '400: Any two answers are the same (within the same question)' };
+  }
+
+  if (!answers.some(answer => answer.correct)) {
+    return { error: '400: There are no correct answers' };
+  }
+
+  quiz.questions[questionId - 1] = {
+    question,
+    timeLimit: duration,
+    points,
+    answerOptions: answers
+  };
+
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+
+  setData(data);
+
+  return {};
 }
