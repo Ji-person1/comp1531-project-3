@@ -272,3 +272,22 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
     setData(data); 
     return {};
 }
+
+
+export function adminQuizTrash(token: number): errorObject | { quizzes: Array<object> } {
+    const data = getData();
+
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
+
+    const user = data.users.find(user => user.id === session.authUserId);
+    if (!user) {
+        return { error: '400 user not found' };
+    }
+
+    const trashedQuizzes = data.bin.filter(quiz => quiz.creatorId === user.id);
+    
+    return { quizzes: trashedQuizzes };
+}
