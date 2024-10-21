@@ -310,4 +310,84 @@ export function adminQuizTransfer(token: number, quizId: number, userEmail: stri
     setData(data);
     
     return {};
+}
+
+
+
+/**
+ * Creates a new question for a quiz.
+ * 
+ * @param {number} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz to add the question to
+ * @param {string} question - The question text
+ * @param {number} duration - The time limit for the question in seconds
+ * @param {number} points - The points that the queston is worth
+ * @param {Answer[]} answers - An array of answers
+ * @returns {object} An object with the new questionId if successful, or an error object if unsuccessful
+ */
+export function adminQuizCreateQuestion(token: number, quizId: number, question: string, duration: number, points: number, answers: Answer[]): { questionId: number } | errorObject {
+    const data = getData();
+    
+    // Check if token is valid
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+      return { error: '401: Token is invalid or empty' };
+    }
+  
+    // Check if quiz exists and user owns it
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!quiz || quiz.creatorId !== session.authUserId) {
+      return { error: '403: User is not an owner of this quiz or quiz doesnt exist' };
+    }
+  
+    // Validate question
+    if (question.length < 5 || question.length > 50) {
+      return { error: '400: Question string is less than length 5 or greater length 50' };
+    }
+  
+    // Validate answers
+    if (answers.length < 2 || answers.length > 6) {
+      return { error: '400: The question has less than 2 answers or more than 6 answers' };
+    }
+  
+    if (duration <= 0) {
+      return { error: '400: The question time limit is not positive' };
+    }
+  
+    const totalDuration = quiz.questions.reduce((sum, question) => sum + question.timeLimit, 0) + duration;
+    if (totalDuration > 180) {
+      return { error: '400: The quiz is longer than 3 minutes' };
+    }
+  
+    if (points < 1 || points > 10) {
+      return { error: '400: The points awarded for the question are less than 1 or greater than 10' };
+    }
+  
+    if (answers.some(answer => answer.answer.length < 1 || answer.answer.length > 30)) {
+      return { error: '400: The length of any answer is shorter than 1 character long, or longer than 30 characters long' };
+    }
+  
+    if (answers.length !== new Set(answers.map(answer => answer.answer)).size) {
+      return { error: '400: Any answer strings are duplicates of one another (within the same question)' };
+    }
+  
+    if (!answers.some(answer => answer.correct)) {
+      return { error: '400: There are no correct answers' };
+    }
+  
+    // Create new question
+    const newQuestion: Questions = {
+      question,
+      timeLimit: duration,
+      points,
+      answerOptions: answers
+    };
+  
+    quiz.questions.push(newQuestion);
+    quiz.numQuestions++;
+    quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  
+    setData(data);
+  
+    return { questionId: quiz.questions.length };
   }
