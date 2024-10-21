@@ -40,7 +40,7 @@ describe('Error Cases', () => {
 });
 
 describe('Success Cases', () => {
-    let UserToken: { token: number };
+    let UserToken: { token: number };  
 
     beforeEach(() => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
@@ -50,10 +50,10 @@ describe('Success Cases', () => {
 
     test('Valid token', () => {
         expect(UserToken).toHaveProperty('token');
-        expect(typeof UserToken.token).toBe('number');
+        expect(typeof UserToken.token).toBe('number'); 
 
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            qs: { token: UserToken.token }, 
+            qs: { token: UserToken.token },  
             timeout: TIMEOUT_MS
         });
 
