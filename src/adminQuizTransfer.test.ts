@@ -19,10 +19,10 @@ describe('adminQuizTransfer', () => {
         // Register two users
         const resUser1 = request('POST', `${SERVER_URL}/v1/admin/auth/register`, {
             json: {
-                email: "user1@example.com",
+                email: "swastik1@gmail.com",
                 password: "password123",
-                nameFirst: "User",
-                nameLast: "One"
+                nameFirst: "Swastik",
+                nameLast: "Mishra"
             },
             timeout: TIMEOUT_MS
         });
@@ -30,10 +30,10 @@ describe('adminQuizTransfer', () => {
 
         const resUser2 = request('POST', `${SERVER_URL}/v1/admin/auth/register`, {
             json: {
-                email: "user2@example.com",
+                email: "Swastik2@gmail.com",
                 password: "password456",
-                nameFirst: "User",
-                nameLast: "Two"
+                nameFirst: "Neo",
+                nameLast: "Mishra"
             },
             timeout: TIMEOUT_MS
         });
@@ -55,7 +55,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
             json: {
                 token: user1Token,
-                userEmail: "user2@example.com"
+                userEmail: "Swastik2@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
@@ -76,7 +76,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
             json: {
                 token: 'invalid_token',
-                userEmail: "user2@example.com"
+                userEmail: "Swastik2@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
@@ -88,7 +88,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/999/transfer`, {
             json: {
                 token: user1Token,
-                userEmail: "user2@example.com"
+                userEmail: "Swastik2@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
@@ -100,7 +100,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
             json: {
                 token: user2Token,
-                userEmail: "user1@example.com"
+                userEmail: "Swastik1@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
@@ -112,7 +112,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
             json: {
                 token: user1Token,
-                userEmail: "nonexistent@example.com"
+                userEmail: "nonexistent@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
@@ -124,7 +124,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
             json: {
                 token: user1Token,
-                userEmail: "user1@example.com"
+                userEmail: "Swastik1@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
@@ -146,7 +146,7 @@ describe('adminQuizTransfer', () => {
         const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
             json: {
                 token: user1Token,
-                userEmail: "user2@example.com"
+                userEmail: "Swastik2@gmail.com"
             },
             timeout: TIMEOUT_MS
         });
