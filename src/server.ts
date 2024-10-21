@@ -12,7 +12,7 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
     adminUserPasswordUpdate 
   } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove
+  adminQuizRemove, adminQuizTrashEmpty
  } from './quiz.ts';
 import { clear } from './other.ts';
 // Set up web app
@@ -238,6 +238,32 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
   }
   res.status(200).json(result);
 });
+
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const { token, quizIds } = req.query; 
+
+  if (!token) {
+    return res.status(401).json({ error: '401 Token is empty or invalid' });
+  }
+
+  const parsedQuizIds = JSON.parse(quizIds as string);
+
+  const result = adminQuizTrashEmpty(Number(token), parsedQuizIds);
+
+  if ('error' in result) {
+    if (result.error.startsWith('401')) {
+      return res.status(401).json(result);
+    } else if (result.error.startsWith('403')) {
+      return res.status(403).json(result);
+    } else if (result.error.startsWith('403')) {
+      return res.status(400).json(result);
+    }
+  }
+
+  return res.status(200).json({});
+});
+
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
