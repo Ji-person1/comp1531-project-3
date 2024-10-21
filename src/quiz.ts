@@ -433,10 +433,6 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     return { error: '403: Token is valid, but user is not an owner of this quiz or quiz doesnt exist' };
   }
 
-  if (questionId < 1 || questionId > quiz.questions.length) {
-    return { error: '400: Question Id does not refer to a valid question in the quiz' };
-  }
-
   if (question.length < 5 || question.length > 50) {
     return { error: '400: Question is less than length 5 or greater than length 50' };
   }
@@ -470,7 +466,12 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     return { error: '400: There are no correct answers' };
   }
 
-  quiz.questions[questionId - 1] = {
+  const questionIndex = quiz.questions.findIndex(q => q.questionId === questionId)
+  if (questionIndex === -1) {
+    return { error: "400: questionId not found/invalid"}
+  }
+
+  quiz.questions[questionIndex] = {
     questionId,
     question,
     timeLimit: duration,
@@ -479,7 +480,6 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
   };
 
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
-  quiz.numQuestions += 1
 
   setData(data);
 
