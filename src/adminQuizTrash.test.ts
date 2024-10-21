@@ -5,6 +5,7 @@ const SERVER_URL = `${url}:${port}`;
 const TIMEOUT_MS = 5 * 1000;
 
 const ERROR = { error: expect.any(String) };
+
 beforeEach(() => {
     request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
 });
@@ -46,17 +47,19 @@ describe('Success Cases', () => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
             { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Swapnav", nameLast: "Saikia" } });
         UserToken = JSON.parse(res.body.toString());
+        console.log('Initial Token: ', UserToken.token)
     });
 
     test('Valid token', () => {
         expect(UserToken).toHaveProperty('token');
         expect(typeof UserToken.token).toBe('number'); 
-
+        console.log('Sent Token: ', UserToken.token)
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            qs: { token: UserToken.token },  
+            qs: { token: UserToken.token }, 
             timeout: TIMEOUT_MS
         });
-
+        console.log('Final Token: ', UserToken.token)
+        
         expect(res.statusCode).toBe(200);
 
         const body = JSON.parse(res.body.toString());

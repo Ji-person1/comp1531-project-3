@@ -241,25 +241,14 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 
 //adminQuizTrash
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const { token } = req.query; 
-  if (!token || isNaN(Number(token))) {
-    res.status(401).json({ error: '401 Token is invalid or missing' });
-    return;
-  }
-
+  const { token } = req.body;  
+  
   const result = adminQuizTrash(Number(token)); 
   if ('error' in result) {
-    if (result.error.startsWith('401')) {
-      res.status(401).json(result);
-    } else if (result.error.startsWith('400')) {
-      res.status(400).json(result);
-    } else {
-      res.status(403).json(result);
-    }
+    res.status(401).json(result);
     return;
   }
-
-  res.status(200).json(result); 
+  res.status(200).json(result);
 });
 
 // ====================================================================
