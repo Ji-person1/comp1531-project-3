@@ -13,7 +13,8 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
   } from './auth';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
-  adminQuestionDuplicate
+  adminQuestionDuplicate,
+  quizQuestionDelete
  } from './quiz';
 import { clear } from './other';
 // Set up web app
@@ -353,6 +354,30 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   } else {
     res.status(200).json(result);
   }
+});
+
+//quizQuestionDelete
+app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  console.log('Received token:', token);
+  console.log('Received quizid:', quizid);
+  console.log('Received questionId:', questionId);
+  const result = quizQuestionDelete(token, quizid, questionId);
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return;
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return;
+    } else {
+      res.status(400).json(result);
+      return;
+    }
+  }
+  res.status(200).json(result);
 });
 
 //clear

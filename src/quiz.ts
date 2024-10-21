@@ -583,3 +583,44 @@ export function adminQuestionDuplicate (token: number, quizid: number, questionI
   quiz.questions.splice(newIndex, 0, question)
   return {}; 
 }
+
+/**
+ * remove the question that given in a given quiz.
+ *
+ * @param {number} token - the id of the user
+ * @param {number} quizId - the id of the quiz being deleted
+ * @param {number} questionId - the question id being deleted
+ * @returns {number|object} error if failed, empty if successful
+ */
+
+export function quizQuestionDelete (token: number, quizId: number, questionId: number): errorObject | object {
+	const data = getData();
+
+	const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
+
+	const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+	if (!quiz) {
+		return { error: '403: no quiz provided - error' };
+	}
+	if (quiz.creatorId !== session.authUserId) {
+		return { error: '403: Quiz ID does not refer to a quiz that this user owns - error' };
+	}
+    
+	const question = quiz.questions.find(question => question.questionId === questionId);
+
+    if (!question) {
+		return { error: '400: no question provided - error' };
+	}
+
+	const questionIndex = quiz.questions.indexOf(question);
+
+	quiz.questions.splice(questionIndex, 1);
+	quiz.numQuestions--;
+
+	quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+	setData(data);
+	return {};
+}
