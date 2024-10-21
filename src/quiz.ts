@@ -289,27 +289,26 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
 }
 
 /**
- * Given a particular quiz, permanently remove the quiz.
+ * Transfer ownership of a quiz to another user based on their email.
  * 
- * @param {number} token - The token of the user
- * @param {number} quizId - The name of the new quiz.
- * @param {string} userEmail - The email of the user
- * @returns {object} error object if failed, empty object if successful
+ * @param {number} quizId - The ID of the quiz to be transferred.
+ * @param {{ token: number; userEmail: string }} transferBody - An object containing the token and userEmail.
+ * @returns {object} An empty object if successful, or an error object if unsuccessful.
  */
-export function adminQuizTransfer(token: number, quizId: number, userEmail: string): {} | errorObject {
+export function adminQuizTransfer(quizId: number, transferBody: { token: number; userEmail: string }): {} | errorObject {
     const data = getData();
     
-    const session = data.sessions.find(session => session.sessionId === token);
+    const session = data.sessions.find(session => session.sessionId === transferBody.token);
     if (!session) {
       return { error: '401: Token is invalid or empty' };
     }
     
     const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
     if (!quiz || quiz.creatorId !== session.authUserId) {
-      return { error: '403: User is not an owner of this quiz or quiz doesnt exist' };
+      return { error: '403: User not an owner of this quiz or quiz doesnt exist' };
     }
     
-    const targetUser = data.users.find(user => user.email === userEmail);
+    const targetUser = data.users.find(user => user.email === transferBody.userEmail);
     if (!targetUser) {
       return { error: '400: UserEmail is not a real user' };
     }
@@ -318,7 +317,7 @@ export function adminQuizTransfer(token: number, quizId: number, userEmail: stri
     }
     
     if (data.quizzes.some(existingQuiz => existingQuiz.creatorId === targetUser.id && existingQuiz.name === quiz.name)) {
-      return { error: '400: Quiz ID refers to a quiz that has a name that is already used by the target user' };
+      return { error: '400: Quiz ID refers to a quiz that has a name already in use by the target user' };
     }
     
     quiz.creatorId = targetUser.id;
@@ -326,7 +325,6 @@ export function adminQuizTransfer(token: number, quizId: number, userEmail: stri
     
     return {};
 }
-
 
 
 /**

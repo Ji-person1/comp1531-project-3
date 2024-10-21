@@ -232,8 +232,10 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 //adminQuizTransfer
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const { token, userEmail } = req.body;
-  const result = adminQuizTransfer(token, quizId, userEmail);
+  const transferBody = req.body;
+  
+  const result = adminQuizTransfer(quizId, transferBody);
+  
   if ('error' in result) {
     if (result.error.startsWith('400')) {
       res.status(400).json(result);
