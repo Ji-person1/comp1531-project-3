@@ -12,7 +12,7 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
     adminUserPasswordUpdate 
   } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove
+  adminQuizRemove, adminQuizTransfer
  } from './quiz.ts';
 import { clear } from './other.ts';
 // Set up web app
@@ -228,6 +228,25 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   }
   res.status(200).json(result);
 });
+
+//adminQuizTransfer
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, userEmail } = req.body;
+  const result = adminQuizTransfer(token, quizId, userEmail);
+  if ('error' in result) {
+    if (result.error.startsWith('400')) {
+      res.status(400).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
 
 //clear
 app.delete('/v1/clear', (req: Request, res: Response) => {

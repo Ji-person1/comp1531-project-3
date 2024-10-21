@@ -272,3 +272,42 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
     setData(data); 
     return {};
 }
+
+/**
+ * Given a particular quiz, permanently remove the quiz.
+ * 
+ * @param {number} token - The token of the user
+ * @param {number} quizId - The name of the new quiz.
+ * @param {string} userEmail - The email of the user
+ * @returns {object} error object if failed, empty object if successful
+ */
+export function adminQuizTransfer(token: number, quizId: number, userEmail: string): {} | errorObject {
+    const data = getData();
+    
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+      return { error: '401: Token is invalid or empty' };
+    }
+    
+    const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+    if (!quiz || quiz.creatorId !== session.authUserId) {
+      return { error: '403: User is not an owner of this quiz or quiz doesnt exist' };
+    }
+    
+    const targetUser = data.users.find(user => user.email === userEmail);
+    if (!targetUser) {
+      return { error: '400: UserEmail is not a real user' };
+    }
+    if (targetUser.id === session.authUserId) {
+      return { error: '400: UserEmail is the current logged in user' };
+    }
+    
+    if (data.quizzes.some(existingQuiz => existingQuiz.creatorId === targetUser.id && existingQuiz.name === quiz.name)) {
+      return { error: '400: Quiz ID refers to a quiz that has a name that is already used by the target user' };
+    }
+    
+    quiz.creatorId = targetUser.id;
+    setData(data);
+    
+    return {};
+  }
