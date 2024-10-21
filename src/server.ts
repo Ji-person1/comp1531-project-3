@@ -12,7 +12,7 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
     adminUserPasswordUpdate 
   } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove
+  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion
  } from './quiz.ts';
 import { clear } from './other.ts';
 // Set up web app
@@ -227,6 +227,67 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
     }
   }
   res.status(200).json(result);
+});
+
+//adminQuizTransfer
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const transferBody = req.body;
+  
+  const result = adminQuizTransfer(quizId, transferBody);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('400')) {
+      res.status(400).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, question, duration, points, answers } = req.body;
+  
+  const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//adminQuizUpdateQuestion
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token, question, duration, points, answers } = req.body;
+  
+  const result = adminQuizUpdateQuestion(token, quizId, questionId, question, duration, points, answers);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
 });
 
 //clear
