@@ -1,4 +1,4 @@
-import { getData } from './datastore.ts';
+import { getData } from './datastore';
 
 export function generateSessionId(): number {
     const data = getData();
