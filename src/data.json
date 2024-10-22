@@ -1,6 +1,70 @@
 {
-  "users": [],
-  "quizzes": [],
-  "sessions": [],
-  "bin": []
+  "users": [
+    {
+      "id": 1,
+      "email": "jim.zheng123@icloud.com",
+      "nameFirst": "Jim",
+      "nameLast": "Zheng",
+      "password": "1234abcd",
+      "numSuccessfulLogins": 0,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    },
+    {
+      "id": 2,
+      "email": "z5394791@unsw.edu.au",
+      "nameFirst": "Mij",
+      "nameLast": "Zeng",
+      "password": "1234abcd",
+      "numSuccessfulLogins": 0,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 3,
+      "creatorId": 2,
+      "name": "third quiz",
+      "description": "a test quiz",
+      "timeCreated": 1729580992,
+      "timeLastEdited": 1729580992,
+      "numQuestions": 0,
+      "questions": []
+    }
+  ],
+  "sessions": [
+    {
+      "sessionId": 85159,
+      "authUserId": 1,
+      "createdAt": 1729580992
+    },
+    {
+      "sessionId": 53031,
+      "authUserId": 2,
+      "createdAt": 1729580992
+    }
+  ],
+  "bin": [
+    {
+      "quizId": 1,
+      "creatorId": 1,
+      "name": "first quiz",
+      "description": "a test quiz",
+      "timeCreated": 1729580992,
+      "timeLastEdited": 1729580992,
+      "numQuestions": 0,
+      "questions": []
+    },
+    {
+      "quizId": 2,
+      "creatorId": 1,
+      "name": "second quiz",
+      "description": "a test quiz",
+      "timeCreated": 1729580992,
+      "timeLastEdited": 1729580992,
+      "numQuestions": 0,
+      "questions": []
+    }
+  ]
 }

@@ -17,11 +17,13 @@ describe('Error Cases', () => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
             { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Swapnav", nameLast: "Saikia" } });
         UserToken = JSON.parse(res.body.toString());
+        request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
     });
 
     test('Invalid token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            qs: { token: 'invalidToken' }, 
+            json: { token: 'invalidToken' }, 
             timeout: TIMEOUT_MS
         });
 
@@ -31,7 +33,7 @@ describe('Error Cases', () => {
 
     test('Empty token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            qs: { token: '' }, 
+            json: { token: '' }, 
             timeout: TIMEOUT_MS
         });
 
@@ -41,34 +43,49 @@ describe('Error Cases', () => {
 });
 
 describe('Success Cases', () => {
-    let UserToken: { token: number };  
-
+    let UserToken: {token: number}
+    let UserTokenTwo: {token: number}
+    let quizId: {quizId: number}
+    let quizIdTwo: {quizId: number}
+    let quizIdThree: {quizId: number}
     beforeEach(() => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            { json: { email: "Swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Swapnav", nameLast: "Saikia" } });
-        UserToken = JSON.parse(res.body.toString());
-        console.log('Initial Token: ', UserToken.token)
+            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
+        UserToken = JSON.parse(res.body.toString())
+        const resTwo = request('POST', SERVER_URL + '/v1/admin/auth/register', 
+            {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
+        UserTokenTwo = JSON.parse(resTwo.body.toString())
+        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "first quiz", description: "a test quiz"}});
+        quizId = JSON.parse(quizRes.body.toString())
+        const quizResTwo = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "second quiz", description: "a test quiz"}});
+        quizIdTwo = JSON.parse(quizResTwo.body.toString())
+        const quizResThree = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserTokenTwo.token, name: "third quiz", description: "a test quiz"}});
+        quizIdThree = JSON.parse(quizResThree.body.toString())
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
+            {json: {token: UserToken.token}});
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
+            {json: {token: UserToken.token}});
     });
 
     test('Valid token', () => {
-        expect(UserToken).toHaveProperty('token');
-        expect(typeof UserToken.token).toBe('number'); 
-        console.log('Sent Token: ', UserToken.token)
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            qs: { token: UserToken.token }, 
+            json: { token: UserToken.token }, 
             timeout: TIMEOUT_MS
         });
-        console.log('Final Token: ', UserToken.token)
-        
         expect(res.statusCode).toBe(200);
-
-        const body = JSON.parse(res.body.toString());
-        expect(body).toHaveProperty('quizzes');
-        expect(body.quizzes.length).toBeGreaterThanOrEqual(0); 
-
-        if (body.quizzes.length > 0) {
-            expect(body.quizzes[0]).toHaveProperty('quizId');
-            expect(body.quizzes[0]).toHaveProperty('name');
-        }
+        expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: [
+            {
+                quizId: expect.any(Number),
+                name: "first quiz"
+            },
+            {
+                quizId: expect.any(Number),
+                name: "second quiz"
+            }
+        ]});
+        expect(res.statusCode).toStrictEqual(200);
     });
 });
