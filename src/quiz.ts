@@ -627,6 +627,54 @@ export function quizQuestionDelete (token: number, quizId: number, questionId: n
 	return {};
 }
 
+/**
+ * Permanently delete specific quizzes that are currently sitting in the trash.
+ *
+ * @param {number} token - The session token of the user.
+ * @param {number[]} quizIds - An array of quiz IDs to be deleted.
+ * @returns {errorObject|{}} - An error object if failed, or an empty object if successful.
+ */
+export function adminQuizTrashEmpty(token: number, quizIds: number[]): errorObject | {} {
+    const data = getData();
+
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
+
+    const user = data.users.find(user => user.id === session.authUserId);
+    if (!user) {
+        return { error: '401 token is not linked to a user' };
+    }
+
+    if (!Array.isArray(quizIds)) {
+        if (typeof quizIds === 'number') {
+            quizIds = [quizIds];
+        } else {
+            return { error: '400 Quizid is not a number' }; 
+        }
+    }
+
+
+    for (const quizId of quizIds) {
+        const quiz = data.bin.find(quiz => quiz.quizId === quizId); 
+
+        if (!quiz) {
+            return { error: '400 one or more Quiz IDs is not currently in the trash' };
+        }
+
+        if (quiz.creatorId !== user.id) {
+            return { error: '403 Quiz ID does not refer to a quiz that this user owns or it doesn’t exist' };
+        }
+
+        data.bin = data.bin.filter(quiz => quiz.quizId !== quizId);
+    }
+
+    setData(data);
+
+    return {};
+}
+
 export function adminQuizTrash(token: number): errorObject | quizList {
     const data = getData();
 

@@ -13,7 +13,7 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
   } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
-  adminQuestionDuplicate, adminQuizTrash,
+  adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, 
   quizQuestionDelete
  } from './quiz';
 import { clear } from './other';
@@ -404,6 +404,30 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
   }
   res.status(200).json(result);
 });
+
+//trashempty
+app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+  const { token, quizIds } = req.body; 
+  console.log("Token is", token)
+  console.log("ARRAY is", quizIds)
+
+  const parsedQuizIds = JSON.parse(quizIds as string);
+
+  const result = adminQuizTrashEmpty(token, parsedQuizIds);
+
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
 
 // adminAuthLogout
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
