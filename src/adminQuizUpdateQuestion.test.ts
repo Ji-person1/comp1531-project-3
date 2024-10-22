@@ -72,8 +72,8 @@ describe('adminQuizUpdateQuestion', () => {
             timeout: TIMEOUT_MS
         });
         const data = JSON.parse(res.body.toString());
+        expect(data).toStrictEqual({});
         expect(res.statusCode).toBe(200);
-        expect(data).toEqual({});
     });
 
     test('Invalid token', () => {
@@ -91,7 +91,7 @@ describe('adminQuizUpdateQuestion', () => {
             timeout: TIMEOUT_MS
         });
         expect(res.statusCode).toBe(401);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
+        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
     });
 
     test('Quiz does not exist', () => {
@@ -113,7 +113,7 @@ describe('adminQuizUpdateQuestion', () => {
     });
 
     test('Question does not exist', () => {
-        const res = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/question/999`, {
+        const res = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${-questionId}`, {
             json: {
                 token: user1Token,
                 question: "Who is the Rizzler?",

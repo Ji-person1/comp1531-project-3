@@ -296,6 +296,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { token, question, duration, points, answers } = req.body;
+  console.log('Received questionId:', questionId);
   
   const result = adminQuizUpdateQuestion(token, quizId, questionId, question, duration, points, answers);
   
