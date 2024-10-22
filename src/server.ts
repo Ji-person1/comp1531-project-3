@@ -9,11 +9,11 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
-    adminUserPasswordUpdate, adminAuthLogout 
-  } from './auth.ts';
+    adminUserPasswordUpdate, adminAuthLogout
+  } from './auth';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
-  adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, 
+  adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, adminQuizRestore,
   quizQuestionDelete
  } from './quiz';
 import { clear } from './other';
@@ -428,6 +428,25 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   }
 });
 
+//adminQuizRestore
+app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid)
+  const { token } = req.body;
+  const result = adminQuizRestore(token, quizid)
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return
+    } else {
+      res.status(400).json(result);
+      return
+    }
+  }
+  res.status(200).json(result);
+});
 
 // adminAuthLogout
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
