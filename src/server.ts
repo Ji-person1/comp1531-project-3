@@ -9,8 +9,8 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
-    adminUserPasswordUpdate, 
-  } from './auth';
+    adminUserPasswordUpdate, adminAuthLogout 
+  } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
   adminQuestionDuplicate, adminQuizTrash,
@@ -405,7 +405,16 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
-
+// adminAuthLogout
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminAuthLogout(token);
+  if ('error' in result) {
+    res.status(401).json(result);
+    return;
+  }
+  res.status(200).json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
