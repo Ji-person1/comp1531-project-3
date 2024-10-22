@@ -1,6 +1,6 @@
 import validator from 'validator';
-import {getData, setData} from './datastore.ts'
-import { generateSessionId } from './helper.ts';
+import {getData, setData} from './datastore'
+import { generateSessionId } from './helper';
 
 interface UserDetails {
     user : {
