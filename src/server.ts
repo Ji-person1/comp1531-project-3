@@ -13,7 +13,7 @@ import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUp
   } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
-  adminQuestionDuplicate, adminQuizTrashEmpty,
+  adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, 
   quizQuestionDelete
  } from './quiz';
 import { clear } from './other';
@@ -114,6 +114,20 @@ app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
       res.status(400).json(result);
       return
     }
+  }
+  res.status(200).json(result);
+});
+
+//adminQuizTrash
+// moved before the less parameterised one of adminquizinfo
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const { token } = req.body;  
+  console.log('Initial Token: ', token)
+  
+  const result = adminQuizTrash(token); 
+  if ('error' in result) {
+    res.status(401).json(result);
+    return;
   }
   res.status(200).json(result);
 });
@@ -457,3 +471,4 @@ process.on('SIGINT', () => {
     process.exit();
   });
 });
+

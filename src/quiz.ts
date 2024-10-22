@@ -54,6 +54,8 @@ interface DuplicatedId {
     duplicatedQuestionId: number;
 }
 
+
+
 /**
  * Update the description of the relevant quiz.
  * 
@@ -671,4 +673,28 @@ export function adminQuizTrashEmpty(token: number, quizIds: number[]): errorObje
     setData(data);
 
     return {};
+}
+
+export function adminQuizTrash(token: number): errorObject | quizList {
+    const data = getData();
+
+
+    const session = data.sessions.find(session => session.sessionId === token);
+    if (!session) {
+        return { error: '401 invalid session' };
+    }
+
+    const user = data.users.find(user => user.id === session.authUserId);
+    if (!user) {
+        return { error: 'Token is empty or invalid ' };
+    }
+
+    const trashedQuizzes = data.bin.filter(quiz => quiz.creatorId === user.id);
+
+    return {
+        quizzes: trashedQuizzes.map(quiz => ({
+            quizId: quiz.quizId,
+            name: quiz.name
+        }))
+    };
 }
