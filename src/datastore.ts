@@ -24,6 +24,7 @@ interface Quiz {
 }
 
 interface Questions {
+    questionId: number
     question: string;
     timeLimit: number;
     points: number;
@@ -33,6 +34,7 @@ interface Questions {
 interface Answer {
     answer: string;
     correct: boolean;
+    colour?: string;
 }
 
 interface Session {
