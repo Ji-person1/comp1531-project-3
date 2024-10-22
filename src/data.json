@@ -1,44 +1,6 @@
 {
-  "users": [
-    {
-      "id": 1,
-      "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
-      "password": "1234abcd",
-      "numSuccessfulLogins": 0,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "prevPasswords": []
-    }
-  ],
-  "quizzes": [
-    {
-      "quizId": 1,
-      "creatorId": 1,
-      "name": "functional quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729513327,
-      "timeLastEdited": 1729513327,
-      "numQuestions": 0,
-      "questions": []
-    },
-    {
-      "quizId": 2,
-      "creatorId": 1,
-      "name": "Usable quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729513327,
-      "timeLastEdited": 1729513327,
-      "numQuestions": 0,
-      "questions": []
-    }
-  ],
-  "sessions": [
-    {
-      "sessionId": 67679,
-      "authUserId": 1,
-      "createdAt": 1729513327
-    }
-  ],
+  "users": [],
+  "quizzes": [],
+  "sessions": [],
   "bin": []
 }
