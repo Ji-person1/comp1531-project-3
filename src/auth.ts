@@ -1,6 +1,6 @@
 import validator from 'validator';
-import {getData, setData} from './datastore.ts'
-import { generateSessionId } from './helper.ts';
+import {getData, setData} from './datastore'
+import { generateSessionId } from './helper';
 
 interface UserDetails {
     user : {
@@ -252,4 +252,26 @@ export function adminUserPasswordUpdate (token: number, oldPassword: string, new
     user.prevPasswords.push(oldPassword)
     setData(data)
     return {}; 
+}
+
+/**
+ * Logs out an admin user who has an active user session.
+ * 
+ * @param {number} token - The token for the current user session.
+ * @returns {object} error if token is invalid, empty object if successful
+ */
+export function adminAuthLogout (token: number): errorObject | {} {
+    const data = getData();
+
+    const sessionIndex = data.sessions.findIndex(session => session.sessionId === token);
+
+    if (sessionIndex === -1) {
+        return { error: '401 invalid token' };
+    }
+
+    data.sessions.splice(sessionIndex, 1);
+
+    setData(data);
+
+    return {};
 }

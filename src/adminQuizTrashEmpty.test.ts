@@ -11,31 +11,21 @@ beforeEach(() => {
 });
 
 describe('Error Cases', () => {
-    const validQuizIds = [3, 4, 5];
-    let UserToken: { token: number };
-
+    let UserToken: {token: number}
+    let quizId: {quizId: number}
     beforeEach(() => {
-        const loginRes = request('POST', SERVER_URL + '/v1/admin/auth/login', {
-            json: { email: "swapnav.saikia123@icloud.com", password: "1234abcd" },
-            timeout: TIMEOUT_MS
-        });
-
-        if (loginRes.statusCode === 200) {
-            UserToken = JSON.parse(loginRes.body.toString());
-        } else {
-            const registerRes = request('POST', SERVER_URL + '/v1/admin/auth/register', {
-                json: { email: "swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng" },
-                timeout: TIMEOUT_MS
-            });
-            UserToken = JSON.parse(registerRes.body.toString());
-        }
-    });
+        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
+            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
+        UserToken = JSON.parse(res.body.toString())
+        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
+        quizId = JSON.parse(quizRes.body.toString())
+    }); 
 
     test('Invalid token', () => {
-        const invalidToken = 999999;  
-
+        const quizArray = [quizId.quizId]
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            qs: { token: invalidToken, quizIds: JSON.stringify(validQuizIds) },
+            json: { token: -UserToken.token, quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -44,10 +34,9 @@ describe('Error Cases', () => {
     });
 
     test('Empty token', () => {
-        const emptyToken = 0; 
-
+        const quizArray = [quizId.quizId]
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            qs: { token: emptyToken, quizIds: JSON.stringify(validQuizIds) },
+            json: { token: '', quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -56,10 +45,9 @@ describe('Error Cases', () => {
     });
 
     test('Quiz ID not in the trash', () => {
-        const nonTrashQuizIds = [999]; 
-
+        const quizArray = [quizId.quizId]
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            qs: { token: UserToken.token, quizIds: JSON.stringify(nonTrashQuizIds) },
+            json: { token: UserToken.token, quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -68,47 +56,58 @@ describe('Error Cases', () => {
     });
 
     test('Quiz does not belong to the user', () => {
-        const unauthorizedQuizIds = [9999]; 
+        const quizArray = [quizId.quizId]
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
+            {json: {token: UserToken.token}});
+        const resTwo = request('POST', SERVER_URL + '/v1/admin/auth/register', 
+            {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
+        const UserTokenTwo = JSON.parse(resTwo.body.toString())
 
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            qs: { token: UserToken.token, quizIds: JSON.stringify(unauthorizedQuizIds) },
+            json: { token: UserTokenTwo.token, quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
-        expect(response.statusCode).toBe(403);
         expect(JSON.parse(response.body.toString())).toEqual(ERROR);
+        expect(response.statusCode).toBe(403);
     });
 });
 
 describe('Success Cases', () => {
-    let UserToken: { token: number };
-    
+    let UserToken: {token: number}
+    let quizId: {quizId: number}
+    let quizIdTwo: {quizId: number}
+    let quizIdThree: {quizId: number}
     beforeEach(() => {
-        const loginRes = request('POST', SERVER_URL + '/v1/admin/auth/login', {
-            json: { email: "swapnav.saikia123@icloud.com", password: "1234abcd" },
-            timeout: TIMEOUT_MS
-        });
-
-        if (loginRes.statusCode === 200) {
-            UserToken = JSON.parse(loginRes.body.toString());
-        } else {
-            const registerRes = request('POST', SERVER_URL + '/v1/admin/auth/register', {
-                json: { email: "swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng" },
-                timeout: TIMEOUT_MS
-            });
-            UserToken = JSON.parse(registerRes.body.toString());
-        }
-    });
+        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
+            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
+        UserToken = JSON.parse(res.body.toString())
+        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "first quiz", description: "a test quiz"}});
+        quizId = JSON.parse(quizRes.body.toString())
+        const quizResTwo = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "second quiz", description: "a test quiz"}});
+        quizIdTwo = JSON.parse(quizResTwo.body.toString())
+        const quizResThree = request('POST', SERVER_URL + '/v1/admin/quiz', 
+            {json: {token: UserToken.token, name: "third quiz", description: "a test quiz"}});
+        quizIdThree = JSON.parse(quizResThree.body.toString())
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
+            {json: {token: UserToken.token}});
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
+            {json: {token: UserToken.token}});
+        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdThree.quizId}`, 
+            {json: {token: UserToken.token}});
+    }); 
 
     test('Successful trash empty', () => {
-        const quizIds = [3, 4, 5];
+        const quizIds = [quizId.quizId, quizIdTwo.quizId, quizIdThree.quizId];
 
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            qs: { token: UserToken.token, quizIds: JSON.stringify(quizIds) },
+            json: { token: UserToken.token, quizIds: JSON.stringify(quizIds) },
             timeout: TIMEOUT_MS
         });
 
-        expect(response.statusCode).toBe(200);
         expect(JSON.parse(response.body.toString())).toEqual({});
+        expect(response.statusCode).toBe(200);
     });
 });

@@ -9,12 +9,14 @@ import fs from 'fs';
 import path from 'path';
 import process from 'process';
 import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
-    adminUserPasswordUpdate 
+    adminUserPasswordUpdate, adminAuthLogout 
   } from './auth.ts';
 import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove, adminQuizTrashEmpty
- } from './quiz.ts';
-import { clear } from './other.ts';
+  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
+  adminQuestionDuplicate, adminQuizTrashEmpty,
+  quizQuestionDelete
+ } from './quiz';
+import { clear } from './other';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -229,6 +231,156 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
+//adminQuizTransfer
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const transferBody = req.body;
+  
+  const result = adminQuizTransfer(quizId, transferBody);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('400')) {
+      res.status(400).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//adminQuizTransfer
+app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const transferBody = req.body;
+  
+  const result = adminQuizTransfer(quizId, transferBody);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('400')) {
+      res.status(400).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//adminQuizCreateQuestion
+app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const { token, question, duration, points, answers } = req.body;
+  
+  const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);;
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//adminQuizUpdateQuestion
+app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token, question, duration, points, answers } = req.body;
+  console.log('Received questionId:', questionId);
+  
+  const result = adminQuizUpdateQuestion(token, quizId, questionId, question, duration, points, answers);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//questionMove
+app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token, newPosition } = req.body;
+  
+  console.log('Received questionId:', questionId);
+  const result = adminQuestionMove(token, quizId, questionId, newPosition);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//questionDuplicate
+app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  
+  console.log('Received questionId:', questionId);
+  const result = adminQuestionDuplicate(token, quizId, questionId);
+  
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
+    }
+  } else {
+    res.status(200).json(result);
+  }
+});
+
+//quizQuestionDelete
+app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
+  const quizid = parseInt(req.params.quizid);
+  const questionId = parseInt(req.params.questionid);
+  const { token } = req.body;
+  console.log('Received token:', token);
+  console.log('Received quizid:', quizid);
+  console.log('Received questionId:', questionId);
+  const result = quizQuestionDelete(token, quizid, questionId);
+  if ('error' in result) {
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+      return;
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+      return;
+    } else {
+      res.status(400).json(result);
+      return;
+    }
+  }
+  res.status(200).json(result);
+});
+
 //clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear()
@@ -239,31 +391,40 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
   res.status(200).json(result);
 });
 
+//trashempty
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const { token, quizIds } = req.query; 
-
-  if (!token) {
-    return res.status(401).json({ error: '401 Token is empty or invalid' });
-  }
+  const { token, quizIds } = req.body; 
+  console.log("Token is", token)
+  console.log("ARRAY is", quizIds)
 
   const parsedQuizIds = JSON.parse(quizIds as string);
 
-  const result = adminQuizTrashEmpty(Number(token), parsedQuizIds);
+  const result = adminQuizTrashEmpty(token, parsedQuizIds);
 
   if ('error' in result) {
-    if (result.error.startsWith('401')) {
-      return res.status(401).json(result);
-    } else if (result.error.startsWith('403')) {
-      return res.status(403).json(result);
-    } else if (result.error.startsWith('403')) {
-      return res.status(400).json(result);
+    if (result.error.startsWith('403')) {
+      res.status(403).json(result);
+    } else if (result.error.startsWith('401')) {
+      res.status(401).json(result);
+    } else {
+      res.status(400).json(result);
     }
+  } else {
+    res.status(200).json(result);
   }
-
-  return res.status(200).json({});
 });
 
 
+// adminAuthLogout
+app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+  const { token } = req.body;
+  const result = adminAuthLogout(token);
+  if ('error' in result) {
+    res.status(401).json(result);
+    return;
+  }
+  res.status(200).json(result);
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
