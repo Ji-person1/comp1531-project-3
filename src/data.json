@@ -1,5 +1,16 @@
 {
-  "users": [],
+  "users": [
+    {
+      "id": 1,
+      "email": "swapnav.saikia123@icloud.com",
+      "nameFirst": "Jim",
+      "nameLast": "Zheng",
+      "password": "1234abcd",
+      "numSuccessfulLogins": 0,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    }
+  ],
   "quizzes": [],
   "sessions": [],
   "bin": []
