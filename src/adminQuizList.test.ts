@@ -21,7 +21,7 @@ describe('Error cases', () => {
 
     test('Invalid id with no quizzes', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: -UserToken.token}});
+            {qs: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });
@@ -30,7 +30,7 @@ describe('Error cases', () => {
         request('POST', SERVER_URL + '/v1/admin/quiz', 
             {json: {token: UserToken, name: "Quiz test", description: "a test quiz"}});
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: -UserToken.token}});
+            {qs: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });
@@ -49,7 +49,7 @@ describe('Success cases', () => {
     }); 
     test('Correct basic case', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
+            {qs: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: [
             {
                 quizId: quizId.quizId,
@@ -64,7 +64,7 @@ describe('Success cases', () => {
             {json: {token: UserToken.token, name: "Usable quiz", description: "a test quiz"}});
         const QuizTwo = JSON.parse(responseQuiz.body.toString())
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
+            {qs: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: [
             {
                 quizId: quizId.quizId,

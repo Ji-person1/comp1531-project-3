@@ -1,4 +1,5 @@
 {
+    "type": "module",
     "scripts": {
         "test": "jest",
         "tsc": "tsc --project tsconfig.json",

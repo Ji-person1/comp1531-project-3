@@ -76,6 +76,9 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 //adminUserDetails
 app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
   const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminUserDetails(token)
   if ('error' in result) {
     res.status(401).json(result);
@@ -121,7 +124,10 @@ app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
 //adminQuizTrash
 // moved before the less parameterised one of adminquizinfo
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const { token } = req.body;  
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   console.log('Initial Token: ', token)
   
   const result = adminQuizTrash(token); 
@@ -134,7 +140,10 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 
 //adminquizList
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminQuizList(token)
   if ('error' in result) {
     res.status(401).json(result);
@@ -167,7 +176,10 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 //adminQuizRemove
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid as string);
-  const { token } = req.body;
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   console.log('Received token:', token);
   console.log('Received quizid:', quizid);
   console.log('Received original:', parseInt(req.params.quizid as string));
@@ -188,7 +200,10 @@ app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 //adminQuizInfo
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid)
-  const { token } = req.body;
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminQuizInfo(token, quizid)
   if ('error' in result) {
     if (result.error.startsWith('403')) {
@@ -375,7 +390,10 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
 app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { token } = req.body;
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   console.log('Received token:', token);
   console.log('Received quizid:', quizid);
   console.log('Received questionId:', questionId);
@@ -407,25 +425,47 @@ app.delete('/v1/clear', (req: Request, res: Response) => {
 
 //trashempty
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
-  const { token, quizIds } = req.body; 
-  console.log("Token is", token)
-  console.log("ARRAY is", quizIds)
+  const { token, quizIds } = req.query;
 
-  const parsedQuizIds = JSON.parse(quizIds as string);
+  console.log("Token is", token);
+  console.log("ARRAY is", quizIds);
 
-  const result = adminQuizTrashEmpty(token, parsedQuizIds);
+  if (!token || isNaN(Number(token))) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+
+  let parsedQuizIds: number[] = [];
+
+  if (Array.isArray(quizIds)) {
+    parsedQuizIds = (quizIds as string[]).map(id => Number(id)).filter(id => !isNaN(id));
+  } else if (typeof quizIds === 'string') {
+    try {
+      parsedQuizIds = JSON.parse(quizIds);
+      if (!Array.isArray(parsedQuizIds)) {
+        throw new Error();
+      }
+    } catch (error) {
+      return res.status(400).json({ error: 'Quiz IDs are not valid or not an array' });
+    }
+  } else {
+    return res.status(400).json({ error: 'Quiz IDs are missing or invalid' });
+  }
+
+  console.log("Parsed Quiz IDs:", parsedQuizIds);
+
+  const result = adminQuizTrashEmpty(Number(token), parsedQuizIds);
 
   if ('error' in result) {
     if (result.error.startsWith('403')) {
-      res.status(403).json(result);
+      return res.status(403).json(result);
     } else if (result.error.startsWith('401')) {
-      res.status(401).json(result);
+      return res.status(401).json(result);
     } else {
-      res.status(400).json(result);
+      return res.status(400).json(result);
     }
-  } else {
-    res.status(200).json(result);
   }
+
+  return res.status(200).json(result);
 });
 
 //adminQuizRestore

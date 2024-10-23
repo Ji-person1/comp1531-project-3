@@ -23,7 +23,7 @@ describe('Error Cases', () => {
 
     test('Invalid token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            json: { token: 'invalidToken' }, 
+            qs: { token: 'invalidToken' }, 
             timeout: TIMEOUT_MS
         });
 
@@ -33,7 +33,7 @@ describe('Error Cases', () => {
 
     test('Empty token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            json: { token: '' }, 
+            qs: { token: '' }, 
             timeout: TIMEOUT_MS
         });
 
@@ -72,7 +72,7 @@ describe('Success Cases', () => {
 
     test('Valid token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            json: { token: UserToken.token }, 
+            qs: { token: UserToken.token }, 
             timeout: TIMEOUT_MS
         });
         expect(res.statusCode).toBe(200);
