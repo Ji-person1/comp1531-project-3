@@ -2,21 +2,32 @@
   "users": [
     {
       "id": 1,
-      "email": "blah@email.com",
-      "nameFirst": "john",
-      "nameLast": "smith",
-      "password": "password1YAY",
+      "email": "swastik@example.com",
+      "nameFirst": "Swastik",
+      "nameLast": "Mishra",
+      "password": "password123",
       "numSuccessfulLogins": 0,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
     }
   ],
-  "quizzes": [],
+  "quizzes": [
+    {
+      "quizId": 1,
+      "creatorId": 1,
+      "name": "Test Quiz",
+      "description": "This is a test quiz",
+      "timeCreated": 1729674535,
+      "timeLastEdited": 1729674535,
+      "numQuestions": 0,
+      "questions": []
+    }
+  ],
   "sessions": [
     {
-      "sessionId": 50705,
+      "sessionId": 79612,
       "authUserId": 1,
-      "createdAt": 1729668615
+      "createdAt": 1729674535
     }
   ],
   "bin": []

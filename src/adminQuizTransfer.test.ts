@@ -60,6 +60,7 @@ describe('adminQuizTransfer', () => {
             timeout: TIMEOUT_MS
         });
         const data = JSON.parse(res.body.toString());
+        expect(data).toEqual({});
         expect(res.statusCode).toBe(200);
         expect(data).toEqual({});
 

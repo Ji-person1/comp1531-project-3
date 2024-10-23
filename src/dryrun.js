@@ -15,14 +15,16 @@ const assert = (condition) => {
 function requestHelper(method, path, payload) {
   let qs = {};
   let json = {};
-  const headers = { 'token': payload.token };
+  const headers = { 'token': payload };
   if (['GET', 'DELETE'].includes(method)) {
     qs = payload;
+    
   } else {
     // PUT/POST
     json = payload;
   }
 
+  console.log(method, path, { qs, json, headers })
   const res = request(method, path, { qs, json, headers } );
 
   if (res.statusCode !== 200) {
@@ -80,7 +82,6 @@ function testClear() {
   clear();
   const data = adminAuthRegister('email@email.com', 'Password1', 'first', 'last');
   assert(data !== 400);
-  console.log(data)
 }
 
 function testAdminAuthRegister() {
@@ -94,14 +95,13 @@ const testAdminQuizCreate = () => {
   const token = adminAuthRegister('email@email.com', 'Password1', 'first', 'last').token;
   const data = adminQuizCreate(token, 'Quiz name', 'Quiz description');
   assert(typeof data === 'object' && 'quizId' in data && typeof data.quizId === 'number');
-  console.log(data)
 }
 
 const testUserDetails = () => {
   clear();
   const token = adminAuthRegister('blah@email.com', 'password1YAY', 'john', 'smith').token;
+  console.log(typeof(token), token)
   const data = adminUserDetailsGet(token);
-  console.log(data)
   assert(
     typeof data === 'object' && 
     'user' in data && typeof data.user === 'object' &&
@@ -136,9 +136,9 @@ for (let i = 0; i < tests.length; i++) {
     tests[i]();
   } catch (err) {
     console.log("You failed test", i)
+    console.log(err)
     failed++;
   }
 }
+
 console.log(`You passed ${tests.length - failed} out of ${tests.length} tests.`);
-
-
