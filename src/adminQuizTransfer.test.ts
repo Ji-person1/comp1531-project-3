@@ -66,7 +66,7 @@ describe('adminQuizTransfer', () => {
 
         // Verify that user2 now owns the quiz
         const resQuizInfo = request('GET', `${SERVER_URL}/v1/admin/quiz/${quizId}`, {
-            json: { token: user2Token },
+            qs: { token: user2Token },
             timeout: TIMEOUT_MS
         });
         const quizInfo = JSON.parse(resQuizInfo.body.toString());

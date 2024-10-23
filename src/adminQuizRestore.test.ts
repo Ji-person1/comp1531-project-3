@@ -25,7 +25,7 @@ describe('Error cases', () => {
 
     test('identical quiz restoration', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('POST', SERVER_URL + '/v1/admin/quiz', 
             {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
         const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
@@ -43,7 +43,7 @@ describe('Error cases', () => {
 
     test('Invalid quizId', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         const res = request('POST', SERVER_URL + `/v1/admin/quiz/${-quizId.quizId}/restore`, 
             {json: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
@@ -52,7 +52,7 @@ describe('Error cases', () => {
 
     test('Invalid token', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
             {json: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
@@ -82,20 +82,20 @@ describe('Success cases', () => {
 
     test('Basic return success check', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
             {json: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({});
         expect(res.statusCode).toStrictEqual(200);
     });
 
-    test('Ssuccess check with a quizinfo', () => {
+    test('Success check with a quizinfo', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
             {json: {token: UserToken.token}});
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             quizId: quizIdTwo.quizId,
             name: "second quiz",

@@ -88,7 +88,7 @@ describe('Success cases', () => {
 
     test('correct with one account', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             user: {
                 userId: expect.any(Number),
@@ -103,7 +103,7 @@ describe('Success cases', () => {
         expect(JSON.parse(resTwo.body.toString())).toStrictEqual({});
         expect(resTwo.statusCode).toStrictEqual(200);
         const resThree = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(resThree.body.toString())).toStrictEqual({
             user: {
                 userId: expect.any(Number),
