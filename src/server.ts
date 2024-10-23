@@ -75,7 +75,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 
 //adminUserDetails
 app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = Number(req.query.token);
   const result = adminUserDetails(token)
   if ('error' in result) {
     res.status(401).json(result);

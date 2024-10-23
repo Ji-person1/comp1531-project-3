@@ -25,14 +25,14 @@ describe('Error cases', () => {
 
     test('Invalid token', () => {
         const res = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: -UserToken.token}});
+            {qs: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });
 
     test('Invalid quizId', () => {
         const res = request('DELETE', SERVER_URL + `/v1/admin/quiz/${-quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(400);
     });
@@ -42,7 +42,7 @@ describe('Error cases', () => {
             {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
         const UserTokenTwo = JSON.parse(res.body.toString())
         const errRes = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserTokenTwo.token}});
+            {qs: {token: UserTokenTwo.token}});
         expect(JSON.parse(errRes.body.toString())).toStrictEqual(ERROR);
         expect(errRes.statusCode).toStrictEqual(400);
     });
@@ -74,18 +74,18 @@ describe('Success cases', () => {
 
     test('Basic return success check', () => {
         const res = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({});
         expect(res.statusCode).toStrictEqual(200);
     });
 
     test('List check', () => {
         const resFirst = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(resFirst.body.toString())).toStrictEqual({});
         expect(resFirst.statusCode).toStrictEqual(200);
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
+            {qs: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: [
             {
                 quizId: quizId.quizId,
@@ -97,9 +97,9 @@ describe('Success cases', () => {
 
     test('Post deletion error on the list function', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdThree.quizId}`, 
-            {json: {token: UserTokenTwo.token}});
+            {qs: {token: UserTokenTwo.token}});
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: UserTokenTwo.token, name: "functional quiz", description: "a test quiz"}});
+            {qs: {token: UserTokenTwo.token, name: "functional quiz", description: "a test quiz"}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: []});
         expect(res.statusCode).toStrictEqual(200);
     });
