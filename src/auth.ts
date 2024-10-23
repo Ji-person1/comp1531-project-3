@@ -17,7 +17,7 @@ interface errorObject {
 }
 
 interface Token {
-    token: number
+    token: string
 }
 /**
  * Creates a new user when given the email, first name, last name and password
@@ -83,7 +83,7 @@ export function adminAuthRegister (email: string, password: string, nameFirst: s
     data.sessions.push(newSession)
     data.users.push(newUser)
     setData(data)
-    return {token: sessionId}
+    return {token: sessionId.toString()}
 }
 
 /**
@@ -119,7 +119,7 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
 
     data.sessions.push(newSession)
     setData(data)
-    return {token: sessionId}
+    return {token: sessionId.toString()}
 }
 
 /**

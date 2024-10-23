@@ -89,7 +89,11 @@ app.get('/v1/admin/auth/details', (req: Request, res: Response) => {
 
 //adminUserDetailUpdate
 app.put('/v1/admin/auth/details', (req: Request, res: Response) => {
-  const { token, email, nameFirst, nameLast } = req.body;
+  const { email, nameFirst, nameLast } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
   if ('error' in result) {
     if (result.error.startsWith('401')) {
@@ -106,7 +110,11 @@ app.put('/v1/admin/auth/details', (req: Request, res: Response) => {
 
 //adminUserPasswordUpdate
 app.put('/v1/admin/auth/password', (req: Request, res: Response) => {
-  const { token, oldPassword, newPassword } = req.body;
+  const { oldPassword, newPassword } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminUserPasswordUpdate(token, oldPassword, newPassword)
   if ('error' in result) {
     if (result.error.startsWith('401')) {
@@ -154,7 +162,11 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 
 //adminQuizCreate
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
-  const { token, name, description } = req.body;
+  const { name, description } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminQuizCreate(token, name, description)
   console.log('Received token:', token);
   console.log('Received name:', name);
@@ -223,7 +235,11 @@ app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
 //adminNameUpdate
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid)
-  const { token, name } = req.body;
+  const { name } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminQuizNameUpdate(token, quizid, name)
   if ('error' in result) {
     if (result.error.startsWith('403')) {
@@ -243,7 +259,11 @@ app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
 //adminDescriptionUpdate
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid)
-  const { token, description } = req.body;
+  const { description } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminQuizDescriptionUpdate(token, quizid, description)
   if ('error' in result) {
     if (result.error.startsWith('403')) {
@@ -263,29 +283,14 @@ app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
 //adminQuizTransfer
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const transferBody = req.body;
-  
-  const result = adminQuizTransfer(quizId, transferBody);
-  
-  if ('error' in result) {
-    if (result.error.startsWith('400')) {
-      res.status(400).json(result);
-    } else if (result.error.startsWith('401')) {
-      res.status(401).json(result);
-    } else if (result.error.startsWith('403')) {
-      res.status(403).json(result);
-    }
-  } else {
-    res.status(200).json(result);
+  const token = Number(req.body.token);
+  const { userEmail } = req.body;
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
   }
-});
-
-//adminQuizTransfer
-app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
-  const quizId = parseInt(req.params.quizid);
-  const transferBody = req.body;
+  console.log(token)
   
-  const result = adminQuizTransfer(quizId, transferBody);
+  const result = adminQuizTransfer(quizId, token, userEmail);
   
   if ('error' in result) {
     if (result.error.startsWith('400')) {
@@ -303,7 +308,11 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
 //adminQuizCreateQuestion
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
-  const { token, question, duration, points, answers } = req.body;
+  const { question, duration, points, answers } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   
   const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);;
   
@@ -324,7 +333,11 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { token, question, duration, points, answers } = req.body;
+  const { question, duration, points, answers } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   console.log('Received questionId:', questionId);
   
   const result = adminQuizUpdateQuestion(token, quizId, questionId, question, duration, points, answers);
@@ -346,7 +359,11 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { token, newPosition } = req.body;
+  const { newPosition } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   
   console.log('Received questionId:', questionId);
   const result = adminQuestionMove(token, quizId, questionId, newPosition);
@@ -368,7 +385,10 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
-  const { token } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   
   console.log('Received questionId:', questionId);
   const result = adminQuestionDuplicate(token, quizId, questionId);
@@ -471,7 +491,10 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 //adminQuizRestore
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid)
-  const { token } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminQuizRestore(token, quizid)
   if ('error' in result) {
     if (result.error.startsWith('403')) {
@@ -490,7 +513,10 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
 
 // adminAuthLogout
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
-  const { token } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(401).json({ error: 'Invalid token' });;
+  }
   const result = adminAuthLogout(token);
   if ('error' in result) {
     res.status(401).json(result);

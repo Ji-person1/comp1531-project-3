@@ -62,19 +62,19 @@ describe('Success cases', () => {
     test('Correct basic case', () => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
             {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(res.statusCode).toStrictEqual(200);
     });
     test('Correct long password case', () => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
             {json: {email: "jim.zheng123@icloud.com", password: "123456789ABCDEFGhijklmno", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(res.statusCode).toStrictEqual(200);
     });
     test('Correct weird names case', () => {
         const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
             {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim-ello", nameLast: "What is my last name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(res.statusCode).toStrictEqual(200);
     });
 });

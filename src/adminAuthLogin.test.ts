@@ -54,7 +54,7 @@ describe('Success cases', () => {
             {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
         const res = request('POST', SERVER_URL + '/v1/admin/auth/login', 
             {json: {email: "jim.zheng123@icloud.com", password: "1234abcd"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(res.statusCode).toStrictEqual(200);
     });
 
@@ -67,9 +67,9 @@ describe('Success cases', () => {
             {json: {email: "jim.zheng123@icloud.com", password: "1234abcd"}});
         const resTwo = request('POST', SERVER_URL + '/v1/admin/auth/login', 
             {json: {email: "z5394791@unsw.edu.au", password: "6789mnbv"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(res.statusCode).toStrictEqual(200);
-        expect(JSON.parse(resTwo.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(resTwo.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(resTwo.statusCode).toStrictEqual(200);
     });
 });

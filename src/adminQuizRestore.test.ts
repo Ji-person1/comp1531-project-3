@@ -82,7 +82,7 @@ describe('Success cases', () => {
 
     test('Basic return success check', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
             {json: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({});
@@ -91,11 +91,11 @@ describe('Success cases', () => {
 
     test('Ssuccess check with a quizinfo', () => {
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
             {json: {token: UserToken.token}});
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             quizId: quizIdTwo.quizId,
             name: "second quiz",

@@ -297,10 +297,10 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
  * @param {{ token: number; userEmail: string }} transferBody - An object containing the token and userEmail.
  * @returns {object} An empty object if successful, or an error object if unsuccessful.
  */
-export function adminQuizTransfer(quizId: number, transferBody: { token: number; userEmail: string }): {} | errorObject {
+export function adminQuizTransfer(quizId: number, token: number, userEmail: string ): {} | errorObject {
     const data = getData();
     
-    const session = data.sessions.find(session => session.sessionId === transferBody.token);
+    const session = data.sessions.find(session => session.sessionId === token);
     if (!session) {
       return { error: '401: Token is invalid or empty' };
     }
@@ -310,7 +310,7 @@ export function adminQuizTransfer(quizId: number, transferBody: { token: number;
       return { error: '403: User not an owner of this quiz or quiz doesnt exist' };
     }
     
-    const targetUser = data.users.find(user => user.email === transferBody.userEmail);
+    const targetUser = data.users.find(user => user.email === userEmail);
     if (!targetUser) {
       return { error: '400: UserEmail is not a real user' };
     }

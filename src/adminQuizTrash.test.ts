@@ -65,9 +65,9 @@ describe('Success Cases', () => {
             {json: {token: UserTokenTwo.token, name: "third quiz", description: "a test quiz"}});
         quizIdThree = JSON.parse(quizResThree.body.toString())
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
     });
 
     test('Valid token', () => {

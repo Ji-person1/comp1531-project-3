@@ -68,7 +68,7 @@ const adminQuizList = (token) => {
 const adminUserDetailsGet = (token) => {
   return requestHelper( 
     'GET', 
-    `${url}:${port}/v1/admin/user/details`,
+    `${url}:${port}/v1/admin/userdetails/`,
     { token }
   );
 }
