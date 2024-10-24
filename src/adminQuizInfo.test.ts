@@ -25,14 +25,14 @@ describe('Error cases', () => {
 
     test('Invalid token', () => {
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: -UserToken.token}});
+            {qs: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });
 
     test('Invalid quizId', () => {
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${-quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(403);
     });
@@ -42,7 +42,7 @@ describe('Error cases', () => {
             {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
         const UserTokenTwo = JSON.parse(res.body.toString())
         const errRes = request('GET', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserTokenTwo.token}});
+            {qs: {token: UserTokenTwo.token}});
         expect(JSON.parse(errRes.body.toString())).toStrictEqual(ERROR);
         expect(errRes.statusCode).toStrictEqual(403);
     });
@@ -74,7 +74,7 @@ describe('Success cases', () => {
 
     test('Basic return success check', () => {
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             quizId: quizId.quizId,
             name: "first quiz",
@@ -89,7 +89,7 @@ describe('Success cases', () => {
 
     test('Ssuccess check with multiple quizzes for a user', () => {
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             quizId: quizIdTwo.quizId,
             name: "second quiz",
@@ -104,7 +104,7 @@ describe('Success cases', () => {
 
     test('Ssuccess check with multiple users', () => {
         const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizIdThree.quizId}`, 
-            {json: {token: UserTokenTwo.token}});
+            {qs: {token: UserTokenTwo.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             quizId: quizIdThree.quizId,
             name: "third quiz",

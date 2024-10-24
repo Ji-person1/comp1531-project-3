@@ -297,10 +297,10 @@ export function adminQuizRemove(token: number, quizId: number): errorObject | {}
  * @param {{ token: number; userEmail: string }} transferBody - An object containing the token and userEmail.
  * @returns {object} An empty object if successful, or an error object if unsuccessful.
  */
-export function adminQuizTransfer(quizId: number, transferBody: { token: number; userEmail: string }): {} | errorObject {
+export function adminQuizTransfer(quizId: number, token: number, userEmail: string ): {} | errorObject {
     const data = getData();
     
-    const session = data.sessions.find(session => session.sessionId === transferBody.token);
+    const session = data.sessions.find(session => session.sessionId === token);
     if (!session) {
       return { error: '401: Token is invalid or empty' };
     }
@@ -310,7 +310,7 @@ export function adminQuizTransfer(quizId: number, transferBody: { token: number;
       return { error: '403: User not an owner of this quiz or quiz doesnt exist' };
     }
     
-    const targetUser = data.users.find(user => user.email === transferBody.userEmail);
+    const targetUser = data.users.find(user => user.email === userEmail);
     if (!targetUser) {
       return { error: '400: UserEmail is not a real user' };
     }
@@ -356,12 +356,18 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
     }
   
     // Validate question
-    if (question.length < 5 || question.length > 50) {
+    if (!question) {
+        return { error: '400: Question is invalid' };
+      }
+    else if (question.length < 5 || question.length > 50) {
       return { error: '400: Question string is less than length 5 or greater length 50' };
     }
   
     // Validate answers
-    if (answers.length < 2 || answers.length > 6) {
+    if (!answers) {
+        return { error: '400: Question is invalid' };
+    }
+    else if (answers.length < 2 || answers.length > 6) {
       return { error: '400: The question has less than 2 answers or more than 6 answers' };
     }
   
@@ -647,18 +653,10 @@ export function adminQuizTrashEmpty(token: number, quizIds: number[]): errorObje
         return { error: '401 token is not linked to a user' };
     }
 
-    if (!Array.isArray(quizIds)) {
-        if (typeof quizIds === 'number') {
-            quizIds = [quizIds];
-        } else {
-            return { error: '400 Quizid is not a number' }; 
-        }
-    }
-
 
     for (const quizId of quizIds) {
-        const quiz = data.bin.find(quiz => quiz.quizId === quizId); 
-
+        const quiz = data.bin.find(quiz => quiz.quizId === quizId);
+        
         if (!quiz) {
             return { error: '400 one or more Quiz IDs is not currently in the trash' };
         }

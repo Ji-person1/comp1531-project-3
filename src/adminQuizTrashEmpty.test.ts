@@ -25,7 +25,7 @@ describe('Error Cases', () => {
     test('Invalid token', () => {
         const quizArray = [quizId.quizId]
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            json: { token: -UserToken.token, quizIds: quizArray },
+            qs: { token: -UserToken.token, quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -36,7 +36,7 @@ describe('Error Cases', () => {
     test('Empty token', () => {
         const quizArray = [quizId.quizId]
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            json: { token: '', quizIds: quizArray },
+            qs: { token: '', quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -47,7 +47,7 @@ describe('Error Cases', () => {
     test('Quiz ID not in the trash', () => {
         const quizArray = [quizId.quizId]
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            json: { token: UserToken.token, quizIds: quizArray },
+            qs: { token: UserToken.token, quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -58,13 +58,13 @@ describe('Error Cases', () => {
     test('Quiz does not belong to the user', () => {
         const quizArray = [quizId.quizId]
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         const resTwo = request('POST', SERVER_URL + '/v1/admin/auth/register', 
             {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
         const UserTokenTwo = JSON.parse(resTwo.body.toString())
 
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            json: { token: UserTokenTwo.token, quizIds: quizArray },
+            qs: { token: UserTokenTwo.token, quizIds: quizArray },
             timeout: TIMEOUT_MS
         });
 
@@ -92,18 +92,18 @@ describe('Success Cases', () => {
             {json: {token: UserToken.token, name: "third quiz", description: "a test quiz"}});
         quizIdThree = JSON.parse(quizResThree.body.toString())
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdThree.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
     }); 
 
     test('Successful trash empty', () => {
         const quizIds = [quizId.quizId, quizIdTwo.quizId, quizIdThree.quizId];
 
         const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
-            json: { token: UserToken.token, quizIds: JSON.stringify(quizIds) },
+            qs: { token: UserToken.token, quizIds: JSON.stringify(quizIds) },
             timeout: TIMEOUT_MS
         });
 

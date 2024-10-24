@@ -99,7 +99,7 @@ describe('Success cases', () => {
         expect(resLoginF.statusCode).toStrictEqual(400);
         const resLoginS = request('POST', SERVER_URL + '/v1/admin/auth/login', 
             {json: {email: "jim.zheng123@icloud.com", password: "1234567A"}});
-        expect(JSON.parse(resLoginS.body.toString())).toStrictEqual({token: expect.any(Number)});
+        expect(JSON.parse(resLoginS.body.toString())).toStrictEqual({token: expect.any(String)});
         expect(resLoginS.statusCode).toStrictEqual(200);
     });
 });

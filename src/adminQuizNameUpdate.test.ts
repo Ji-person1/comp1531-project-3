@@ -110,7 +110,7 @@ describe('Success cases', () => {
         expect(JSON.parse(res.body.toString())).toStrictEqual({});
         expect(res.statusCode).toStrictEqual(200);
         const resTwo = request('GET', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(resTwo.body.toString())).toStrictEqual({
             quizId: quizId.quizId,
             name: "Normal name",

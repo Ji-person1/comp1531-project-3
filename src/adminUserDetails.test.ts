@@ -21,14 +21,14 @@ describe('Error cases', () => {
 
     test('invalid user token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: -UserToken.token}});
+            {qs: {token: -UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });
 
     test('no token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: ''}});
+            {qs: {token: ''}});
         expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
         expect(res.statusCode).toStrictEqual(401);
     });
@@ -48,7 +48,7 @@ describe('Success cases', () => {
 
     test('Success case: A', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             user: {
                 userId: expect.any(Number),
@@ -63,7 +63,7 @@ describe('Success cases', () => {
 
     test('Success case: B', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: UserTokenTwo.token}});
+            {qs: {token: UserTokenTwo.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             user: {
                 userId: expect.any(Number),
@@ -82,7 +82,7 @@ describe('Success cases', () => {
             {json: {email: "jim.zheng123@icloud.com", password: "1234abcd"}});
         loginToken = JSON.parse(resOne.body.toString())
         const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: loginToken.token}});
+            {qs: {token: loginToken.token}});
         expect(JSON.parse(res.body.toString())).toStrictEqual({
             user: {
                 userId: expect.any(Number),

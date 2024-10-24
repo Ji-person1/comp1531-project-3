@@ -23,7 +23,7 @@ describe('Error Cases', () => {
 
     test('Invalid token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            json: { token: 'invalidToken' }, 
+            qs: { token: 'invalidToken' }, 
             timeout: TIMEOUT_MS
         });
 
@@ -33,7 +33,7 @@ describe('Error Cases', () => {
 
     test('Empty token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            json: { token: '' }, 
+            qs: { token: '' }, 
             timeout: TIMEOUT_MS
         });
 
@@ -65,14 +65,14 @@ describe('Success Cases', () => {
             {json: {token: UserTokenTwo.token, name: "third quiz", description: "a test quiz"}});
         quizIdThree = JSON.parse(quizResThree.body.toString())
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
         request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {json: {token: UserToken.token}});
+            {qs: {token: UserToken.token}});
     });
 
     test('Valid token', () => {
         const res = request('GET', SERVER_URL + '/v1/admin/quiz/trash', {
-            json: { token: UserToken.token }, 
+            qs: { token: UserToken.token }, 
             timeout: TIMEOUT_MS
         });
         expect(res.statusCode).toBe(200);

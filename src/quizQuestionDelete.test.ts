@@ -43,7 +43,7 @@ describe('Error cases', () => {
   test('invalid token', () => {
     const res = request('DELETE', SERVER_URL +
      `/v1/admin/quiz/${quizId.quizId}/question/${questionId.questionId}`,
-    { json: { UserToken, quizId: quizId.quizId, questionId: questionId.questionId } })
+    { qs: { token: -UserToken.token } })
     expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR)
     expect(res.statusCode).toStrictEqual(401)
   })
@@ -51,7 +51,7 @@ describe('Error cases', () => {
   test('quiz does not exist', () => {
     const res = request('DELETE', SERVER_URL +
         `/v1/admin/quiz/${-quizId.quizId}/question/${questionId.questionId}`,
-    { json: { token: UserToken.token, quizId: quizId.quizId, questionId: questionId.questionId } })
+    { qs: { token: UserToken.token} })
     expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR)
     expect(res.statusCode).toStrictEqual(403)
   })
@@ -62,14 +62,14 @@ describe('Error cases', () => {
     const UserTokenTwo = JSON.parse(resTwo.body.toString())
 
     const errRes = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/question/${questionId.questionId}`,
-    { json: { token: UserTokenTwo.token, quizId: quizId.quizId, questionId: questionId.questionId } })
+    { qs: { token: UserTokenTwo.token} })
     expect(JSON.parse(errRes.body.toString())).toStrictEqual(ERROR)
     expect(errRes.statusCode).toStrictEqual(403)
   })
 
   test('question does not exist', () => {
     const res = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/question/${-questionId.questionId}`,
-    { json: { token: UserToken.token, quizId: quizId.quizId, questionId: questionId.questionId } });
+    { qs: { token: UserToken.token} });
 
     expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
@@ -143,13 +143,13 @@ describe('Success cases', () => {
   
   test('Basic return success check', () => {
     const res = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/question/${questionId.questionId}`,
-    { json: { token: UserToken.token, quizId: quizId.quizId, questionId: questionId.questionId } })
+    { qs: { token: UserToken.token } })
     expect(JSON.parse(res.body.toString())).toStrictEqual({})
     expect(res.statusCode).toStrictEqual(200)
   })
   test('delete the second question', () => {
     const res = request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/question/${questionIdTwo.questionId}`,
-    { json: { token: UserToken.token, quizId: quizId.quizId, questionId: questionIdTwo.questionId } })
+    { qs: { token: UserToken.token } })
     expect(JSON.parse(res.body.toString())).toStrictEqual({})
     expect(res.statusCode).toStrictEqual(200)
   })
