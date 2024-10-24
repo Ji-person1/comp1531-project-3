@@ -500,7 +500,7 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
  * @param {number} token - The session token of the current user.
  * @param {number} quizId - The ID of the quiz containing the question.
  * @param {number} questionId - The ID of the question to be updated.
- * @returns {object} error if failed, empty object if successful
+ * @returns {errorObject|object} error if failed, empty object if successful
  */
 export function adminQuestionMove (token: number, quizid: number, questionId: number, newPosition: number): errorObject | {} {
   const data = getData();
@@ -548,7 +548,7 @@ export function adminQuestionMove (token: number, quizid: number, questionId: nu
  * @param {number} token - The session token of the current user.
  * @param {number} quizId - The ID of the quiz containing the question.
  * @param {number} questionId - The ID of the question to be updated.
- * @returns {object|object} error if failed, an id if successful
+ * @returns {errorObject|object} error if failed, an id if successful
  */
 export function adminQuestionDuplicate (token: number, quizid: number, questionId: number): errorObject | DuplicatedId {
   const data = getData();
@@ -591,7 +591,7 @@ export function adminQuestionDuplicate (token: number, quizid: number, questionI
  * @param {number} token - the id of the user
  * @param {number} quizId - the id of the quiz being deleted
  * @param {number} questionId - the question id being deleted
- * @returns {number|object} error if failed, empty if successful
+ * @returns {errorObject|object} error if failed, empty if successful
  */
 
 export function quizQuestionDelete (token: number, quizId: number, questionId: number): errorObject | object {
