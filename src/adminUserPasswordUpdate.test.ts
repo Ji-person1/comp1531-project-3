@@ -1,105 +1,106 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
-
+import {
+  ServerAuthRegister, ServerUserDetails,
+  ServerClear, ServerUserDetailsUpdate
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-})
+  ServerClear();
+});
 
 describe('Error cases', () => {
-    let UserToken: {token: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        UserToken = JSON.parse(res.body.toString())
-    })
+  let UserToken: { token: string };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+  });
 
-    test('invalid user token', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: -UserToken.token, oldPassword: "1234abcd", newPassword: "1234567A"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('invalid user token', () => {
+    const res = ServerUserDetails((-Number(UserToken.token)).toString());
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 
-    test('same password', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "1234abcd"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('invalid email', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token, 'No', 'Hayden', 'Smith');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('incorrect password', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234567A", newPassword: "1234567A"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('invalid first name', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token, 'hayden.smith@unsw.edu.au', '!!', 'Smith');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('Password used before', () => {
-        request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "1234567A"}});
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234567A", newPassword: "1234abcd"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('invalid last name', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token,
+      'hayden.smith@unsw.edu.au', 'Hayden', '!!');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('New password too short', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "1"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Too long first name', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token,
+      'hayden.smith@unsw.edu.au', 'a'.repeat(30), 'Smith');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('New password has no letters', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "12345678"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Too short first name', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token, 'hayden.smith@unsw.edu.au', 'a', 'Smith');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('New password has no numbers', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "abcdefgh"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Too long last name', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token,
+      'hayden.smith@unsw.edu.au', 'Hayden', 'a'.repeat(30));
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test.todo("probably something once we have the logout implemented")
+  test('Too short last name', () => {
+    const res = ServerUserDetailsUpdate(UserToken.token, 'hayden.smith@unsw.edu.au', 'Hayden', 'a');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test.todo('implement a test once we have logout implemented');
 });
 
 describe('Success cases', () => {
-    let UserToken: {token: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        UserToken = JSON.parse(res.body.toString())
-    })
+  let UserToken: { token: string };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+  });
 
-    test('Success test', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "1234567A"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({});
-        expect(res.statusCode).toStrictEqual(200);
+  test('correct with one account', () => {
+    const res = ServerUserDetails(UserToken.token);
+    expect(res.body).toStrictEqual({
+      user: {
+        userId: expect.any(Number),
+        name: 'Jim Zheng',
+        email: 'jim.zheng123@icloud.com',
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0
+      }
     });
 
-    test('Success test with a login', () => {
-        const res = request('PUT', SERVER_URL + '/v1/admin/auth/password', 
-            {json: {token: UserToken.token, oldPassword: "1234abcd", newPassword: "1234567A"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({});
-        expect(res.statusCode).toStrictEqual(200);
-        const resLoginF = request('POST', SERVER_URL + '/v1/admin/auth/login', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd"}});
-        expect(JSON.parse(resLoginF.body.toString())).toStrictEqual(ERROR);
-        expect(resLoginF.statusCode).toStrictEqual(400);
-        const resLoginS = request('POST', SERVER_URL + '/v1/admin/auth/login', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234567A"}});
-        expect(JSON.parse(resLoginS.body.toString())).toStrictEqual({token: expect.any(String)});
-        expect(resLoginS.statusCode).toStrictEqual(200);
+    const resTwo = ServerUserDetailsUpdate(UserToken.token,
+      'hayden.smith@unsw.edu.au', 'Hayden', 'Smith');
+    expect(resTwo.body).toStrictEqual({});
+    expect(resTwo.statusCode).toStrictEqual(200);
+
+    const resThree = ServerUserDetails(UserToken.token);
+    expect(resThree.body).toStrictEqual({
+      user: {
+        userId: expect.any(Number),
+        name: 'Hayden Smith',
+        email: 'hayden.smith@unsw.edu.au',
+        numSuccessfulLogins: 1,
+        numFailedPasswordsSinceLastLogin: 0
+      }
     });
+  });
 });

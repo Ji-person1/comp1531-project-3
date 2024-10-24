@@ -1,80 +1,66 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
-
+import { ServerAuthRegister, ServerClear } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-})
+  ServerClear();
+});
 
 describe('Error cases', () => {
-    test('invalid email', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "no", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    test('Password too short', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "no", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    test('Password only letters', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "aaaaaaaa", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    test('Password only numbers', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "12345678", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    test('invalid first name', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "1234", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    test('invalid last name', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "1234"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    test('reused email', () => {
-        request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('invalid email', () => {
+    const res = ServerAuthRegister('no', '1234abcd', 'Jim', 'Zheng');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('Password too short', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', 'no', 'Jim', 'Zheng');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('Password only letters', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', 'aaaaaaaa', 'Jim', 'Zheng');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('Password only numbers', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '12345678', 'Jim', 'Zheng');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('invalid first name', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', '1234', 'Zheng');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('invalid last name', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', '1234');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+  test('reused email', () => {
+    ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng');
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 });
 
 describe('Success cases', () => {
-    test('Correct basic case', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
-        expect(res.statusCode).toStrictEqual(200);
-    });
-    test('Correct long password case', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "123456789ABCDEFGhijklmno", nameFirst: "Jim", nameLast: "Zheng"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
-        expect(res.statusCode).toStrictEqual(200);
-    });
-    test('Correct weird names case', () => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim-ello", nameLast: "What is my last name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({token: expect.any(String)});
-        expect(res.statusCode).toStrictEqual(200);
-    });
+  test('Correct basic case', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng');
+    expect(res.body).toStrictEqual({ token: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(200);
+  });
+  test('Correct long password case', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '123456789ABCDEFGhijklmno',
+      'Jim', 'Zheng');
+    expect(res.body).toStrictEqual({ token: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(200);
+  });
+  test('Correct weird names case', () => {
+    const res = ServerAuthRegister('jim.zheng123@icloud.com', '123456789ABCDEFGhijklmno',
+      'Jim-ello', 'What is my last name');
+    expect(res.body).toStrictEqual({ token: expect.any(String) });
+    expect(res.statusCode).toStrictEqual(200);
+  });
 });

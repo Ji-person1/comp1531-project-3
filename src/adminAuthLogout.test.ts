@@ -1,79 +1,50 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
-
+import {
+  ServerAuthRegister, ServerAuthLogin, ServerAuthLogout,
+  ServerClear
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-})
+  ServerClear();
+});
 
 describe('Error Cases', () => {
-    let UserToken: {token: number}
-    beforeEach(() => {
-        const loginRes = request('POST', SERVER_URL + '/v1/admin/auth/login', 
-            {json: {email: "swapnav.saikia123@icloud.com", password: "1234abcd"}});
-    
-        if (loginRes.statusCode === 200) {
-            UserToken = JSON.parse(loginRes.body.toString());
-        } else {
-            const registerRes = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-                {json: {email: "swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-            UserToken = JSON.parse(registerRes.body.toString());
-        }
-    })
+  let UserToken: { token: string };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('swapnav.saikia123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+  });
 
-    test('Logout with invalid token (401 Unauthorized)', () => {
-        const invalidToken = "invalid_token_123";
+  test('Logout with invalid token (401 Unauthorized)', () => {
+    const invalidToken = Number(-UserToken.token).toString();
+    const logoutRes = ServerAuthLogout(invalidToken);
+    expect(logoutRes.statusCode).toBe(401);
+    expect(logoutRes.body).toStrictEqual(ERROR);
+  });
 
-        const logoutRes = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
-            json: { token: invalidToken },
-            timeout: TIMEOUT_MS
-        });
-
-        expect(logoutRes.statusCode).toBe(401);
-        expect(JSON.parse(logoutRes.body.toString())).toEqual(ERROR);
-    });
-
-    test('Logout with empty token (401 Unauthorized)', () => {
-        const emptyToken = "";
-
-        const logoutRes = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
-            json: { token: emptyToken },
-            timeout: TIMEOUT_MS
-        });
-
-        expect(logoutRes.statusCode).toBe(401);
-        expect(JSON.parse(logoutRes.body.toString())).toEqual(ERROR);
-    });
-
+  test('Logout with empty token (401 Unauthorized)', () => {
+    const emptyToken = '';
+    const logoutRes = ServerAuthLogout(emptyToken);
+    expect(logoutRes.statusCode).toBe(401);
+    expect(logoutRes.body).toStrictEqual(ERROR);
+  });
 });
 
 describe('Success Cases', () => {
-    let UserToken: {token: number}
-    beforeEach(() => {
-        const loginRes = request('POST', SERVER_URL + '/v1/admin/auth/login', 
-            {json: {email: "swapnav.saikia123@icloud.com", password: "1234abcd"}});
-    
-        if (loginRes.statusCode === 200) {
-            UserToken = JSON.parse(loginRes.body.toString());
-        } else {
-            const registerRes = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-                {json: {email: "swapnav.saikia123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}});
-            UserToken = JSON.parse(registerRes.body.toString());
-        }
-    })
+  let UserToken: { token: string };
+  beforeEach(() => {
+    const loginRes = ServerAuthLogin('swapnav.saikia123@icloud.com', '1234abcd');
+    if (loginRes.statusCode === 200) {
+      UserToken = loginRes.body;
+    } else {
+      UserToken = ServerAuthRegister('swapnav.saikia123@icloud.com', '1234abcd',
+        'Jim', 'Zheng').body;
+    }
+  });
 
-    test('Successful logout (200 OK)', () => {
-        const logoutRes = request('POST', SERVER_URL + '/v1/admin/auth/logout', {
-            json: { token: UserToken.token },
-            timeout: TIMEOUT_MS
-        });
-
-        expect(logoutRes.statusCode).toBe(200);
-        expect(JSON.parse(logoutRes.body.toString())).toEqual({});
-    });
-})
+  test('Successful logout (200 OK)', () => {
+    const logoutRes = ServerAuthLogout(UserToken.token);
+    expect(logoutRes.statusCode).toBe(200);
+    expect(logoutRes.body).toStrictEqual({});
+  });
+});

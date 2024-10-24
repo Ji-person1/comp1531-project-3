@@ -1,80 +1,70 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
-
+import {
+  ServerQuizList, ServerQuizCreate,
+  ServerClear, ServerAuthRegister
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-})
+  ServerClear();
+});
 
 describe('Error cases', () => {
-    let UserToken: {token: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-    }); 
+  let UserToken: { token: string };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+  });
 
-    test('Invalid id with no quizzes', () => {
-        const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {qs: {token: -UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('Invalid token with no quizzes', () => {
+    const res = ServerQuizList((-Number(UserToken.token)).toString());
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 
-    test('Invalid id with no quizzes', () => {
-        request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken, name: "Quiz test", description: "a test quiz"}});
-        const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {qs: {token: -UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('Invalid token after quiz creation', () => {
+    ServerQuizCreate(UserToken.token, 'Quiz test', 'a test quiz');
+    const res = ServerQuizList((-Number(UserToken.token)).toString());
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 });
 
 describe('Success cases', () => {
-    let UserToken: {token: number}
-    let quizId: {quizId: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
-        quizId = JSON.parse(quizRes.body.toString())
-    }); 
-    test('Correct basic case', () => {
-        const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {qs: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: [
-            {
-                quizId: quizId.quizId,
-                name: "functional quiz"
-            }
-        ]});
-        expect(res.statusCode).toStrictEqual(200);
-    });
+  let UserToken: { token: string };
+  let quizId: { quizId: number };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+    quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
+  });
 
-    test('multiple quizzes', () => {
-        const responseQuiz = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "Usable quiz", description: "a test quiz"}});
-        const QuizTwo = JSON.parse(responseQuiz.body.toString())
-        const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {qs: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({quizzes: [
-            {
-                quizId: quizId.quizId,
-                name: "functional quiz"
-            },
-            {
-                quizId: QuizTwo.quizId,
-                name: "Usable quiz"
-            }
-        ]});
-        expect(res.statusCode).toStrictEqual(200);
+  test('Correct basic case', () => {
+    const res = ServerQuizList(UserToken.token);
+    expect(res.body).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId.quizId,
+          name: 'functional quiz'
+        }
+      ]
     });
+    expect(res.statusCode).toStrictEqual(200);
+  });
+
+  test('multiple quizzes', () => {
+    const QuizTwo = ServerQuizCreate(UserToken.token, 'Usable quiz', 'a test quiz').body;
+    const res = ServerQuizList(UserToken.token);
+    expect(res.body).toStrictEqual({
+      quizzes: [
+        {
+          quizId: quizId.quizId,
+          name: 'functional quiz'
+        },
+        {
+          quizId: QuizTwo.quizId,
+          name: 'Usable quiz'
+        }
+      ]
+    });
+    expect(res.statusCode).toStrictEqual(200);
+  });
 });
