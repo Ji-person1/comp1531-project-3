@@ -1,24 +1,10 @@
 import validator from 'validator';
 import { getData, setData } from './datastore';
-import { generateSessionId } from './helper';
+import { findToken, generateSessionId } from './helper';
+import {
+  UserDetails, errorObject, Token,
+} from './interfaces';
 
-interface UserDetails {
-    user : {
-        userId: number;
-        name: string;
-        email: string;
-        numSuccessfulLogins: number;
-        numFailedPasswordsSinceLastLogin: number
-    }
-}
-
-interface errorObject {
-    error: string
-}
-
-interface Token {
-    token: string
-}
 /**
  * Creates a new user when given the email, first name, last name and password
  * validates the passed in variables
@@ -126,20 +112,15 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
  * finds details on an account based on the userid passed in
  * returns error if the account cannot be found.
  *
- * @param {string} authUserId - the user id of the account being searched
+ * @param {string} token - a token used to find the linked account.
  * @returns {object} error if failed, the details of the account otherwise
  */
 export function adminUserDetails (token: number): errorObject | UserDetails {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400  user not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   return {
@@ -157,7 +138,7 @@ export function adminUserDetails (token: number): errorObject | UserDetails {
  * updates the details, when provided with them. Changing the email
  * first name and last name of the user.
  *
- * @param {string} authUserId - The id of the user, used for verification.
+ * @param {string} token - a token used to find the linked account.
  * @param {string} email - The new email address of a user.
  * @param {string} nameFirst - the new first name of the user.
  * @param {string} nameLast - the new last name of the user
@@ -166,14 +147,9 @@ export function adminUserDetails (token: number): errorObject | UserDetails {
 export function adminUserDetailsUpdate (token: number, email: string,
   nameFirst: string, nameLast: string): errorObject | Record<string, never> {
   const data = getData();
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid token' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400 user id not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   if (user.email === email) {
@@ -189,10 +165,10 @@ export function adminUserDetailsUpdate (token: number, email: string,
     return { error: '400 namefirst is less than two characters' };
   }
   if (nameFirst.length > 20) {
-    return { error: '400 nameFkirst is more than twenty characters' };
+    return { error: '400 nameFirst is more than twenty characters' };
   }
   if (/[^a-zA-Z\s'-]/.test(nameLast) === true) {
-    return { error: '400 nameFirst invalid characters' };
+    return { error: '400 nameLast invalid characters' };
   }
   if (nameLast.length < 2) {
     return { error: '400 nameLast is less than two characters' };
@@ -212,7 +188,7 @@ export function adminUserDetailsUpdate (token: number, email: string,
  * updates the password of a user to a new password, if given the user id and
  * former password of the user to a new password passed in.
  *
- * @param {string} authUserId - The user id of the account
+ * @param {string} token - a token used to find the linked account.
  * @param {string} oldPassword - The former password for the account.
  * @param {string} newPassword - The new password for the account.
  * @returns {object} error if failed, empty object if successful
@@ -220,15 +196,12 @@ export function adminUserDetailsUpdate (token: number, email: string,
 export function adminUserPasswordUpdate (token: number, oldPassword: string,
   newPassword: string): errorObject | Record<string, never> {
   const data = getData();
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400 user id not found' };
-  } else if (oldPassword !== user.password) {
+  if (oldPassword !== user.password) {
     return { error: '400 Old Password is not the correct old password' };
   } else if (oldPassword === newPassword) {
     return { error: '400 Old Password and New Password match exactly' };
