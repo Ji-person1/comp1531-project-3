@@ -1,59 +1,14 @@
 import { getData, setData } from './datastore';
-import { randomColour } from './helper';
-
-interface errorObject {
-    error: string
-}
-
-interface quizDetails {
-    quizId: number
-    name: string
-    timeCreated: number
-    timeLastEdited: number
-    description: string
-    numQuestions: number
-    questions: Questions[]
-}
-
-interface QuestionId {
-  questionId: number
-}
-
-interface Questions {
-    questionId: number;
-    question: string;
-    timeLimit: number;
-    points: number;
-    answerOptions: Answer[];
-}
-
-interface Answer {
-    answer: string;
-    correct: boolean;
-    colour?: string;
-}
-
-interface quizList {
-    quizzes: QuizListInfo[]
-}
-
-interface QuizListInfo {
-    quizId: number;
-    name: string;
-}
-
-interface QuizId {
-    quizId: number;
-}
-
-interface DuplicatedId {
-    duplicatedQuestionId: number;
-}
+import { findToken, randomColour } from './helper';
+import {
+  errorObject, quizDetails, QuestionId, Questions, Answer,
+  quizList, QuizId, DuplicatedId
+} from './interfaces';
 
 /**
  * Update the description of the relevant quiz.
  *
- * @param {number} authUserId - the id of the user
+ * @param {string} token - a number used to find the linked account.
  * @param {number} quizId - the id of the quiz being updated
  * @param {string} description - the new description of the quiz
  * @returns {number|object} error if failed, empty if successful
@@ -62,14 +17,9 @@ export function adminQuizDescriptionUpdate (token: number, quizId: number,
   description: string): errorObject | Record<string, never> {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '401 token is not linked to a user' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -91,7 +41,7 @@ export function adminQuizDescriptionUpdate (token: number, quizId: number,
 /**
  * Updates the name of a quiz when given the correct authUserId, quizId and name
  *
- * @param {string} authUserId - The id of the user.
+ * @param {string} token - a number used to find the linked account.
  * @param {string} quizId - The id of the quiz.
  * @param {string} name - the name of the quiz.
  * @returns {object} error if failed, empty if successful.
@@ -135,21 +85,16 @@ export function adminQuizNameUpdate (token: number, quizId: number,
  * Get all of the relevant information about the current quiz. Returning an error if
  * either adminauthuserid doesn't work or quizid
  *
- * @param {string} authUserId - The email address of a user.
+ * @param {string} token - a number used to find the linked account.
  * @param {string} quizId - The password for the account.
  * @returns {number|object} error if failed, number if successful
  */
 export function adminQuizInfo(token: number, quizId: number): errorObject | quizDetails {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400 user not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -175,21 +120,16 @@ export function adminQuizInfo(token: number, quizId: number): errorObject | quiz
 /**
  * Provides a list of all quizzes that are owned by the currently logged in user.
  *
- * @param {string} authUserId - The email address of a user.
+ * @param {string} token - a number used to find the linked account.
  * @param {string} quizId - The password for the account.
  * @returns {number|object} error if failed, number if successful
  */
 export function adminQuizList(token : number): errorObject | quizList {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '401  user not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const userQuizzes = data.quizzes.filter(quiz => quiz.creatorId === user.id);
@@ -204,7 +144,7 @@ export function adminQuizList(token : number): errorObject | quizList {
 /**
  * Given basic details about a new quiz, create one for the logged in user.
  *
- * @param {string} authUserId - The email address of a user.
+ * @param {string} token - a number used to find the linked account.
  * @param {string} name - The name of the new quiz.
  * @param {string} description - The description of the new quiz.
  * @returns {object} error object if failed, object containing a number if successful
@@ -213,14 +153,9 @@ export function adminQuizCreate(token: number, name: string,
   description: string): errorObject | QuizId {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400  user not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   if (name.length < 3 || name.length > 30 || !/^[a-zA-Z0-9 ]+$/.test(name)) {
@@ -254,7 +189,7 @@ export function adminQuizCreate(token: number, name: string,
 /**
  * Given a particular quiz, move the quiz into trash
  *
- * @param {number} authUserId - The email address of a user.
+ * @param {string} token - a number used to find the linked account.
  * @param {number} quizId - The name of the new quiz.
  * @returns {object} error object if failed, object containing a number if successful
  */
@@ -262,14 +197,9 @@ export function adminQuizRemove(token: number,
   quizId: number): errorObject | Record<string, never> {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400  user not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
@@ -290,7 +220,7 @@ export function adminQuizRemove(token: number,
  * Transfer ownership of a quiz to another user based on their email.
  *
  * @param {number} quizId - The ID of the quiz to be transferred.
- * @param {number} token - token of the user
+ * @param {string} token - a number used to find the linked account.
  * @param {string} userEmail - userEmail.
  * @returns {object} An empty object if successful, or an error object if unsuccessful.
  */
@@ -342,26 +272,22 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
   duration: number, points: number, answers: Answer[]): QuestionId | errorObject {
   const data = getData();
 
-  // Check if token is valid
   const session = data.sessions.find(session => session.sessionId === token);
   if (!session) {
     return { error: '401: Token is invalid or empty' };
   }
 
-  // Check if quiz exists and user owns it
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   if (!quiz || quiz.creatorId !== session.authUserId) {
     return { error: '403: User is not an owner of this quiz or quiz doesnt exist' };
   }
 
-  // Validate question
   if (!question) {
     return { error: '400: Question is invalid' };
   } else if (question.length < 5 || question.length > 50) {
     return { error: '400: Question string is less than length 5 or greater length 50' };
   }
 
-  // Validate answers
   if (!answers) {
     return { error: '400: Question is invalid' };
   } else if (answers.length < 2 || answers.length > 6) {
@@ -510,14 +436,9 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
 export function adminQuestionMove (token: number, quizid: number, questionId: number,
   newPosition: number): errorObject | Record<string, never> {
   const data = getData();
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400 user id not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizid);
@@ -557,14 +478,9 @@ export function adminQuestionMove (token: number, quizid: number, questionId: nu
 export function adminQuestionDuplicate (token: number, quizid: number,
   questionId: number): errorObject | DuplicatedId {
   const data = getData();
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400 user id not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizid);
@@ -592,10 +508,10 @@ export function adminQuestionDuplicate (token: number, quizid: number,
 /**
  * remove the question that given in a given quiz.
  *
- * @param {number} token - the id of the user
+ * @param {string} token - a number used to find the linked account.
  * @param {number} quizId - the id of the quiz being deleted
  * @param {number} questionId - the question id being deleted
- * @returns {errorObject|object} error if failed, empty if successful
+ * @returns {Object} error if failed, empty if successful
  */
 
 export function quizQuestionDelete (token: number, quizId: number, questionId: number):
@@ -641,14 +557,9 @@ export function adminQuizTrashEmpty(token: number, quizIds: number[]):
   errorObject | Record<string, never> {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '401 token is not linked to a user' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   for (const quizId of quizIds) {
@@ -670,17 +581,18 @@ export function adminQuizTrashEmpty(token: number, quizIds: number[]):
   return {};
 }
 
+/**
+ * view a list of all of the quizzes currently inside of trash
+ *
+ * @param {number} token - The session token of the user.
+ * @returns {Object} - An error object if failed, or an empty object if successful.
+ */
 export function adminQuizTrash(token: number): errorObject | quizList {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: 'Token is empty or invalid ' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const trashedQuizzes = data.bin.filter(quiz => quiz.creatorId === user.id);
@@ -693,18 +605,20 @@ export function adminQuizTrash(token: number): errorObject | quizList {
   };
 }
 
+/**
+ * restores a quiz from the bin
+ *
+ * @param {number} token - The session token of the user.
+ * @param {number} quizId - The session token of the user.
+ * @returns {Object} - An error object if failed, or an empty object if successful.
+ */
 export function adminQuizRestore(token: number, quizId: number):
   errorObject | Record<string, never> {
   const data = getData();
 
-  const session = data.sessions.find(session => session.sessionId === token);
-  if (!session) {
-    return { error: '401 invalid session' };
-  }
-
-  const user = data.users.find(user => user.id === session.authUserId);
-  if (!user) {
-    return { error: '400  user not found' };
+  const user = findToken(data, token);
+  if ('error' in user) {
+    return user;
   }
 
   const restoreQuiz = data.bin.find(quiz => quiz.quizId === quizId);

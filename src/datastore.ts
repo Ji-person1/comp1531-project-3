@@ -1,54 +1,6 @@
 import * as fs from 'fs';
 const DATA_PATH = './src/data.json';
-
-interface User {
-    id: number;
-    email: string;
-    nameFirst: string;
-    nameLast: string;
-    password: string;
-    numSuccessfulLogins: number;
-    numFailedPasswordsSinceLastLogin: number;
-    prevPasswords: string[]
-}
-
-interface Quiz {
-    quizId: number;
-    creatorId: number;
-    name: string;
-    description: string;
-    timeCreated: number;
-    timeLastEdited: number;
-    numQuestions: number;
-    questions: Questions[]
-}
-
-interface Questions {
-    questionId: number
-    question: string;
-    timeLimit: number;
-    points: number;
-    answerOptions: Answer[];
-}
-
-interface Answer {
-    answer: string;
-    correct: boolean;
-    colour?: string;
-}
-
-interface Session {
-    sessionId: number;
-    authUserId: number;
-    createdAt: number;
-}
-
-interface DataStore {
-    users: User[];
-    quizzes: Quiz[];
-    bin: Quiz[];
-    sessions: Session[];
-}
+import { DataStore } from './interfaces';
 
 export function getData(): DataStore {
   const data = fs.readFileSync(DATA_PATH, 'utf-8');
