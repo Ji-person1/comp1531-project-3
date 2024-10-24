@@ -1,110 +1,83 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
-
+import {
+  ServerAuthRegister, ServerQuizCreate, ServerQuizRemove,
+  ServerQuizRestore, ServerQuizInfo, ServerClear
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-})
-
-describe('Error cases', () => {
-    let UserToken: {token: number}
-    let quizId: {quizId: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
-        quizId = JSON.parse(quizRes.body.toString())
-    });
-
-    test('identical quiz restoration', () => {
-        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {qs: {token: UserToken.token}});
-        request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
-        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-
-    test('quiz not in trash', () => {
-        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-
-    test('Invalid quizId', () => {
-        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {qs: {token: UserToken.token}});
-        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${-quizId.quizId}/restore`, 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-
-    test('Invalid token', () => {
-        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {qs: {token: UserToken.token}});
-        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
-            {json: {token: -UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  ServerClear();
 });
 
-describe('Success cases', () => {
-    let UserToken: {token: number}
-    let UserTokenTwo: {token: number}
-    let quizId: {quizId: number}
-    let quizIdTwo: {quizId: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-        const resTwo = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
-        UserTokenTwo = JSON.parse(resTwo.body.toString())
-        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "first quiz", description: "a test quiz"}});
-        quizId = JSON.parse(quizRes.body.toString())
-        const quizResTwo = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "second quiz", description: "a test quiz"}});
-        quizIdTwo = JSON.parse(quizResTwo.body.toString())
-    }); 
+describe('Error Cases', () => {
+  let UserToken: { token: string };
+  let quizId: { quizId: number };
 
-    test('Basic return success check', () => {
-        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {qs: {token: UserToken.token}});
-        const res = request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({});
-        expect(res.statusCode).toStrictEqual(200);
-    });
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+    quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
+  });
 
-    test('Success check with a quizinfo', () => {
-        request('DELETE', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {qs: {token: UserToken.token}});
-        request('POST', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/restore`, 
-            {json: {token: UserToken.token}});
-        const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizIdTwo.quizId}`, 
-            {qs: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({
-            quizId: quizIdTwo.quizId,
-            name: "second quiz",
-            timeCreated: expect.any(Number),
-            timeLastEdited: expect.any(Number),
-            description: "a test quiz",
-            numQuestions: 0,
-            questions: []
-        });
-        expect(res.statusCode).toStrictEqual(200);
+  test('identical quiz restoration', () => {
+    ServerQuizRemove(UserToken.token, quizId.quizId);
+    ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz');
+    const res = ServerQuizRestore(UserToken.token, quizId.quizId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('quiz not in trash', () => {
+    const res = ServerQuizRestore(UserToken.token, quizId.quizId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('Invalid quizId', () => {
+    ServerQuizRemove(UserToken.token, quizId.quizId);
+    const res = ServerQuizRestore(UserToken.token, -quizId.quizId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('Invalid token', () => {
+    ServerQuizRemove(UserToken.token, quizId.quizId);
+    const res = ServerQuizRestore('-' + UserToken.token, quizId.quizId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
+});
+
+describe('Success Cases', () => {
+  let UserToken: { token: string };
+  let quizId: { quizId: number };
+  let quizIdTwo: { quizId: number };
+
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+    quizId = ServerQuizCreate(UserToken.token, 'first quiz', 'a test quiz').body;
+    quizIdTwo = ServerQuizCreate(UserToken.token, 'second quiz', 'a test quiz').body;
+  });
+
+  test('Basic return success check', () => {
+    ServerQuizRemove(UserToken.token, quizId.quizId);
+    const res = ServerQuizRestore(UserToken.token, quizId.quizId);
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toStrictEqual(200);
+  });
+
+  test('Success check with a quizinfo', () => {
+    ServerQuizRemove(UserToken.token, quizId.quizId);
+    ServerQuizRestore(UserToken.token, quizId.quizId);
+    const res = ServerQuizInfo(UserToken.token, quizIdTwo.quizId);
+    expect(res.body).toStrictEqual({
+      quizId: quizIdTwo.quizId,
+      name: 'second quiz',
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: 'a test quiz',
+      numQuestions: 0,
+      questions: []
     });
+    expect(res.statusCode).toStrictEqual(200);
+  });
 });

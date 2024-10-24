@@ -1,132 +1,67 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
+import {
+  ServerAuthRegister, ServerQuizCreate, ServerQuizCreateQuestion,
+  ServerQuizUpdateQuestion, ServerClear
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
+  ServerClear();
 });
 
 describe('adminQuizUpdateQuestion', () => {
-    let user1Token: string;
-    let quizId: number;
-    let questionId: number;
+  let user1Token: { token: string };
+  let quizId: { quizId: number };
+  let questionId: { questionId: number };
 
-    beforeEach(() => {
-        // Register user1 
-        const resUser1 = request('POST', `${SERVER_URL}/v1/admin/auth/register`, {
-            json: {
-                email: "swastik@example.com",
-                password: "password123",
-                nameFirst: "Swastik",
-                nameLast: "Mishra"
-            },
-            timeout: TIMEOUT_MS
-        });
-        user1Token = JSON.parse(resUser1.body.toString()).token;
+  beforeEach(() => {
+    user1Token = ServerAuthRegister('swastik@example.com', 'password123', 'Swastik', 'Mishra').body;
+    quizId = ServerQuizCreate(user1Token.token, 'Test Quiz', 'This is a test quiz').body;
+    questionId = ServerQuizCreateQuestion(user1Token.token,
+      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
+        { answer: 'Duke Dennis', correct: true },
+        { answer: 'Kai Cenat', correct: false }
+      ]).body;
+  });
 
-        // Create a quiz for user1
-        const resQuiz = request('POST', `${SERVER_URL}/v1/admin/quiz`, {
-            json: {
-                token: user1Token,
-                name: "Test Quiz",
-                description: "This is a test quiz"
-            },
-            timeout: TIMEOUT_MS
-        });
-        quizId = JSON.parse(resQuiz.body.toString()).quizId;
+  test('Successful question update', () => {
+    const res = ServerQuizUpdateQuestion(user1Token.token, quizId.quizId,
+      questionId.questionId, 'What does it mean when someone takes your food?', 45, 8, [
+        { answer: 'Fanum Tax', correct: true },
+        { answer: 'bullying', correct: false },
+        { answer: 'Sharing', correct: false }
+      ]);
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toBe(200);
+  });
 
-        // Create a question
-        const resQuestion = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/question`, {
-            json: {
-                token: user1Token,
-                question: "Who is the Rizzler?",
-                duration: 30,
-                points: 5,
-                answers: [
-                    { answer: "Duke Dennis", correct: true },
-                    { answer: "Kai Cenat", correct: false }
-                ]
-            },
-            timeout: TIMEOUT_MS
-        });
-        questionId = JSON.parse(resQuestion.body.toString()).questionId;
-    });
+  test('Invalid token', () => {
+    const res = ServerQuizUpdateQuestion('invalid_token', quizId.quizId,
+      questionId.questionId, 'Who is the Rizzler?', 45, 8, [
+        { answer: 'Duke Dennis', correct: true },
+        { answer: 'Kai Cenat', correct: false }
+      ]);
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toStrictEqual(ERROR);
+  });
 
-    test('Successful question update', () => {
-        const res = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`, {
-            json: {
-                token: user1Token,
-                question: "What does it mean when someone takes your food?",
-                duration: 45,
-                points: 8,
-                answers: [
-                    { answer: "Fanum Tax", correct: true },
-                    { answer: "bullying", correct: false },
-                    { answer: "Sharing", correct: false }
-                ]
-            },
-            timeout: TIMEOUT_MS
-        });
-        const data = JSON.parse(res.body.toString());
-        expect(data).toStrictEqual({});
-        expect(res.statusCode).toBe(200);
-    });
+  test('Quiz does not exist', () => {
+    const res = ServerQuizUpdateQuestion(user1Token.token, -quizId.quizId,
+      questionId.questionId, 'Who is the Rizzler?', 45, 8, [
+        { answer: 'Duke Dennis', correct: true },
+        { answer: 'Kai Cenat', correct: false }
+      ]);
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toEqual(ERROR);
+  });
 
-    test('Invalid token', () => {
-        const res = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`, {
-            json: {
-                token: 'invalid_token',
-                question: "Who is the Rizzler?",
-                duration: 45,
-                points: 8,
-                answers: [
-                    { answer: "Duke Dennis", correct: true },
-                    { answer: "Kai Cenat", correct: false }
-                ]
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(401);
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-    });
-
-    test('Quiz does not exist', () => {
-        const res = request('PUT', `${SERVER_URL}/v1/admin/quiz/999/question/${questionId}`, {
-            json: {
-                token: user1Token,
-                question: "Who is the Rizzler?",
-                duration: 45,
-                points: 8,
-                answers: [
-                    { answer: "Duke Dennis", correct: true },
-                    { answer: "Kai Cenat", correct: false }
-                ]
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(403);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
-
-    test('Question does not exist', () => {
-        const res = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${-questionId}`, {
-            json: {
-                token: user1Token,
-                question: "Who is the Rizzler?",
-                duration: 45,
-                points: 8,
-                answers: [
-                    { answer: "Duke Dennis", correct: true },
-                    { answer: "Kai Cenat", correct: false }
-                ]
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(400);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+  test('Question does not exist', () => {
+    const res = ServerQuizUpdateQuestion(user1Token.token, quizId.quizId,
+      -questionId.questionId, 'Who is the Rizzler?', 45, 8, [
+        { answer: 'Duke Dennis', correct: true },
+        { answer: 'Kai Cenat', correct: false }
+      ]);
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual(ERROR);
+  });
 });

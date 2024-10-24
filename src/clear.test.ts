@@ -1,48 +1,44 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
+import {
+  ServerAuthRegister, ServerQuizCreate, ServerClear,
+  ServerQuizList, ServerUserDetails, ServerQuizInfo
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
+beforeEach(() => {
+  ServerClear();
+});
+
 describe('Function tests', () => {
-    let UserToken: {token: number}
-    let quizId: {quizId: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "first quiz", description: "a test quiz"}});
-        quizId = JSON.parse(quizRes.body.toString())
-        request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-    }); 
+  let UserToken: { token: string };
+  let quizId: { quizId: number };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+    quizId = ServerQuizCreate(UserToken.token, 'first quiz', 'a test quiz').body;
+    ServerClear();
+  });
 
-    test('Return type check', () => {
-        const res = request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-        expect(JSON.parse(res.body.toString())).toStrictEqual({});
-        expect(res.statusCode).toStrictEqual(200);
-    });
+  test('Return type check', () => {
+    const res = ServerClear();
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toStrictEqual(200);
+  });
 
-    test('User details should be error if empty datastore', () => {
-        const res = request('GET', SERVER_URL + '/v1/admin/auth/details', 
-            {json: {token: -UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('User details should be error if empty datastore', () => {
+    const res = ServerUserDetails(UserToken.token);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 
-    test('Quiz list should be invalid if empty datastore', () => {
-        const res = request('GET', SERVER_URL + '/v1/admin/quiz/list', 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('Quiz list should be invalid if empty datastore', () => {
+    const res = ServerQuizList(UserToken.token);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 
-    test('Quiz info should be error if empty datastore', () => {
-        const res = request('GET', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {json: {token: UserToken.token}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('Quiz info should be error if empty datastore', () => {
+    const res = ServerQuizInfo(UserToken.token, quizId.quizId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 });

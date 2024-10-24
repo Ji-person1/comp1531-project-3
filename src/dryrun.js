@@ -15,17 +15,14 @@ const assert = (condition) => {
 function requestHelper(method, path, payload) {
   let qs = {};
   let json = {};
-  const headers = { 'token': payload };
+  const headers = { token: payload };
   if (['GET', 'DELETE'].includes(method)) {
     qs = payload;
-    
   } else {
     // PUT/POST
     json = payload;
   }
-
-  console.log(method, path, { qs, json, headers })
-  const res = request(method, path, { qs, json, headers } );
+  const res = request(method, path, { qs, json, headers });
 
   if (res.statusCode !== 200) {
     // Return error code number instead of object in case of error.
@@ -37,15 +34,15 @@ function requestHelper(method, path, payload) {
 
 const clear = () => {
   return requestHelper(
-    'DELETE', 
-    `${url}:${port}/v1/clear`, 
+    'DELETE',
+    `${url}:${port}/v1/clear`,
     {}
   );
-}
+};
 
 const adminAuthRegister = (email, password, nameFirst, nameLast) => {
-  return requestHelper( 
-    'POST', 
+  return requestHelper(
+    'POST',
     `${url}:${port}/v1/admin/auth/register`,
     { email, password, nameFirst, nameLast }
   );
@@ -55,7 +52,7 @@ const adminQuizCreate = (token, name, description) => {
   return requestHelper(
     'POST',
     `${url}:${port}/v1/admin/quiz`,
-    { token, name, description },
+    { token, name, description }
   );
 };
 
@@ -63,17 +60,17 @@ const adminQuizList = (token) => {
   return requestHelper(
     'GET',
     `${url}:${port}/v1/admin/quiz/list`,
-    { token },
+    { token }
   );
 };
 
 const adminUserDetailsGet = (token) => {
-  return requestHelper( 
-    'GET', 
+  return requestHelper(
+    'GET',
     `${url}:${port}/v1/admin/user/details`,
     { token }
   );
-}
+};
 
 // TESTS //
 function testClear() {
@@ -95,23 +92,25 @@ const testAdminQuizCreate = () => {
   const token = adminAuthRegister('email@email.com', 'Password1', 'first', 'last').token;
   const data = adminQuizCreate(token, 'Quiz name', 'Quiz description');
   assert(typeof data === 'object' && 'quizId' in data && typeof data.quizId === 'number');
-}
+};
 
 const testUserDetails = () => {
   clear();
   const token = adminAuthRegister('blah@email.com', 'password1YAY', 'john', 'smith').token;
-  console.log(typeof(token), token)
+  console.log(typeof (token), token);
   const data = adminUserDetailsGet(token);
+  console.log('return data', data);
   assert(
-    typeof data === 'object' && 
+    typeof data === 'object' &&
     'user' in data && typeof data.user === 'object' &&
-    'userId' in data.user && typeof data.user.userId === 'number' && 
-    'email' in data.user && data.user.email === 'blah@email.com' && 
-    'name' in data.user && data.user.name === 'john smith' && 
-    'numSuccessfulLogins' in data.user && data.user.numSuccessfulLogins === 1 && 
-    'numFailedPasswordsSinceLastLogin' in data.user && data.user.numFailedPasswordsSinceLastLogin === 0
-  )
-}
+    'userId' in data.user && typeof data.user.userId === 'number' &&
+    'email' in data.user && data.user.email === 'blah@email.com' &&
+    'name' in data.user && data.user.name === 'john smith' &&
+    'numSuccessfulLogins' in data.user && data.user.numSuccessfulLogins === 1 &&
+    'numFailedPasswordsSinceLastLogin' in
+      data.user && data.user.numFailedPasswordsSinceLastLogin === 0
+  );
+};
 
 const testAdminQuizList = () => {
   clear();
@@ -119,11 +118,12 @@ const testAdminQuizList = () => {
   const quizId = adminQuizCreate(token, 'Quiz name', 'Quiz description').quizId;
   const data = adminQuizList(token);
   assert(
-    typeof data === 'object' && 'quizzes' in data && typeof data.quizzes === 'object' && 'name' in data.quizzes[0]
-    && 'quizId' in data.quizzes[0] && data.quizzes[0].name === 'Quiz name' && data.quizzes[0].quizId === quizId
+    typeof data === 'object' && 'quizzes' in data && typeof
+    data.quizzes === 'object' && 'name' in data.quizzes[0] &&
+    'quizId' in data.quizzes[0] && data.quizzes[0].name === 'Quiz name' &&
+      data.quizzes[0].quizId === quizId
   );
-}
-
+};
 
 const tests = [
   testClear, testAdminAuthRegister,
@@ -135,8 +135,7 @@ for (let i = 0; i < tests.length; i++) {
   try {
     tests[i]();
   } catch (err) {
-    console.log("You failed test", i)
-    console.log(err)
+    console.log('You failed test', i);
     failed++;
   }
 }

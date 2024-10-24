@@ -2,33 +2,16 @@
   "users": [
     {
       "id": 1,
-      "email": "jim.zheng123@icloud.com",
+      "email": "swapnav.saikia123@icloud.com",
       "nameFirst": "Jim",
       "nameLast": "Zheng",
       "password": "1234abcd",
-      "numSuccessfulLogins": 0,
+      "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
     }
   ],
-  "quizzes": [
-    {
-      "quizId": 1,
-      "creatorId": 1,
-      "name": "functional quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729675272,
-      "timeLastEdited": 1729675272,
-      "numQuestions": 0,
-      "questions": []
-    }
-  ],
-  "sessions": [
-    {
-      "sessionId": 27432,
-      "authUserId": 1,
-      "createdAt": 1729675272
-    }
-  ],
+  "quizzes": [],
+  "sessions": [],
   "bin": []
 }

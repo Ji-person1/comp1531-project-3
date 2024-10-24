@@ -1,157 +1,70 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
+import {
+  ServerAuthRegister, ServerQuizCreate, ServerQuizTransfer,
+  ServerQuizInfo, ServerClear
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
+  ServerClear();
 });
 
 describe('adminQuizTransfer', () => {
-    let user1Token: string;
-    let user2Token: string;
-    let quizId: number;
+  let user1Token: { token: string };
+  let user2Token: { token: string };
+  let quizId: { quizId: number };
 
-    beforeEach(() => {
-        // Register two users
-        const resUser1 = request('POST', `${SERVER_URL}/v1/admin/auth/register`, {
-            json: {
-                email: "swastik1@gmail.com",
-                password: "password123",
-                nameFirst: "Swastik",
-                nameLast: "Mishra"
-            },
-            timeout: TIMEOUT_MS
-        });
-        user1Token = JSON.parse(resUser1.body.toString()).token;
+  beforeEach(() => {
+    user1Token = ServerAuthRegister('swastik1@gmail.com', 'password123', 'Swastik', 'Mishra').body;
+    user2Token = ServerAuthRegister('Swastik2@gmail.com', 'password456', 'Neo', 'Mishra').body;
 
-        const resUser2 = request('POST', `${SERVER_URL}/v1/admin/auth/register`, {
-            json: {
-                email: "Swastik2@gmail.com",
-                password: "password456",
-                nameFirst: "Neo",
-                nameLast: "Mishra"
-            },
-            timeout: TIMEOUT_MS
-        });
-        user2Token = JSON.parse(resUser2.body.toString()).token;
+    quizId = ServerQuizCreate(user1Token.token, 'Test Quiz', 'This is a test quiz').body;
+  });
 
-        // Create a quiz for user1
-        const resQuiz = request('POST', `${SERVER_URL}/v1/admin/quiz`, {
-            json: {
-                token: user1Token,
-                name: "Test Quiz",
-                description: "This is a test quiz"
-            },
-            timeout: TIMEOUT_MS
-        });
-        quizId = JSON.parse(resQuiz.body.toString()).quizId;
-    });
+  test('Successful transfer', () => {
+    const res = ServerQuizTransfer(user1Token.token, quizId.quizId, 'Swastik2@gmail.com');
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toBe(200);
 
-    test('Successful transfer', () => {
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
-            json: {
-                token: user1Token,
-                userEmail: "Swastik2@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        const data = JSON.parse(res.body.toString());
-        expect(data).toEqual({});
-        expect(res.statusCode).toBe(200);
-        expect(data).toEqual({});
+    const quizInfo = ServerQuizInfo(user2Token.token, quizId.quizId);
+    expect(quizInfo.body.name).toBe('Test Quiz');
+  });
 
-        // Verify that user2 now owns the quiz
-        const resQuizInfo = request('GET', `${SERVER_URL}/v1/admin/quiz/${quizId}`, {
-            qs: { token: user2Token },
-            timeout: TIMEOUT_MS
-        });
-        const quizInfo = JSON.parse(resQuizInfo.body.toString());
-        expect(quizInfo.name).toBe("Test Quiz");
-    });
+  test('Invalid token', () => {
+    const res = ServerQuizTransfer('invalid_token', quizId.quizId, 'Swastik2@gmail.com');
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toEqual(ERROR);
+  });
 
-    test('Invalid token', () => {
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
-            json: {
-                token: 'invalid_token',
-                userEmail: "Swastik2@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(401);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+  test('Quiz does not exist', () => {
+    const res = ServerQuizTransfer(user1Token.token, 999, 'Swastik2@gmail.com');
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toEqual(ERROR);
+  });
 
-    test('Quiz does not exist', () => {
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/999/transfer`, {
-            json: {
-                token: user1Token,
-                userEmail: "Swastik2@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(403);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+  test('User is not the owner of the quiz', () => {
+    const res = ServerQuizTransfer(user2Token.token, quizId.quizId, 'Swastik1@gmail.com');
+    expect(res.statusCode).toBe(403);
+    expect(res.body).toEqual(ERROR);
+  });
 
-    test('User is not the owner of the quiz', () => {
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
-            json: {
-                token: user2Token,
-                userEmail: "Swastik1@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(403);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+  test('Target user does not exist', () => {
+    const res = ServerQuizTransfer(user1Token.token, quizId.quizId, 'nonexistent@gmail.com');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual(ERROR);
+  });
 
-    test('Target user does not exist', () => {
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
-            json: {
-                token: user1Token,
-                userEmail: "nonexistent@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(400);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+  test('Target user is the current owner', () => {
+    const res = ServerQuizTransfer(user1Token.token, quizId.quizId, 'Swastik1@gmail.com');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual(ERROR);
+  });
 
-    test('Target user is the current owner', () => {
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
-            json: {
-                token: user1Token,
-                userEmail: "Swastik1@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(400);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+  test('Quiz name conflict with target user', () => {
+    ServerQuizCreate(user2Token.token, 'Test Quiz', 'This is another test quiz');
 
-    test('Quiz name conflict with target user', () => {
-        // First, create a quiz with the same name for user2
-        request('POST', `${SERVER_URL}/v1/admin/quiz`, {
-            json: {
-                token: user2Token,
-                name: "Test Quiz",
-                description: "This is another test quiz"
-            },
-            timeout: TIMEOUT_MS
-        });
-
-        const res = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
-            json: {
-                token: user1Token,
-                userEmail: "Swastik2@gmail.com"
-            },
-            timeout: TIMEOUT_MS
-        });
-        expect(res.statusCode).toBe(400);
-        expect(JSON.parse(res.body.toString())).toEqual(ERROR);
-    });
+    const res = ServerQuizTransfer(user1Token.token, quizId.quizId, 'Swastik2@gmail.com');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual(ERROR);
+  });
 });

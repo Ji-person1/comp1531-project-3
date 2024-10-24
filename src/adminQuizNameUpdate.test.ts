@@ -1,125 +1,103 @@
-import request from 'sync-request-curl';
-import { port, url } from './config.json';
-
-const SERVER_URL = `${url}:${port}`;
-const TIMEOUT_MS = 5 * 1000;
-
+import {
+  ServerAuthRegister, ServerQuizCreate, ServerClear,
+  ServerQuizNameUpdate, ServerQuizInfo
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
-    request('DELETE', SERVER_URL + '/v1/clear', { timeout: TIMEOUT_MS });
-})
+  ServerClear();
+});
 
 describe('Error cases', () => {
-    let UserToken: {token: number}
-    let quizId: {quizId: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "functional quiz", description: "a test quiz"}});
-        quizId = JSON.parse(quizRes.body.toString())
-    }); 
+  let UserToken: { token: string };
+  let quizId: { quizId: number };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+    quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
+  });
 
-    test('Invalid characters', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "1237_="}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Invalid characters', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, '1237_=');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('Name too short', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "a"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Name too short', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, 'a');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('Identical names', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "functional quiz"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
-    
-    test('name used in another quiz', () => {
-        request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "Very functional quiz", description: "a test quiz"}});
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "Very functional quiz"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Identical names', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, 'functional quiz');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('Name too long', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "a".repeat(50)}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(400);
-    });
+  test('Name used in another quiz', () => {
+    ServerQuizCreate(UserToken.token, 'Very functional quiz', 'a test quiz');
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, 'Very functional quiz');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('Invalid token', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: -UserToken.token, name: "Normal name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(401);
-    });
+  test('Name too long', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, 'a'.repeat(50));
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
 
-    test('Quiz does not exist', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${-quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "Normal name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(403);
-    });
+  test('Invalid token', () => {
+    const res = ServerQuizNameUpdate((-Number(UserToken.token)).toString(),
+      quizId.quizId, 'Normal name');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 
-    test('not the owner of the quiz', () => {
-        const resTwo = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "z5394791@unsw.edu.au", password: "1234abcd", nameFirst: "Mij", nameLast: "Zeng"}})
-        const UserTokenTwo = JSON.parse(resTwo.body.toString())
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserTokenTwo.token, name: "Normal name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual(ERROR);
-        expect(res.statusCode).toStrictEqual(403);
-    });
+  test('Quiz does not exist', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, -quizId.quizId, 'Normal name');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(403);
+  });
+
+  test('Not the owner of the quiz', () => {
+    const UserTokenTwo = ServerAuthRegister('z5394791@unsw.edu.au', '1234abcd', 'Mij', 'Zeng').body;
+    const res = ServerQuizNameUpdate(UserTokenTwo.token, quizId.quizId, 'Normal name');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(403);
+  });
 });
 
 describe('Success cases', () => {
-    let UserToken: {token: number}
-    let quizId: {quizId: number}
-    beforeEach(() => {
-        const res = request('POST', SERVER_URL + '/v1/admin/auth/register', 
-            {json: {email: "jim.zheng123@icloud.com", password: "1234abcd", nameFirst: "Jim", nameLast: "Zheng"}})
-        UserToken = JSON.parse(res.body.toString())
-        const quizRes = request('POST', SERVER_URL + '/v1/admin/quiz', 
-            {json: {token: UserToken.token, name: "first quiz", description: "a test quiz"}});
-        quizId = JSON.parse(quizRes.body.toString())
-    }); 
+  let UserToken: { token: string };
+  let quizId: { quizId: number };
+  beforeEach(() => {
+    UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
+    quizId = ServerQuizCreate(UserToken.token, 'first quiz', 'a test quiz').body;
+  });
 
-    test('Return type check', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "Normal name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({});
-        expect(res.statusCode).toStrictEqual(200);
-    });
+  test('Return type check', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, 'Normal name');
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toStrictEqual(200);
+  });
 
-    test('Update check with quizinfo', () => {
-        const res = request('PUT', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}/name`, 
-            {json: {token: UserToken.token, name: "Normal name"}});
-        expect(JSON.parse(res.body.toString())).toStrictEqual({});
-        expect(res.statusCode).toStrictEqual(200);
-        const resTwo = request('GET', SERVER_URL + `/v1/admin/quiz/${quizId.quizId}`, 
-            {qs: {token: UserToken.token}});
-        expect(JSON.parse(resTwo.body.toString())).toStrictEqual({
-            quizId: quizId.quizId,
-            name: "Normal name",
-            timeCreated: expect.any(Number),
-            timeLastEdited: expect.any(Number),
-            description: "a test quiz",
-            numQuestions: 0,
-            questions: []
-        });
-        expect(res.statusCode).toStrictEqual(200);
+  test('Update check with quizinfo', () => {
+    const res = ServerQuizNameUpdate(UserToken.token, quizId.quizId, 'Normal name');
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toStrictEqual(200);
+
+    const resTwo = ServerQuizInfo(UserToken.token, quizId.quizId);
+    expect(resTwo.body).toStrictEqual({
+      quizId: quizId.quizId,
+      name: 'Normal name',
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: 'a test quiz',
+      numQuestions: 0,
+      questions: []
     });
+    expect(resTwo.statusCode).toStrictEqual(200);
+  });
 });
