@@ -13,10 +13,10 @@ import {
   adminUserPasswordUpdate, adminAuthLogout
 } from './auth';
 import {
-  adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate,
+  adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
-  adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash,
-  adminQuizRestore, quizQuestionDelete, adminQuizInfo
+  adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, adminQuizRestore,
+  quizQuestionDelete
 } from './quiz';
 import { clear } from './other';
 // Set up web app
@@ -31,7 +31,11 @@ app.use(morgan('dev'));
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
 app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
 app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
-  { swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' } }));
+  {
+    swaggerOptions:
+    { docExpansion: config.expandDocs ? 'full' : 'list' }
+  }
+));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
