@@ -14,7 +14,7 @@ import {
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, 
+  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, adminQuizRestore,
   quizQuestionDelete
 } from './quiz';
@@ -30,8 +30,12 @@ app.use(morgan('dev'));
 // for producing the docs that define the API
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
 app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
-app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: 
-  { docExpansion: config.expandDocs ? 'full' : 'list' } }));
+app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
+  {
+    swaggerOptions:
+    { docExpansion: config.expandDocs ? 'full' : 'list' }
+  }
+));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
@@ -336,7 +340,7 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
     return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
 
-  const result = adminQuizUpdateQuestion(token, quizId, questionId, question, 
+  const result = adminQuizUpdateQuestion(token, quizId, questionId, question,
     duration, points, answers);
 
   if ('error' in result) {
