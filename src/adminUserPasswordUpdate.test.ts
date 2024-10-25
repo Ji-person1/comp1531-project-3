@@ -1,6 +1,9 @@
 import {
-  ServerAuthRegister, ServerUserDetails,
-  ServerClear, ServerUserDetailsUpdate
+  ServerAuthRegister,
+  ServerClear,
+  ServerAuthLogin,
+  ServerAuthLogout,
+  ServerUserPasswordUpdate
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -15,58 +18,65 @@ describe('Error cases', () => {
     UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
   });
 
-  test('invalid user token', () => {
-    const res = ServerUserDetails((-Number(UserToken.token)).toString());
-    expect(res.body).toStrictEqual(ERROR);
-    expect(res.statusCode).toStrictEqual(401);
-  });
-
-  test('invalid email', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token, 'No', 'Hayden', 'Smith');
+  test('Wrong old password', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '5555abcd', 'abcd1234');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
   test('invalid first name', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token, 'hayden.smith@unsw.edu.au', '!!', 'Smith');
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', '1234abcd');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test('invalid last name', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token,
-      'hayden.smith@unsw.edu.au', 'Hayden', '!!');
+  test('Resusing a password', () => {
+    ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcd1234');
+    const res = ServerUserPasswordUpdate(UserToken.token, 'abcd1234', 'abcd1234');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test('Too long first name', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token,
-      'hayden.smith@unsw.edu.au', 'a'.repeat(30), 'Smith');
+  test('New password too short', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcd123');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test('Too short first name', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token, 'hayden.smith@unsw.edu.au', 'a', 'Smith');
+  test('No letter in new password', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', '12345678');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test('Too long last name', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token,
-      'hayden.smith@unsw.edu.au', 'Hayden', 'a'.repeat(30));
+  test('No numbers in new password', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcdefgh');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test('Too short last name', () => {
-    const res = ServerUserDetailsUpdate(UserToken.token, 'hayden.smith@unsw.edu.au', 'Hayden', 'a');
+  test('Prev passwords stores more than just the last password', () => {
+    ServerUserPasswordUpdate(UserToken.token, '1234abcd', '1abcd234');
+    ServerUserPasswordUpdate(UserToken.token, '1abcd234', 'abcdefgh22');
+    ServerUserPasswordUpdate(UserToken.token, 'abcdefgh22', 'mm88!!ss');
+    const res = ServerUserPasswordUpdate(UserToken.token, 'mm88!!ss', '1234abcd');
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test.todo('implement a test once we have logout implemented');
+  test('formerly valid user token', () => {
+    ServerAuthLogout(UserToken.token);
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcd1234');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
+
+  test('invalid user token', () => {
+    const res = ServerUserPasswordUpdate(Number(-UserToken.token).toString(),
+      '1234abcd', 'abcd1234');
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 });
 
 describe('Success cases', () => {
@@ -75,32 +85,35 @@ describe('Success cases', () => {
     UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
   });
 
-  test('correct with one account', () => {
-    const res = ServerUserDetails(UserToken.token);
-    expect(res.body).toStrictEqual({
-      user: {
-        userId: expect.any(Number),
-        name: 'Jim Zheng',
-        email: 'jim.zheng123@icloud.com',
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0
-      }
-    });
+  test('correct return type', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcd1234');
+    expect(res.body).toStrictEqual({});
+    expect(res.statusCode).toStrictEqual(200);
+  });
 
-    const resTwo = ServerUserDetailsUpdate(UserToken.token,
-      'hayden.smith@unsw.edu.au', 'Hayden', 'Smith');
-    expect(resTwo.body).toStrictEqual({});
+  test('New password used to login', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcd1234');
+    expect(res.statusCode).toStrictEqual(200);
+    const resTwo = ServerAuthLogin('jim.zheng123@icloud.com', 'abcd1234');
+    expect(resTwo.body).toStrictEqual({ token: expect.any(String) });
     expect(resTwo.statusCode).toStrictEqual(200);
+  });
 
-    const resThree = ServerUserDetails(UserToken.token);
-    expect(resThree.body).toStrictEqual({
-      user: {
-        userId: expect.any(Number),
-        name: 'Hayden Smith',
-        email: 'hayden.smith@unsw.edu.au',
-        numSuccessfulLogins: 1,
-        numFailedPasswordsSinceLastLogin: 0
-      }
-    });
+  test('Extremely long new password', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'a'.repeat(30) +
+      '1'.repeat(30));
+    expect(res.statusCode).toStrictEqual(200);
+    const resTwo = ServerAuthLogin('jim.zheng123@icloud.com', 'a'.repeat(30) + '1'.repeat(30));
+    expect(resTwo.body).toStrictEqual({ token: expect.any(String) });
+    expect(resTwo.statusCode).toStrictEqual(200);
+  });
+
+  test('New passwork works even if token is logged out', () => {
+    const res = ServerUserPasswordUpdate(UserToken.token, '1234abcd', 'abcd1234');
+    expect(res.statusCode).toStrictEqual(200);
+    ServerAuthLogout(UserToken.token);
+    const resTwo = ServerAuthLogin('jim.zheng123@icloud.com', 'abcd1234');
+    expect(resTwo.body).toStrictEqual({ token: expect.any(String) });
+    expect(resTwo.statusCode).toStrictEqual(200);
   });
 });

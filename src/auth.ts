@@ -91,6 +91,7 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
 
   if (user.password !== password) {
     user.numFailedPasswordsSinceLastLogin++;
+    setData(data);
     return { error: '400 wrong password' };
   }
 

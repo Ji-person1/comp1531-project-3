@@ -1,6 +1,7 @@
 import {
   ServerAuthRegister, ServerUserDetails,
-  ServerClear, ServerUserDetailsUpdate
+  ServerClear, ServerUserDetailsUpdate,
+  ServerAuthLogout
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -13,12 +14,6 @@ describe('Error cases', () => {
   let UserToken: {token: string};
   beforeEach(() => {
     UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
-  });
-
-  test('invalid user token', () => {
-    const res = ServerUserDetails((-Number(UserToken.token)).toString());
-    expect(res.body).toStrictEqual(ERROR);
-    expect(res.statusCode).toStrictEqual(401);
   });
 
   test('invalid email', () => {
@@ -66,7 +61,18 @@ describe('Error cases', () => {
     expect(res.statusCode).toStrictEqual(400);
   });
 
-  test.todo('implement a test once we have logout implemented');
+  test('invalid user token', () => {
+    const res = ServerUserDetails((-Number(UserToken.token)).toString());
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
+
+  test('No longer valid token', () => {
+    ServerAuthLogout(UserToken.token);
+    const res = ServerUserDetails(UserToken.token);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(401);
+  });
 });
 
 describe('Success cases', () => {
