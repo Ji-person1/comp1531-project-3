@@ -14,7 +14,7 @@ import {
  * @param {string} password - The password for the account.
  * @param {string} nameFirst - first name of the user.
  * @param {string} nameLast - the last name of the user
- * @returns {number|object} error if failed, object containing a number if successful
+ * @returns {objectbject} error object if failed, token object otherwise.
  */
 export function adminAuthRegister (email: string, password: string, nameFirst: string,
   nameLast: string): errorObject | Token {
@@ -32,7 +32,7 @@ export function adminAuthRegister (email: string, password: string, nameFirst: s
   if (!nameTest.test(nameFirst)) {
     return { error: '400 invalid characters in first name' };
   } else if (nameFirst.length < 2 || nameFirst.length > 20) {
-    return { error: '400 vvinvalid first name length' };
+    return { error: '400 invalid first name length' };
   }
 
   if (!nameTest.test(nameLast)) {
@@ -91,6 +91,7 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
 
   if (user.password !== password) {
     user.numFailedPasswordsSinceLastLogin++;
+    setData(data);
     return { error: '400 wrong password' };
   }
 
