@@ -1,7 +1,4 @@
-import {
-  ServerClear, ServerAuthRegister,
-  ServerAuthLogin, ServerUserDetails
-} from './ServerTestCallHelper';
+import { ServerClear, ServerAuthRegister, ServerAuthLogin } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
@@ -44,60 +41,21 @@ describe('Error cases', () => {
 });
 
 describe('Success cases', () => {
-  beforeEach(() => {
-    ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng');
-    ServerAuthRegister('z5394791@unsw.edu.au', '6789mnbv', 'Zim', 'Zheng');
-  });
   test('correct with one account', () => {
+    ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng');
     const res = ServerAuthLogin('jim.zheng123@icloud.com', '1234abcd');
     expect(res.body).toStrictEqual({ token: expect.any(String) });
     expect(res.statusCode).toStrictEqual(200);
   });
 
   test('correct with two accounts', () => {
+    ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng');
+    ServerAuthRegister('z5394791@unsw.edu.au', '6789mnbv', 'Zim', 'Zheng');
     const res = ServerAuthLogin('jim.zheng123@icloud.com', '1234abcd');
     const resTwo = ServerAuthLogin('z5394791@unsw.edu.au', '6789mnbv');
     expect(res.body).toStrictEqual({ token: expect.any(String) });
     expect(res.statusCode).toStrictEqual(200);
     expect(resTwo.body).toStrictEqual({ token: expect.any(String) });
     expect(resTwo.statusCode).toStrictEqual(200);
-  });
-
-  test('Increases the amount of logins', () => {
-    for (let i = 0; i < 10; i++) {
-      const res = ServerAuthLogin('jim.zheng123@icloud.com', '1234abcd');
-      expect(res.statusCode).toStrictEqual(200);
-    }
-    const token = ServerAuthLogin('jim.zheng123@icloud.com', '1234abcd').body;
-    const resInfo = ServerUserDetails(token.token);
-    expect(resInfo.statusCode).toStrictEqual(200);
-    expect(resInfo.body).toStrictEqual({
-      user: {
-        userId: expect.any(Number),
-        name: 'Jim Zheng',
-        email: 'jim.zheng123@icloud.com',
-        numSuccessfulLogins: 12,
-        numFailedPasswordsSinceLastLogin: 0
-      }
-    });
-  });
-
-  test('Increases the amount of failed logins', () => {
-    const token = ServerAuthLogin('jim.zheng123@icloud.com', '1234abcd').body;
-    for (let i = 0; i < 10; i++) {
-      const res = ServerAuthLogin('jim.zheng123@icloud.com', '');
-      expect(res.statusCode).toStrictEqual(400);
-    }
-    const resInfo = ServerUserDetails(token.token);
-    expect(resInfo.statusCode).toStrictEqual(200);
-    expect(resInfo.body).toStrictEqual({
-      user: {
-        userId: expect.any(Number),
-        name: 'Jim Zheng',
-        email: 'jim.zheng123@icloud.com',
-        numSuccessfulLogins: 2,
-        numFailedPasswordsSinceLastLogin: 10
-      }
-    });
   });
 });

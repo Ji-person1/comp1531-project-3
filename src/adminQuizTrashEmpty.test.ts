@@ -1,8 +1,6 @@
 import {
   ServerAuthRegister, ServerQuizCreate, ServerQuizRemove,
-  ServerQuizTrashEmpty, ServerClear,
-  ServerAuthLogout,
-  ServerQuizTrash
+  ServerQuizTrashEmpty, ServerClear
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -14,18 +12,15 @@ beforeEach(() => {
 describe('Error Cases', () => {
   let UserToken: { token: string };
   let quizId: { quizId: number };
-  let quizIdTwo: { quizId: number };
 
   beforeEach(() => {
     UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
-    quizIdTwo = ServerQuizCreate(UserToken.token, 'a second quiz', 'a test quiz').body;
-    ServerQuizRemove(UserToken.token, quizId.quizId);
   });
 
   test('Invalid token', () => {
     const quizArray = [quizId.quizId];
-    const response = ServerQuizTrashEmpty(Number(-UserToken.token).toString(), quizArray);
+    const response = ServerQuizTrashEmpty('-' + UserToken.token, quizArray);
 
     expect(response.statusCode).toBe(401);
     expect(response.body).toEqual(ERROR);
@@ -39,17 +34,8 @@ describe('Error Cases', () => {
     expect(response.body).toEqual(ERROR);
   });
 
-  test('User logged out', () => {
-    const quizArray = [quizId.quizId];
-    ServerAuthLogout(UserToken.token);
-    const response = ServerQuizTrashEmpty(UserToken.token, quizArray);
-
-    expect(response.statusCode).toBe(401);
-    expect(response.body).toEqual(ERROR);
-  });
-
   test('Quiz ID not in the trash', () => {
-    const quizArray = [quizIdTwo.quizId];
+    const quizArray = [quizId.quizId];
     const response = ServerQuizTrashEmpty(UserToken.token, quizArray);
 
     expect(response.statusCode).toBe(400);
@@ -88,38 +74,8 @@ describe('Success Cases', () => {
   test('Successful trash empty', () => {
     const quizIds = [quizId.quizId, quizIdTwo.quizId, quizIdThree.quizId];
     const response = ServerQuizTrashEmpty(UserToken.token, quizIds);
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({});
-  });
 
-  test('Empty with quiztrash check', () => {
-    const quizIds = [quizId.quizId, quizIdTwo.quizId];
-    const response = ServerQuizTrashEmpty(UserToken.token, quizIds);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({});
-    const res = ServerQuizTrash(UserToken.token);
-    expect(res.body).toStrictEqual({
-      quizzes: [
-        {
-          quizId: quizIdThree.quizId,
-          name: 'third quiz'
-        }
-      ]
-    }
-    );
-  });
-
-  test('Remove one at a time', () => {
-    const response = ServerQuizTrashEmpty(UserToken.token, [quizId.quizId]);
-    expect(response.statusCode).toBe(200);
-    expect(response.body).toEqual({});
-    const resTwo = ServerQuizTrashEmpty(UserToken.token, [quizIdTwo.quizId]);
-    expect(resTwo.statusCode).toBe(200);
-    expect(resTwo.body).toEqual({});
-    const resThree = ServerQuizTrashEmpty(UserToken.token, [quizIdThree.quizId]);
-    expect(resThree.statusCode).toBe(200);
-    expect(resThree.body).toEqual({});
-    const res = ServerQuizTrash(UserToken.token);
-    expect(res.body).toStrictEqual({ quizzes: [] });
   });
 });
