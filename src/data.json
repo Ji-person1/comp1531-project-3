@@ -3,31 +3,20 @@
     {
       "id": 1,
       "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
-      "password": "1234abcd",
+      "nameFirst": "Jim-ello",
+      "nameLast": "What is my last name",
+      "password": "123456789ABCDEFGhijklmno",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
     }
   ],
-  "quizzes": [
-    {
-      "quizId": 91217,
-      "creatorId": 1,
-      "name": "first quiz",
-      "description": "Updated description",
-      "timeCreated": 1729840386,
-      "timeLastEdited": 1729840386,
-      "numQuestions": 0,
-      "questions": []
-    }
-  ],
+  "quizzes": [],
   "sessions": [
     {
-      "sessionId": 68854,
+      "sessionId": 69989,
       "authUserId": 1,
-      "createdAt": 1729840386
+      "createdAt": 1729841754
     }
   ],
   "bin": []
