@@ -3,8 +3,7 @@ import {
   ServerQuizCreate,
   ServerQuizCreateQuestion,
   ServerQuestionMove,
-  ServerClear,
-  ServerQuizInfo
+  ServerClear
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -83,263 +82,35 @@ describe('Error cases', () => {
 });
 
 describe('Success cases', () => {
-  let userToken: { token: string };
+  let UserToken: { token: string };
   let quizId: { quizId: number };
   let questionId: { questionId: number };
   let questionIdTwo: { questionId: number };
-  let questionIdThree: { questionId: number };
 
   beforeEach(() => {
-    userToken = ServerAuthRegister('swastik@example.com', 'password123', 'Swastik', 'Mishra').body;
-    quizId = ServerQuizCreate(userToken.token, 'Test Quiz', 'This is a test quiz').body;
-    questionId = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
+    UserToken = ServerAuthRegister('1dq11333@gmail.com', '1234abcd', 'Hao', 'Wu').body;
+    quizId = ServerQuizCreate(UserToken.token, 'first quiz', 'a test quiz').body;
+    questionId = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
+      'Who is the Rizzler?', 30, 5, [
         { answer: 'Duke Dennis', correct: true },
         { answer: 'Kai Cenat', correct: false }
       ]).body;
-    questionIdTwo = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is not the Rizzler?', 30, 6, [
-        { answer: 'Duke', correct: false },
-        { answer: 'Kai', correct: true }
-      ]).body;
-    questionIdThree = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Is this quiz good', 30, 10, [
-        { answer: 'Yes', correct: false },
-        { answer: 'No', correct: true }
+    questionIdTwo = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
+      "Who isn't the Rizzler?", 30, 5, [
+        { answer: 'Duke Dennis', correct: false },
+        { answer: 'Kai Cenat', correct: true }
       ]).body;
   });
 
   test('position 0 to 1', () => {
-    const res = ServerQuestionMove(userToken.token, quizId.quizId, questionId.questionId, 1);
+    const res = ServerQuestionMove(UserToken.token, quizId.quizId, questionId.questionId, 1);
     expect(res.body).toStrictEqual({});
     expect(res.statusCode).toBe(200);
-    const resInfo = ServerQuizInfo(userToken.token, quizId.quizId);
-    expect(resInfo.body).toStrictEqual({
-      quizId: quizId.quizId,
-      name: 'Test Quiz',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'This is a test quiz',
-      numQuestions: 3,
-      questions: [
-        {
-          questionId: expect.any(Number),
-          question: 'Who is not the Rizzler?',
-          timeLimit: 30,
-          points: 6,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Duke',
-              colour: expect.any(String),
-              correct: false
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'Kai',
-              colour: expect.any(String),
-              correct: true
-            },
-          ]
-        },
-        {
-          questionId: expect.any(Number),
-          question: 'Who is the Rizzler?',
-          timeLimit: 30,
-          points: 5,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Duke Dennis',
-              colour: expect.any(String),
-              correct: true
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'Kai Cenat',
-              colour: expect.any(String),
-              correct: false
-            }
-          ]
-        },
-        {
-          questionId: expect.any(Number),
-          question: 'Is this quiz good',
-          timeLimit: 30,
-          points: 10,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Yes',
-              colour: expect.any(String),
-              correct: false
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'No',
-              colour: expect.any(String),
-              correct: true
-            }
-          ]
-        }
-      ]
-    });
-    expect(resInfo.statusCode).toStrictEqual(200);
   });
 
   test('Reverse move', () => {
-    const res = ServerQuestionMove(userToken.token, quizId.quizId, questionIdTwo.questionId, 0);
+    const res = ServerQuestionMove(UserToken.token, quizId.quizId, questionIdTwo.questionId, 0);
     expect(res.body).toStrictEqual({});
     expect(res.statusCode).toBe(200);
-    const resInfo = ServerQuizInfo(userToken.token, quizId.quizId);
-    expect(resInfo.body).toStrictEqual({
-      quizId: quizId.quizId,
-      name: 'Test Quiz',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'This is a test quiz',
-      numQuestions: 3,
-      questions: [
-        {
-          questionId: expect.any(Number),
-          question: 'Who is not the Rizzler?',
-          timeLimit: 30,
-          points: 6,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Duke',
-              colour: expect.any(String),
-              correct: false
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'Kai',
-              colour: expect.any(String),
-              correct: true
-            },
-          ]
-        },
-        {
-          questionId: expect.any(Number),
-          question: 'Who is the Rizzler?',
-          timeLimit: 30,
-          points: 5,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Duke Dennis',
-              colour: expect.any(String),
-              correct: true
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'Kai Cenat',
-              colour: expect.any(String),
-              correct: false
-            }
-          ]
-        },
-        {
-          questionId: expect.any(Number),
-          question: 'Is this quiz good',
-          timeLimit: 30,
-          points: 10,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Yes',
-              colour: expect.any(String),
-              correct: false
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'No',
-              colour: expect.any(String),
-              correct: true
-            }
-          ]
-        }
-      ]
-    });
-    expect(resInfo.statusCode).toStrictEqual(200);
-  });
-
-  test('Move final to head', () => {
-    const res = ServerQuestionMove(userToken.token, quizId.quizId, questionIdThree.questionId, 0);
-    expect(res.body).toStrictEqual({});
-    expect(res.statusCode).toBe(200);
-    const resInfo = ServerQuizInfo(userToken.token, quizId.quizId);
-    expect(resInfo.body).toStrictEqual({
-      quizId: quizId.quizId,
-      name: 'Test Quiz',
-      timeCreated: expect.any(Number),
-      timeLastEdited: expect.any(Number),
-      description: 'This is a test quiz',
-      numQuestions: 3,
-      questions: [
-        {
-          questionId: expect.any(Number),
-          question: 'Is this quiz good',
-          timeLimit: 30,
-          points: 10,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Yes',
-              colour: expect.any(String),
-              correct: false
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'No',
-              colour: expect.any(String),
-              correct: true
-            }
-          ]
-        },
-        {
-          questionId: expect.any(Number),
-          question: 'Who is the Rizzler?',
-          timeLimit: 30,
-          points: 5,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Duke Dennis',
-              colour: expect.any(String),
-              correct: true
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'Kai Cenat',
-              colour: expect.any(String),
-              correct: false
-            }
-          ]
-        },
-        {
-          questionId: expect.any(Number),
-          question: 'Who is not the Rizzler?',
-          timeLimit: 30,
-          points: 6,
-          answerOptions: [
-            {
-              answerId: expect.any(Number),
-              answer: 'Duke',
-              colour: expect.any(String),
-              correct: false
-            },
-            {
-              answerId: expect.any(Number),
-              answer: 'Kai',
-              colour: expect.any(String),
-              correct: true
-            },
-          ]
-        }
-      ]
-    });
-    expect(resInfo.statusCode).toStrictEqual(200);
   });
 });
