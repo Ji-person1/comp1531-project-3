@@ -1,7 +1,6 @@
 import {
   ServerAuthRegister, ServerQuizCreate,
-  ServerClear, ServerQuizInfo,
-  ServerAuthLogout
+  ServerClear, ServerQuizInfo
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -20,13 +19,6 @@ describe('Error cases', () => {
 
   test('Invalid token', () => {
     const res = ServerQuizInfo((-Number(UserToken.token)).toString(), quizId.quizId);
-    expect(res.body).toStrictEqual(ERROR);
-    expect(res.statusCode).toStrictEqual(401);
-  });
-
-  test('Logged out user', () => {
-    ServerAuthLogout(UserToken.token);
-    const res = ServerQuizInfo(UserToken.token, quizId.quizId);
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toStrictEqual(401);
   });

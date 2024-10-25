@@ -6,8 +6,6 @@ const TIMEOUT_MS = 5 * 1000;
 
 // this is a helper function meant to massively reduce the amount of bloat in test
 // functions by reducing server calls to simply calling from this function.
-// there doesn't really need a jsdoc here given the nature of all these functions.
-// as they are nothing but extensions of the main functions.
 
 // response body has to be any, as there are a massive variety of different potential response types
 // therefore it is best to keep it as an any to avoid issues with typecasting.

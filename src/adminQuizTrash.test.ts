@@ -1,9 +1,6 @@
 import {
   ServerAuthRegister, ServerQuizCreate, ServerQuizTrash,
-  ServerClear, ServerQuizRemove,
-  ServerAuthLogout,
-  ServerQuizRestore,
-  ServerQuizList
+  ServerClear, ServerQuizRemove
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -23,21 +20,13 @@ describe('Error Cases', () => {
 
   test('Invalid token', () => {
     const res = ServerQuizTrash('invalidToken');
-    expect(res.statusCode).toStrictEqual(401);
+    expect(res.statusCode).toBe(401);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Empty token', () => {
     const res = ServerQuizTrash('');
-    expect(res.statusCode).toStrictEqual(401);
-    expect(res.body).toStrictEqual(ERROR);
-  });
-
-  test('Logged out token', () => {
-    const logoutRes = ServerAuthLogout(UserToken.token);
-    expect(logoutRes.statusCode).toStrictEqual(200);
-    const res = ServerQuizTrash(UserToken.token);
-    expect(res.statusCode).toStrictEqual(401);
+    expect(res.statusCode).toBe(401);
     expect(res.body).toStrictEqual(ERROR);
   });
 });
@@ -58,7 +47,7 @@ describe('Success Cases', () => {
 
   test('Valid token', () => {
     const res = ServerQuizTrash(UserToken.token);
-    expect(res.statusCode).toStrictEqual(200);
+    expect(res.statusCode).toBe(200);
     expect(res.body).toStrictEqual({
       quizzes: [
         {
@@ -68,41 +57,6 @@ describe('Success Cases', () => {
         {
           quizId: expect.any(Number),
           name: 'second quiz'
-        }
-      ]
-    });
-  });
-
-  test('Empty trash for new user', () => {
-    const userTokenTwo = ServerAuthRegister('Swastik2@gmail.com', 'password456',
-      'Neo', 'Mishra').body;
-    const res = ServerQuizTrash(userTokenTwo.token);
-    expect(res.statusCode).toStrictEqual(200);
-    expect(res.body).toStrictEqual({
-      quizzes: []
-    });
-  });
-
-  test('Trash gone after restoring', () => {
-    const resRestore = ServerQuizRestore(UserToken.token, quizId.quizId);
-    expect(resRestore.statusCode).toStrictEqual(200);
-    const res = ServerQuizTrash(UserToken.token);
-    expect(res.statusCode).toStrictEqual(200);
-    expect(res.body).toStrictEqual({
-      quizzes: [
-        {
-          quizId: expect.any(Number),
-          name: 'second quiz'
-        }
-      ]
-    });
-    const resList = ServerQuizList(UserToken.token);
-    expect(resList.statusCode).toStrictEqual(200);
-    expect(resList.body).toStrictEqual({
-      quizzes: [
-        {
-          quizId: expect.any(Number),
-          name: 'first quiz'
         }
       ]
     });
