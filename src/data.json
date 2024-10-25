@@ -13,33 +13,22 @@
   ],
   "quizzes": [
     {
-      "quizId": 53342,
+      "quizId": 91217,
       "creatorId": 1,
       "name": "first quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729837393,
-      "timeLastEdited": 1729837393,
+      "description": "Updated description",
+      "timeCreated": 1729840386,
+      "timeLastEdited": 1729840386,
       "numQuestions": 0,
       "questions": []
     }
   ],
   "sessions": [
     {
-      "sessionId": 72915,
+      "sessionId": 68854,
       "authUserId": 1,
-      "createdAt": 1729837393
+      "createdAt": 1729840386
     }
   ],
-  "bin": [
-    {
-      "quizId": 48644,
-      "creatorId": 1,
-      "name": "second quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729837393,
-      "timeLastEdited": 1729837393,
-      "numQuestions": 0,
-      "questions": []
-    }
-  ]
+  "bin": []
 }

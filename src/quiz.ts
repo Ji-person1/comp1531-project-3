@@ -1,5 +1,5 @@
 import { getData, setData } from './datastore';
-import { findToken, random5DigitNumber, randomColour } from './helper';
+import { findToken, generateQuizId, random5DigitNumber, randomColour } from './helper';
 import {
   errorObject, quizDetails, QuestionId, Questions, Answer,
   quizList, QuizId, DuplicatedId
@@ -34,12 +34,14 @@ export function adminQuizDescriptionUpdate (token: number, quizId: number,
   }
 
   quiz.description = description;
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(data);
   return {};
 }
 
 /**
- * Updates the name of a quiz when given the correct authUserId, quizId and name
+ * Updates the name of a quiz when given the correct token and quizId changing
+ * the name of the quiz to the name passed in
  *
  * @param {string} token - a number used to find the linked account.
  * @param {string} quizId - The id of the quiz.
@@ -77,13 +79,14 @@ export function adminQuizNameUpdate (token: number, quizId: number,
     return { error: '400 Name is already used by the current logged in user for another quiz.' };
   }
   quiz.name = name;
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(data);
   return {};
 }
 
 /**
  * Get all of the relevant information about the current quiz. Returning an error if
- * either adminauthuserid doesn't work or quizid
+ * either the token or quizid is invalid
  *
  * @param {string} token - a number used to find the linked account.
  * @param {string} quizId - The password for the account.
@@ -168,7 +171,7 @@ export function adminQuizCreate(token: number, name: string,
     return { error: '400 Quiz name already used by this user' };
   }
 
-  const newQuizId = random5DigitNumber();
+  const newQuizId = generateQuizId();
   const emptyQuestionArray: Questions[] = [];
   const newQuiz = {
     quizId: newQuizId,
@@ -471,6 +474,7 @@ export function adminQuestionMove (token: number, quizid: number, questionId: nu
   }
   quiz.questions = quiz.questions.filter(question => question.questionId !== questionId);
   quiz.questions.splice(newPosition, 0, question);
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(data);
   return {};
 }
@@ -550,7 +554,6 @@ export function quizQuestionDelete (token: number, quizId: number, questionId: n
   quiz.questions.splice(questionIndex, 1);
   quiz.numQuestions--;
 
-  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
   setData(data);
   return {};
 }
@@ -643,6 +646,7 @@ export function adminQuizRestore(token: number, quizId: number):
     return { error: '403 token is not the owner of the quiz being restored' };
   }
 
+  restoreQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
   data.quizzes.push(restoreQuiz);
   data.bin = data.bin.filter(quiz => quiz.quizId !== quizId);
   setData(data);
