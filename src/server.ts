@@ -8,14 +8,16 @@ import sui from 'swagger-ui-express';
 import fs from 'fs';
 import path from 'path';
 import process from 'process';
-import { adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate, 
-    adminUserPasswordUpdate, adminAuthLogout
-  } from './auth';
-import { adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
-  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, adminQuestionMove,
-  adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, adminQuizRestore,
+import {
+  adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
+  adminUserPasswordUpdate, adminAuthLogout
+} from './auth';
+import {
+  adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
+  adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion, 
+  adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrash, adminQuizRestore,
   quizQuestionDelete
- } from './quiz';
+} from './quiz';
 import { clear } from './other';
 // Set up web app
 const app = express();
@@ -28,7 +30,8 @@ app.use(morgan('dev'));
 // for producing the docs that define the API
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
 app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
-app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: { docExpansion: config.expandDocs ? 'full' : 'list' } }));
+app.use('/docs', sui.serve, sui.setup(YAML.parse(file), { swaggerOptions: 
+  { docExpansion: config.expandDocs ? 'full' : 'list' } }));
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
@@ -58,93 +61,35 @@ app.get('/echo', (req: Request, res: Response) => {
   return res.json(result);
 });
 
-//adminAuthRegister
+// adminAuthRegister
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
-  const result = adminAuthRegister(email, password, nameFirst, nameLast)
+  const result = adminAuthRegister(email, password, nameFirst, nameLast);
   if ('error' in result) {
     res.status(GENERROR).json(result);
-    return
+    return;
   }
   res.status(OKAY).json(result);
 });
 
-//adminAuthLogin
+// adminAuthLogin
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const result = adminAuthLogin(email, password)
+  const result = adminAuthLogin(email, password);
   if ('error' in result) {
     res.status(GENERROR).json(result);
-    return
+    return;
   }
   res.status(OKAY).json(result);
 });
 
-//adminUserDetails
+// adminUserDetails
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
   const token = Number(req.query.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminUserDetails(token)
-  if ('error' in result) {
-    res.status(TOKENERR).json(result);
-    return
-  }
-  res.status(OKAY).json(result);
-});
-
-//adminUserDetailUpdate
-app.put('/v1/admin/user/details', (req: Request, res: Response) => {
-  const { email, nameFirst, nameLast } = req.body;
-  const token = Number(req.body.token);
-  if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
-  }
-  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast)
-  if ('error' in result) {
-    if (result.error.startsWith('401')) {
-      res.status(TOKENERR).json(result);
-      return
-    }
-    else {
-      res.status(GENERROR).json(result);
-      return
-    }
-  }
-  res.status(OKAY).json(result);
-});
-
-//adminUserPasswordUpdate
-app.put('/v1/admin/user/password', (req: Request, res: Response) => {
-  const { oldPassword, newPassword } = req.body;
-  const token = Number(req.body.token);
-  if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
-  }
-  const result = adminUserPasswordUpdate(token, oldPassword, newPassword)
-  if ('error' in result) {
-    if (result.error.startsWith('401')) {
-      res.status(TOKENERR).json(result);
-      return
-    }
-    else {
-      res.status(GENERROR).json(result);
-      return
-    }
-  }
-  res.status(OKAY).json(result);
-});
-
-//adminQuizTrash
-// moved before the less parameterised one of adminquizinfo
-app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = Number(req.query.token);
-  if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
-  }
-
-  const result = adminQuizTrash(token); 
+  const result = adminUserDetails(token);
   if ('error' in result) {
     res.status(TOKENERR).json(result);
     return;
@@ -152,144 +97,198 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
   res.status(OKAY).json(result);
 });
 
-//adminquizList
-app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const token = Number(req.query.token);
+// adminUserDetailUpdate
+app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+  const { email, nameFirst, nameLast } = req.body;
+  const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizList(token)
+  const result = adminUserDetailsUpdate(token, email, nameFirst, nameLast);
   if ('error' in result) {
-    res.status(TOKENERR).json(result);
-    return
+    if (result.error.startsWith('401')) {
+      res.status(TOKENERR).json(result);
+      return;
+    } else {
+      res.status(GENERROR).json(result);
+      return;
+    }
   }
   res.status(OKAY).json(result);
 });
 
-//adminQuizCreate
+// adminUserPasswordUpdate
+app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+  const { oldPassword, newPassword } = req.body;
+  const token = Number(req.body.token);
+  if (isNaN(token)) {
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
+  }
+  const result = adminUserPasswordUpdate(token, oldPassword, newPassword);
+  if ('error' in result) {
+    if (result.error.startsWith('401')) {
+      res.status(TOKENERR).json(result);
+      return;
+    } else {
+      res.status(GENERROR).json(result);
+      return;
+    }
+  }
+  res.status(OKAY).json(result);
+});
+
+// adminQuizTrash
+// moved before the less parameterised one of adminquizinfo
+app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
+  }
+
+  const result = adminQuizTrash(token);
+  if ('error' in result) {
+    res.status(TOKENERR).json(result);
+    return;
+  }
+  res.status(OKAY).json(result);
+});
+
+// adminquizList
+app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+  const token = Number(req.query.token);
+  if (isNaN(token)) {
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
+  }
+  const result = adminQuizList(token);
+  if ('error' in result) {
+    res.status(TOKENERR).json(result);
+    return;
+  }
+  res.status(OKAY).json(result);
+});
+
+// adminQuizCreate
 app.post('/v1/admin/quiz', (req: Request, res: Response) => {
   const { name, description } = req.body;
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizCreate(token, name, description)
+  const result = adminQuizCreate(token, name, description);
   if ('error' in result) {
     if (result.error.startsWith('401')) {
       res.status(TOKENERR).json(result);
-      return
-    }
-    else {
+      return;
+    } else {
       res.status(GENERROR).json(result);
-      return
+      return;
     }
   }
   res.status(OKAY).json(result);
 });
 
-//adminQuizRemove
+// adminQuizRemove
 app.delete('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid as string);
   const token = Number(req.query.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizRemove(token, quizid)
+  const result = adminQuizRemove(token, quizid);
   if ('error' in result) {
     if (result.error.startsWith('401')) {
       res.status(TOKENERR).json(result);
-      return
-    }
-    else {
+      return;
+    } else {
       res.status(GENERROR).json(result);
-      return
+      return;
     }
   }
   res.status(OKAY).json(result);
 });
 
-//adminQuizInfo
+// adminQuizInfo
 app.get('/v1/admin/quiz/:quizid', (req: Request, res: Response) => {
-  const quizid = parseInt(req.params.quizid)
+  const quizid = parseInt(req.params.quizid);
   const token = Number(req.query.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizInfo(token, quizid)
+  const result = adminQuizInfo(token, quizid);
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
-      return
+      return;
     } else if (result.error.startsWith('401')) {
       res.status(TOKENERR).json(result);
-      return
+      return;
     } else {
       res.status(GENERROR).json(result);
-      return
+      return;
     }
   }
   res.status(OKAY).json(result);
 });
 
-//adminNameUpdate
+// adminNameUpdate
 app.put('/v1/admin/quiz/:quizid/name', (req: Request, res: Response) => {
-  const quizid = parseInt(req.params.quizid)
+  const quizid = parseInt(req.params.quizid);
   const { name } = req.body;
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizNameUpdate(token, quizid, name)
+  const result = adminQuizNameUpdate(token, quizid, name);
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
-      return
+      return;
     } else if (result.error.startsWith('401')) {
       res.status(TOKENERR).json(result);
-      return
+      return;
     } else {
       res.status(GENERROR).json(result);
-      return
+      return;
     }
   }
   res.status(OKAY).json(result);
 });
 
-//adminDescriptionUpdate
+// adminDescriptionUpdate
 app.put('/v1/admin/quiz/:quizid/description', (req: Request, res: Response) => {
-  const quizid = parseInt(req.params.quizid)
+  const quizid = parseInt(req.params.quizid);
   const { description } = req.body;
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizDescriptionUpdate(token, quizid, description)
+  const result = adminQuizDescriptionUpdate(token, quizid, description);
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
-      return
+      return;
     } else if (result.error.startsWith('401')) {
       res.status(TOKENERR).json(result);
-      return
+      return;
     } else {
       res.status(GENERROR).json(result);
-      return
+      return;
     }
   }
   res.status(OKAY).json(result);
 });
 
-//adminQuizTransfer
+// adminQuizTransfer
 app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = Number(req.body.token);
   const { userEmail } = req.body;
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  
+
   const result = adminQuizTransfer(quizId, token, userEmail);
-  
+
   if ('error' in result) {
     if (result.error.startsWith('400')) {
       res.status(GENERROR).json(result);
@@ -303,17 +302,17 @@ app.post('/v1/admin/quiz/:quizid/transfer', (req: Request, res: Response) => {
   }
 });
 
-//adminQuizCreateQuestion
+// adminQuizCreateQuestion
 app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const { question, duration, points, answers } = req.body;
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  
-  const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);;
-  
+
+  const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);
+
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
@@ -327,18 +326,19 @@ app.post('/v1/admin/quiz/:quizid/question', (req: Request, res: Response) => {
   }
 });
 
-//adminQuizUpdateQuestion
+// adminQuizUpdateQuestion
 app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { question, duration, points, answers } = req.body;
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
 
-  const result = adminQuizUpdateQuestion(token, quizId, questionId, question, duration, points, answers);
-  
+  const result = adminQuizUpdateQuestion(token, quizId, questionId, question, 
+    duration, points, answers);
+
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
@@ -352,18 +352,18 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Respo
   }
 });
 
-//questionMove
+// questionMove
 app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const { newPosition } = req.body;
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  
+
   const result = adminQuestionMove(token, quizId, questionId, newPosition);
-  
+
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
@@ -377,17 +377,17 @@ app.put('/v1/admin/quiz/:quizid/question/:questionid/move', (req: Request, res: 
   }
 });
 
-//questionDuplicate
+// questionDuplicate
 app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  
+
   const result = adminQuestionDuplicate(token, quizId, questionId);
-  
+
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
@@ -401,13 +401,13 @@ app.post('/v1/admin/quiz/:quizid/question/:questionid/duplicate', (req: Request,
   }
 });
 
-//quizQuestionDelete
+// quizQuestionDelete
 app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Response) => {
   const quizid = parseInt(req.params.quizid);
   const questionId = parseInt(req.params.questionid);
   const token = Number(req.query.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
   const result = quizQuestionDelete(token, quizid, questionId);
   if ('error' in result) {
@@ -425,17 +425,17 @@ app.delete('/v1/admin/quiz/:quizid/question/:questionid', (req: Request, res: Re
   res.status(OKAY).json(result);
 });
 
-//clear
+// clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
-  const result = clear()
+  const result = clear();
   if ('error' in result) {
     res.status(GENERROR).json(result);
-    return
+    return;
   }
   res.status(OKAY).json(result);
 });
 
-//trashempty
+// trashempty
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const { token, quizIds } = req.query;
 
@@ -475,24 +475,24 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   return res.status(OKAY).json(result);
 });
 
-//adminQuizRestore
+// adminQuizRestore
 app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
-  const quizid = parseInt(req.params.quizid)
+  const quizid = parseInt(req.params.quizid);
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
-  const result = adminQuizRestore(token, quizid)
+  const result = adminQuizRestore(token, quizid);
   if ('error' in result) {
     if (result.error.startsWith('403')) {
       res.status(OWNERROR).json(result);
-      return
+      return;
     } else if (result.error.startsWith('401')) {
       res.status(TOKENERR).json(result);
-      return
+      return;
     } else {
       res.status(GENERROR).json(result);
-      return
+      return;
     }
   }
   res.status(OKAY).json(result);
@@ -502,7 +502,7 @@ app.post('/v1/admin/quiz/:quizid/restore', (req: Request, res: Response) => {
 app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   const token = Number(req.body.token);
   if (isNaN(token)) {
-    return res.status(TOKENERR).json({ error: 'Invalid token' });;
+    return res.status(TOKENERR).json({ error: 'Invalid token' });
   }
   const result = adminAuthLogout(token);
   if ('error' in result) {
@@ -543,4 +543,3 @@ process.on('SIGINT', () => {
     process.exit();
   });
 });
-
