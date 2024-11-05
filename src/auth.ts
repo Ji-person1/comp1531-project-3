@@ -115,12 +115,12 @@ export function adminAuthLogin (email: string, password: string): Token | errorO
  * @param {string} token - a token used to find the linked account.
  * @returns {object} error if failed, the details of the account otherwise
  */
-export function adminUserDetails (token: number): errorObject | UserDetails {
+export function adminUserDetails (token: number): UserDetails {
   const data = getData();
 
   const user = findToken(data, token);
   if ('error' in user) {
-    return user;
+    throw new Error('How did this even happen');
   }
 
   return {
@@ -145,36 +145,37 @@ export function adminUserDetails (token: number): errorObject | UserDetails {
  * @returns {object} error if failed, empty object if successful
  */
 export function adminUserDetailsUpdate (token: number, email: string,
-  nameFirst: string, nameLast: string): errorObject | Record<string, never> {
+  nameFirst: string, nameLast: string): Record<string, never> {
   const data = getData();
   const user = findToken(data, token);
   if ('error' in user) {
-    return user;
+    throw new Error('How did this even happen');
   }
 
-  if (user.email === email) {
-    return { error: '400 email already in use' };
+  const emailCheck = data.users.find(u => u.email === email);
+  if (emailCheck && emailCheck.id !== user.id) {
+    throw new Error('Email already in use');
   }
   if (!validator.isEmail(email)) {
-    return { error: '400 invalid email address' };
+    throw new Error('400 invalid email address');
   }
   if (/[^a-zA-Z\s'-]/.test(nameFirst) === true) {
-    return { error: '400 nameFirst invalid characters' };
+    throw new Error('400 nameFirst invalid characters');
   }
   if (nameFirst.length < 2) {
-    return { error: '400 namefirst is less than two characters' };
+    throw new Error('400 namefirst is less than two characters');
   }
   if (nameFirst.length > 20) {
-    return { error: '400 nameFirst is more than twenty characters' };
+    throw new Error('400 nameFirst is more than twenty characters');
   }
   if (/[^a-zA-Z\s'-]/.test(nameLast) === true) {
-    return { error: '400 nameLast invalid characters' };
+    throw new Error('400 nameLast invalid characters');
   }
   if (nameLast.length < 2) {
-    return { error: '400 nameLast is less than two characters' };
+    throw new Error('400 nameLast is less than two characters');
   }
   if (nameLast.length > 20) {
-    return { error: '400 nameLast is more than twenty characters' };
+    throw new Error('400 nameLast is more than twenty characters');
   }
 
   user.email = email;
@@ -198,7 +199,7 @@ export function adminUserPasswordUpdate (token: number, oldPassword: string,
   const data = getData();
   const user = findToken(data, token);
   if ('error' in user) {
-    return user;
+    throw new Error('How did this even happen');
   }
 
   if (oldPassword !== user.password) {
@@ -227,21 +228,18 @@ export function adminUserPasswordUpdate (token: number, oldPassword: string,
 
 /**
  * Logs out an admin user who has an active user session.
+ * removed the error check since the validator means its
+ * always going to be a valid token.
  *
  * @param {number} token - The token for the current user session.
  * @returns {object} error if token is invalid, empty object if successful
  */
-export function adminAuthLogout (token: number): errorObject | Record<string, never> {
+export function adminAuthLogout (token: number): Record<string, never> {
   const data = getData();
 
   const sessionIndex = data.sessions.findIndex(session => session.sessionId === token);
 
-  if (sessionIndex === -1) {
-    return { error: '401 invalid token' };
-  }
-
   data.sessions.splice(sessionIndex, 1);
-
   setData(data);
 
   return {};

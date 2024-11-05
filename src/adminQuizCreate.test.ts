@@ -61,6 +61,4 @@ describe('Success cases', () => {
     expect(res.body).toStrictEqual({ quizId: expect.any(Number) });
     expect(res.statusCode).toStrictEqual(200);
   });
-
-  test.todo("add one to check quiz details once that's done");
 });
