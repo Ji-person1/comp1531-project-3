@@ -306,3 +306,13 @@ export function ServerQuestionDuplicate(token: string, quizId: number,
 
   return convToResponse(response);
 }
+
+// personSendChat
+export function ServerSendChat(playerId: number): Response {
+  const response = request('POST',
+    `${SERVER_URL}'/v1/player/${playerId}/chat'`, {
+      timeout: TIMEOUT_MS
+    });
+
+  return convToResponse(response);
+}

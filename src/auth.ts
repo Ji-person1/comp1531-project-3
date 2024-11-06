@@ -250,9 +250,10 @@ export function adminAuthLogout (token: number): errorObject | Record<string, ne
 /**
  * Send a new chat message to everyone in the session.
  *
- * @param {number} token - The token for the current user session.
- * @returns {object} error if token is invalid, empty object if successful
+ * @param {number} playerId - The playerId for the current user session.
+ * @returns {object} error if message is inccorect length, player ID doesn't exist,
+ * or empty object if successful
  */
-export function playerSendChat (token: number): Record<string, never> {
+export function playerSendChat (playerId: number): Record<string, never> {
   return {};
 }

@@ -533,15 +533,15 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 
 // playerSendChat
 app.post('/v1/player/{playerid}/chat', (req: Request, res: Response) =>  {
-  const token = Number(req.header('token'));
+  const playerId = Number(req.params.playerId);
   try {
-    checkValidToken(token);
+    checkValidToken(playerId);
   } catch (e) {
-    return res.status(401).json({ error: e.message });
+    return res.status(400).json({ error: e.message });
   }
 
   try {
-    const result = playerSendChat(token);
+    const result = playerSendChat(playerId);
     res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message});

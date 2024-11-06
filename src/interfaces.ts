@@ -97,3 +97,10 @@ export interface QuizId {
 export interface DuplicatedId {
     duplicatedQuestionId: number;
 }
+
+export interface Player {
+    playerName: string,
+    score: number,
+    playerId: number,
+    time: number,
+}
