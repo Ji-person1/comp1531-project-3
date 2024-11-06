@@ -534,6 +534,7 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 // playerSendChat
 app.post('/v1/player/{playerid}/chat', (req: Request, res: Response) =>  {
   const playerId = Number(req.params.playerId);
+  const { message } = req.body;
   try {
     checkValidToken(playerId);
   } catch (e) {
@@ -541,7 +542,7 @@ app.post('/v1/player/{playerid}/chat', (req: Request, res: Response) =>  {
   }
 
   try {
-    const result = playerSendChat(playerId);
+    const result = playerSendChat(playerId, message);
     res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message});

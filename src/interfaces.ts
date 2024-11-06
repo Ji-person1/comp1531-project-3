@@ -65,6 +65,8 @@ export interface DataStore {
     quizzes: Quiz[];
     bin: Quiz[];
     sessions: Session[];
+    players: Player[];
+    messages: Chat[]
 }
 
 export interface quizDetails {
@@ -99,8 +101,13 @@ export interface DuplicatedId {
 }
 
 export interface Player {
-    playerName: string,
-    score: number,
-    playerId: number,
-    time: number,
+    playerName: string;
+    score: number;
+    playerId: number;
+    time: number;
+}
+
+export interface Chat {
+    playerId: number;
+    message: string;
 }

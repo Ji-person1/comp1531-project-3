@@ -251,9 +251,25 @@ export function adminAuthLogout (token: number): errorObject | Record<string, ne
  * Send a new chat message to everyone in the session.
  *
  * @param {number} playerId - The playerId for the current user session.
+ * @param {string} message - The message string that is sent to the chat.
  * @returns {object} error if message is inccorect length, player ID doesn't exist,
  * or empty object if successful
  */
-export function playerSendChat (playerId: number): Record<string, never> {
+export function playerSendChat (playerId: number, message: string): Record<string, never> {
+  const data =  getData();
+  const player = data.players.find((p) => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 Player Id not found');
+  }
+
+  if (message.length < 1 || message.length > 100) {
+    throw new Error('400 message length invalid (<1 or >100 characters)');
+  }
+
+  data.messages.push({playerId, message: message});
+
+  setData(data);
+
   return {};
+  
 }
