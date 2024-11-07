@@ -1,5 +1,10 @@
 import request from 'sync-request-curl';
 import { port, url } from './config.json';
+import {
+  DuplicateIdResponse, EmptyBody, ListResponse, QuestionIdResponse,
+  QuizIdResponse, QuizInfoResponse, TokenResponse, UserDetailResponse
+} from './serverInterfaces';
+import { Answer, errorObject } from './interfaces';
 
 const SERVER_URL = `${url}:${port}`;
 const TIMEOUT_MS = 5 * 1000;
@@ -7,24 +12,14 @@ const TIMEOUT_MS = 5 * 1000;
 // this is a helper function meant to massively reduce the amount of bloat in test
 // functions by reducing server calls to simply calling from this function.
 
-// response body has to be any, as there are a massive variety of different potential response types
-// therefore it is best to keep it as an any to avoid issues with typecasting.
 export interface Response {
-    body: any,
-    statusCode: number
-}
-
-// helper function to convert the response to an object
-function convToResponse(response: any): Response {
-  return {
-    body: JSON.parse(response.body.toString()),
-    statusCode: response.statusCode
-  };
+  body: string | errorObject,
+  statusCode: number
 }
 
 // adminAuthRegister
 export function ServerAuthRegister(email: string, password: string,
-  nameFirst: string, nameLast: string): Response {
+  nameFirst: string, nameLast: string): TokenResponse {
   const response = request('POST', `${SERVER_URL}/v1/admin/auth/register`, {
     json: {
       email: email,
@@ -35,11 +30,14 @@ export function ServerAuthRegister(email: string, password: string,
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminAuthLogin
-export function ServerAuthLogin(email: string, password: string): Response {
+export function ServerAuthLogin(email: string, password: string): TokenResponse {
   const response = request('POST', `${SERVER_URL}/v1/admin/auth/login`, {
     json: {
       email: email,
@@ -48,25 +46,31 @@ export function ServerAuthLogin(email: string, password: string): Response {
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminUserDetails
-export function ServerUserDetails(token: string): Response {
-  const response = request('GET', `${SERVER_URL}/v1/admin/user/details`, {
-    qs: { token: token },
+export function ServerUserDetails(token: string): UserDetailResponse {
+  const response = request('GET', `${SERVER_URL}/v2/admin/user/details`, {
+    headers: { token: token },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminUserDetailsUpdate
 export function ServerUserDetailsUpdate(token: string, email: string,
-  nameFirst: string, nameLast: string): Response {
-  const response = request('PUT', `${SERVER_URL}/v1/admin/user/details`, {
+  nameFirst: string, nameLast: string): EmptyBody {
+  const response = request('PUT', `${SERVER_URL}/v2/admin/user/details`, {
+    headers: { token: token },
     json: {
-      token: token,
       email: email,
       nameFirst: nameFirst,
       nameLast: nameLast
@@ -74,169 +78,211 @@ export function ServerUserDetailsUpdate(token: string, email: string,
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminUserPasswordUpdate
 export function ServerUserPasswordUpdate(token: string, oldPassword: string,
-  newPassword: string): Response {
+  newPassword: string): EmptyBody {
   const response = request('PUT', `${SERVER_URL}/v1/admin/user/password`, {
+    headers: { token: token },
     json: {
-      token: token,
       oldPassword: oldPassword,
       newPassword: newPassword
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizList
-export function ServerQuizList(token: string): Response {
-  const response = request('GET', `${SERVER_URL}/v1/admin/quiz/list`, {
-    qs: { token: token },
+export function ServerQuizList(token: string): ListResponse {
+  const response = request('GET', `${SERVER_URL}/v2/admin/quiz/list`, {
+    headers: { token: token },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizCreate
-export function ServerQuizCreate(token: string, name: string, description: string): Response {
-  const response = request('POST', `${SERVER_URL}/v1/admin/quiz`, {
+export function ServerQuizCreate(token: string, name: string, description: string): QuizIdResponse {
+  const response = request('POST', `${SERVER_URL}/v2/admin/quiz`, {
+    headers: { token: token },
     json: {
-      token: token,
       name: name,
       description: description
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizRemove
-export function ServerQuizRemove(token: string, quizId: number): Response {
-  const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/${quizId}`, {
-    qs: { token: token },
+export function ServerQuizRemove(token: string, quizId: number): EmptyBody {
+  const response = request('DELETE', `${SERVER_URL}/v2/admin/quiz/${quizId}`, {
+    headers: { token: token },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizInfo
-export function ServerQuizInfo(token: string, quizId: number): Response {
-  const response = request('GET', `${SERVER_URL}/v1/admin/quiz/${quizId}`, {
-    qs: { token: token },
+export function ServerQuizInfo(token: string, quizId: number): QuizInfoResponse {
+  const response = request('GET', `${SERVER_URL}/v2/admin/quiz/${quizId}`, {
+    headers: { token: token },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizNameUpdate
-export function ServerQuizNameUpdate(token: string, quizId: number, name: string): Response {
-  const response = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/name`, {
+export function ServerQuizNameUpdate(token: string, quizId: number, name: string): EmptyBody {
+  const response = request('PUT', `${SERVER_URL}/v2/admin/quiz/${quizId}/name`, {
+    headers: { token: token },
     json: {
-      token: token,
       name: name
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminDescriptionUpdate
 export function ServerQuizDescriptionUpdate(token: string, quizId: number,
-  description: string): Response {
-  const response = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/description`, {
+  description: string): EmptyBody {
+  const response = request('PUT', `${SERVER_URL}/v2/admin/quiz/${quizId}/description`, {
+    headers: { token: token },
     json: {
-      token: token,
       description: description
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // clear
-export function ServerClear(): Response {
+export function ServerClear(): EmptyBody {
   const response = request('DELETE', `${SERVER_URL}/v1/clear`, { timeout: TIMEOUT_MS });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // Iteration 2 functions
 // adminAuthLogout
-export function ServerAuthLogout(token: string): Response {
-  const response = request('POST', `${SERVER_URL}/v1/admin/auth/logout`, {
-    json: {
+export function ServerAuthLogout(token: string): EmptyBody {
+  const response = request('POST', `${SERVER_URL}/v2/admin/auth/logout`, {
+    headers: {
       token: token
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminQuizTrashView
-export function ServerQuizTrash(token: string): Response {
-  const response = request('GET', `${SERVER_URL}/v1/admin/quiz/trash`, {
-    qs: { token: token },
+export function ServerQuizTrash(token: string): ListResponse {
+  const response = request('GET', `${SERVER_URL}/v2/admin/quiz/trash`, {
+    headers: { token: token },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminQuizRestore
-export function ServerQuizRestore(token: string, quizId: number): Response {
-  const response = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/restore`, {
-    json: {
+export function ServerQuizRestore(token: string, quizId: number): EmptyBody {
+  const response = request('POST', `${SERVER_URL}/v2/admin/quiz/${quizId}/restore`, {
+    headers: {
       token: token
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminQuizTrashEmpty
-export function ServerQuizTrashEmpty(token: string, quizIds: number[]): Response {
-  const response = request('DELETE', `${SERVER_URL}/v1/admin/quiz/trash/empty`, {
+export function ServerQuizTrashEmpty(token: string, quizIds: number[]): EmptyBody {
+  const response = request('DELETE', `${SERVER_URL}/v2/admin/quiz/trash/empty`, {
+    headers: { token: token },
     qs: {
-      token: token,
       quizIds: JSON.stringify(quizIds)
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizTransfer
-export function ServerQuizTransfer(token: string, quizId: number, userEmail: string): Response {
-  const response = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/transfer`, {
+export function ServerQuizTransfer(token: string, quizId: number, userEmail: string): EmptyBody {
+  const response = request('POST', `${SERVER_URL}/v2/admin/quiz/${quizId}/transfer`, {
+    headers: { token: token },
     json: {
-      token: token,
       userEmail: userEmail
     },
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizQuestionCreate
 export function ServerQuizCreateQuestion(token: string, quizId: number,
-  question: string, duration: number, points: number, answers: any[]): Response {
-  const response = request('POST', `${SERVER_URL}/v1/admin/quiz/${quizId}/question`, {
+  question: string, duration: number, points: number, answers: Answer[]): QuestionIdResponse {
+  const response = request('POST', `${SERVER_URL}/v2/admin/quiz/${quizId}/question`, {
+    headers: { token: token },
     json: {
-      token: token,
       question: question,
       duration: duration,
       points: points,
@@ -245,16 +291,19 @@ export function ServerQuizCreateQuestion(token: string, quizId: number,
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // adminQuizQuestionUpdate
 export function ServerQuizUpdateQuestion(token: string, quizId: number,
   questionId: number, question: string, duration: number,
-  points: number, answers: any[]): Response {
-  const response = request('PUT', `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`, {
+  points: number, answers: Answer[]): EmptyBody {
+  const response = request('PUT', `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`, {
+    headers: { token: token },
     json: {
-      token: token,
       question: question,
       duration: duration,
       points: points,
@@ -263,46 +312,58 @@ export function ServerQuizUpdateQuestion(token: string, quizId: number,
     timeout: TIMEOUT_MS
   });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminQuizQuestionDelete
 export function ServerQuizQuestionDelete(token: string,
-  quizId: number, questionId: number): Response {
+  quizId: number, questionId: number): EmptyBody {
   const response = request('DELETE',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}`, {
-      qs: { token: token },
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`, {
+      headers: { token: token },
       timeout: TIMEOUT_MS
     });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminQuizMove
 export function ServerQuestionMove(token: string, quizId: number,
-  questionId: number, newPosition: number): Response {
+  questionId: number, newPosition: number): EmptyBody {
   const response = request('PUT',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}/move`, {
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}/move`, {
+      headers: { token: token },
       json: {
-        token: token,
         newPosition: newPosition
       },
       timeout: TIMEOUT_MS
     });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // AdminQuizDuplicate
 export function ServerQuestionDuplicate(token: string, quizId: number,
-  questionId: number): Response {
+  questionId: number): DuplicateIdResponse {
   const response = request('POST',
-    `${SERVER_URL}/v1/admin/quiz/${quizId}/question/${questionId}/duplicate`, {
-      json: {
+    `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}/duplicate`, {
+      headers: {
         token: token
       },
       timeout: TIMEOUT_MS
     });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }

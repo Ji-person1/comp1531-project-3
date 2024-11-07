@@ -2,20 +2,10 @@
   "users": [
     {
       "id": 1,
-      "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
-      "password": "1234abcd",
-      "numSuccessfulLogins": 1,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "prevPasswords": []
-    },
-    {
-      "id": 2,
-      "email": "z5394791@unsw.edu.au",
-      "nameFirst": "Mij",
-      "nameLast": "Zeng",
-      "password": "1234abcd",
+      "email": "swastik@example.com",
+      "nameFirst": "Swastik",
+      "nameLast": "Mishra",
+      "password": "password123",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
@@ -23,46 +13,42 @@
   ],
   "quizzes": [
     {
-      "quizId": 1,
+      "quizId": 90209,
       "creatorId": 1,
-      "name": "first quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729788021,
-      "timeLastEdited": 1729788021,
-      "numQuestions": 0,
-      "questions": []
-    },
-    {
-      "quizId": 2,
-      "creatorId": 1,
-      "name": "second quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729788021,
-      "timeLastEdited": 1729788021,
-      "numQuestions": 0,
-      "questions": []
-    },
-    {
-      "quizId": 3,
-      "creatorId": 2,
-      "name": "third quiz",
-      "description": "a test quiz",
-      "timeCreated": 1729788021,
-      "timeLastEdited": 1729788021,
-      "numQuestions": 0,
-      "questions": []
+      "name": "Test Quiz",
+      "description": "This is a test quiz",
+      "timeCreated": 1730982619,
+      "timeLastEdited": 1730982619,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 84936,
+          "question": "Who is the Rizzler?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": true,
+              "colour": "green",
+              "answerId": 86843
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": false,
+              "colour": "green",
+              "answerId": 38031
+            }
+          ]
+        }
+      ]
     }
   ],
   "sessions": [
     {
-      "sessionId": 57302,
+      "sessionId": 42919,
       "authUserId": 1,
-      "createdAt": 1729788021
-    },
-    {
-      "sessionId": 17762,
-      "authUserId": 2,
-      "createdAt": 1729788021
+      "createdAt": 1730982619
     }
   ],
   "bin": []
