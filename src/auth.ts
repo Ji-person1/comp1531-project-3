@@ -262,11 +262,18 @@ export function playerSendChat (playerId: number, message: string): Record<strin
     throw new Error('400 Player Id not found');
   }
 
+  const name = player.playerName;
+
   if (message.length < 1 || message.length > 100) {
     throw new Error('400 message length invalid (<1 or >100 characters)');
   }
 
-  data.messages.push({playerId, message: message});
+  data.messages.push({
+    playerId, 
+    message: message,
+    timeSent: Math.floor(Date.now()/1000),
+    playerName: name
+  });
 
   setData(data);
 

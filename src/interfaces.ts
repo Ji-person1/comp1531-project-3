@@ -110,4 +110,6 @@ export interface Player {
 export interface Chat {
     playerId: number;
     message: string;
+    playerName: string;
+    timeSent: number;
 }
