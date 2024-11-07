@@ -51,6 +51,7 @@ export interface Questions {
 export interface Answer {
     answer: string;
     correct: boolean;
+    answerId?: number;
     colour?: string;
 }
 

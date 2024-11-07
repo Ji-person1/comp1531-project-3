@@ -1,7 +1,7 @@
 import { getData, setData } from './datastore';
 import { findToken, random5DigitNumber, randomColour } from './helper';
 import {
-  errorObject, quizDetails, QuestionId, Questions, Answer,
+  quizDetails, QuestionId, Questions, Answer,
   quizList, QuizId, DuplicatedId
 } from './interfaces';
 
@@ -14,7 +14,7 @@ import {
  * @returns {number|object} error if failed, empty if successful
  */
 export function adminQuizDescriptionUpdate (token: number, quizId: number,
-  description: string): errorObject | Record<string, never> {
+  description: string): Record<string, never> {
   const data = getData();
 
   const user = findToken(data, token);
@@ -47,7 +47,7 @@ export function adminQuizDescriptionUpdate (token: number, quizId: number,
  * @returns {object} error if failed, empty if successful.
  */
 export function adminQuizNameUpdate (token: number, quizId: number,
-  name: string): errorObject | Record<string, never> {
+  name: string): Record<string, never> {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -87,21 +87,21 @@ export function adminQuizNameUpdate (token: number, quizId: number,
  * @param {string} quizId - The password for the account.
  * @returns {number|object} error if failed, number if successful
  */
-export function adminQuizInfo(token: number, quizId: number): errorObject | quizDetails {
+export function adminQuizInfo(token: number, quizId: number): quizDetails {
   const data = getData();
 
   const user = findToken(data, token);
   if ('error' in user) {
-    return user;
+    throw new Error('Token not found');
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   if (!quiz) {
-    return { error: '403 no quiz provided' };
+    throw new Error('Quiz not found');
   }
 
   if (quiz.creatorId !== user.id) {
-    return { error: '403 Quiz ID does not refer to a quiz that this user owns' };
+    throw new Error('User does not own quiz');
   }
 
   return {
@@ -122,7 +122,7 @@ export function adminQuizInfo(token: number, quizId: number): errorObject | quiz
  * @param {string} quizId - The password for the account.
  * @returns {number|object} error if failed, number if successful
  */
-export function adminQuizList(token : number): errorObject | quizList {
+export function adminQuizList(token : number): quizList {
   const data = getData();
 
   const user = findToken(data, token);
@@ -223,7 +223,7 @@ export function adminQuizRemove(token: number,
  * @returns {object} An empty object if successful, or an error object if unsuccessful.
  */
 export function adminQuizTransfer(token: number, quizId: number,
-  userEmail: string): Record<string, never> | errorObject {
+  userEmail: string): Record<string, never> {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -267,7 +267,7 @@ export function adminQuizTransfer(token: number, quizId: number,
  * @returns {object} object with new questionId if successful or error object if unsuccessful
  */
 export function adminQuizCreateQuestion(token: number, quizId: number, question: string,
-  duration: number, points: number, answers: Answer[]): QuestionId | errorObject {
+  duration: number, points: number, answers: Answer[]): QuestionId {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -320,7 +320,8 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
 
   const colouredAnswers = answers.map((answer:Answer): Answer => ({
     ...answer,
-    colour: randomColour()
+    colour: randomColour(),
+    answerId: random5DigitNumber()
   }));
 
   const randomQuestionId = Math.floor(10000 + Math.random() * 90000);
@@ -356,7 +357,7 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
 
 export function adminQuizUpdateQuestion(token: number, quizId: number, questionId: number,
   question: string, duration: number, points: number, answers: Answer[]
-): Record<string, never>| errorObject {
+): Record<string, never> {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -381,8 +382,8 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     throw new Error('The question timeLimit is not positive');
   }
 
-  const totalDuration = quiz.questions.reduce((sum, q, index) => sum +
-    (index === questionId - 1 ? duration : q.timeLimit), 0);
+  const totalDuration = quiz.questions.reduce((sum, question) => sum + question.timeLimit, 0) +
+    duration;
   if (totalDuration > 180) {
     throw new Error('The quiz is longer than 3 minutes');
   }
@@ -408,12 +409,18 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     throw new Error('questionId not found/invalid');
   }
 
+  const colouredAnswers = answers.map((answer:Answer): Answer => ({
+    ...answer,
+    colour: randomColour(),
+    answerId: random5DigitNumber()
+  }));
+
   quiz.questions[questionIndex] = {
     questionId,
     question,
     timeLimit: duration,
     points,
-    answerOptions: answers
+    answerOptions: colouredAnswers
   };
 
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
@@ -501,6 +508,7 @@ export function adminQuestionDuplicate (token: number, quizid: number,
 
   setData(data);
   quiz.questions.splice(newIndex, 0, question);
+  setData(data);
   return { duplicatedQuestionId: question.questionId };
 }
 
@@ -514,7 +522,7 @@ export function adminQuestionDuplicate (token: number, quizid: number,
  */
 
 export function quizQuestionDelete (token: number, quizId: number, questionId: number):
-  errorObject | Record<string, never> {
+   Record<string, never> {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -553,7 +561,7 @@ export function quizQuestionDelete (token: number, quizId: number, questionId: n
  * @returns {errorObject|{}} - An error object if failed, or an empty object if successful.
  */
 export function adminQuizTrashEmpty(token: number, quizIds: number[]):
-  errorObject | Record<string, never> {
+   Record<string, never> {
   const data = getData();
 
   const user = findToken(data, token);
@@ -586,12 +594,12 @@ export function adminQuizTrashEmpty(token: number, quizIds: number[]):
  * @param {number} token - The session token of the user.
  * @returns {Object} - An error object if failed, or an empty object if successful.
  */
-export function adminQuizTrashView(token: number): errorObject | quizList {
+export function adminQuizTrashView(token: number): quizList {
   const data = getData();
 
   const user = findToken(data, token);
   if ('error' in user) {
-    return user;
+    throw new Error('Token not found');
   }
 
   const trashedQuizzes = data.bin.filter(quiz => quiz.creatorId === user.id);
@@ -612,7 +620,7 @@ export function adminQuizTrashView(token: number): errorObject | quizList {
  * @returns {Object} - An error object if failed, or an empty object if successful.
  */
 export function adminQuizRestore(token: number, quizId: number):
-  errorObject | Record<string, never> {
+   Record<string, never> {
   const data = getData();
 
   const user = findToken(data, token);
@@ -633,7 +641,9 @@ export function adminQuizRestore(token: number, quizId: number):
     throw new Error('How');
   }
 
+  restoreQuiz.timeLastEdited = Math.floor(Date.now() / 1000);
   data.quizzes.push(restoreQuiz);
+  data.bin = data.bin.filter(quiz => quiz.quizId !== quizId);
   setData(data);
 
   return {};

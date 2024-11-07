@@ -2,10 +2,10 @@
   "users": [
     {
       "id": 1,
-      "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
-      "password": "1234abcd",
+      "email": "swastik@example.com",
+      "nameFirst": "Swastik",
+      "nameLast": "Mishra",
+      "password": "password123",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
@@ -13,31 +13,42 @@
   ],
   "quizzes": [
     {
-      "quizId": 11564,
+      "quizId": 90209,
       "creatorId": 1,
-      "name": "functional quiz",
-      "description": "a test quiz",
-      "timeCreated": 1730807644,
-      "timeLastEdited": 1730807644,
-      "numQuestions": 0,
-      "questions": []
-    },
-    {
-      "quizId": 18881,
-      "creatorId": 1,
-      "name": "Usable quiz",
-      "description": "a test quiz",
-      "timeCreated": 1730807644,
-      "timeLastEdited": 1730807644,
-      "numQuestions": 0,
-      "questions": []
+      "name": "Test Quiz",
+      "description": "This is a test quiz",
+      "timeCreated": 1730982619,
+      "timeLastEdited": 1730982619,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 84936,
+          "question": "Who is the Rizzler?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": true,
+              "colour": "green",
+              "answerId": 86843
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": false,
+              "colour": "green",
+              "answerId": 38031
+            }
+          ]
+        }
+      ]
     }
   ],
   "sessions": [
     {
-      "sessionId": 78052,
+      "sessionId": 42919,
       "authUserId": 1,
-      "createdAt": 1730807644
+      "createdAt": 1730982619
     }
   ],
   "bin": []

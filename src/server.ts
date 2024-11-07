@@ -58,23 +58,23 @@ app.get('/echo', (req: Request, res: Response) => {
 // adminAuthRegister
 app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
-  const result = adminAuthRegister(email, password, nameFirst, nameLast);
-  if ('error' in result) {
-    res.status(400).json(result);
-    return;
+  try {
+    const result = adminAuthRegister(email, password, nameFirst, nameLast);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
   }
-  res.status(200).json(result);
 });
 
 // adminAuthLogin
 app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
   const { email, password } = req.body;
-  const result = adminAuthLogin(email, password);
-  if ('error' in result) {
-    res.status(400).json(result);
-    return;
+  try {
+    const result = adminAuthLogin(email, password);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
   }
-  res.status(200).json(result);
 });
 
 // adminUserDetails
@@ -433,10 +433,6 @@ app.delete('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Re
 // clear
 app.delete('/v1/clear', (req: Request, res: Response) => {
   const result = clear();
-  if ('error' in result) {
-    res.status(400).json(result);
-    return;
-  }
   res.status(200).json(result);
 });
 

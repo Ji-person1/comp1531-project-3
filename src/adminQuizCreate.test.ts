@@ -1,4 +1,7 @@
-import { ServerAuthRegister, ServerQuizCreate, ServerClear } from './ServerTestCallHelper';
+import {
+  ServerAuthRegister, ServerQuizCreate,
+  ServerClear, ServerQuizInfo
+} from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
 
@@ -59,6 +62,24 @@ describe('Success cases', () => {
   test('Correct basic case', () => {
     const res = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz');
     expect(res.body).toStrictEqual({ quizId: expect.any(Number) });
+    expect(res.statusCode).toStrictEqual(200);
+  });
+
+  test('Basic return success check', () => {
+    const res = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz');
+    expect(res.body).toStrictEqual({ quizId: expect.any(Number) });
+    expect(res.statusCode).toStrictEqual(200);
+    const quizId = res.body;
+    const resInfo = ServerQuizInfo(UserToken.token, quizId.quizId);
+    expect(resInfo.body).toStrictEqual({
+      quizId: quizId.quizId,
+      name: 'functional quiz',
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: 'a test quiz',
+      numQuestions: 0,
+      questions: []
+    });
     expect(res.statusCode).toStrictEqual(200);
   });
 });
