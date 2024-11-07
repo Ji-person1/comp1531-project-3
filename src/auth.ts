@@ -256,6 +256,9 @@ export function adminAuthLogout (token: number): errorObject | Record<string, ne
  */
 
 export function playerViewChat (playerId: number): Record<string, never> {
+  const data = getData();
+
+  const chat = data
 
   return {}
 }
