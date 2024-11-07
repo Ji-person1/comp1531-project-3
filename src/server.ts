@@ -10,7 +10,7 @@ import path from 'path';
 import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
-  adminUserPasswordUpdate, adminAuthLogout
+  adminUserPasswordUpdate, adminAuthLogout, playerViewChat
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -19,6 +19,7 @@ import {
   quizQuestionDelete
 } from './quiz';
 import { clear } from './other';
+import { checkBinOwnership, checkQuizArray, checkQuizOwnership, checkValidToken } from './helper';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -528,6 +529,28 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
   }
   res.status(200).json(result);
 });
+
+// playerViewChat
+
+app.get('/v1/player/:playerid/chat', (req: Request, res: Response) =>  {
+  const playerId = Number(req.params.playerId);
+
+  try {
+    checkValidToken(playerId);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+
+  try {
+    const result = playerViewChat(playerId);
+    res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message});
+  }
+
+
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

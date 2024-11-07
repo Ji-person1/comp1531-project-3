@@ -246,3 +246,16 @@ export function adminAuthLogout (token: number): errorObject | Record<string, ne
 
   return {};
 }
+
+/**
+ * view all messages sent by the player in the session.
+ *
+ * @param {number} playerId - The playerId for the current user session.
+ * @returns {object} error if message is inccorect length, player ID doesn't exist,
+ * or empty object if successful
+ */
+
+export function playerViewChat (playerId: number): Record<string, never> {
+
+  return {}
+}
