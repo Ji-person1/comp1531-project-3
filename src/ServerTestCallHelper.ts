@@ -372,7 +372,7 @@ export function ServerQuestionDuplicate(token: string, quizId: number,
 export function serverStartSession(token: string, quizId: number,
   autoStartNum: number): QuizSessionId {
   const response = request('POST',
-    `${SERVER_URL}/v2/admin/quiz/${quizId}/session/start`, {
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/start`, {
       headers: {
         token: token
       },

@@ -21,14 +21,14 @@ describe('Error Cases', () => {
 
   beforeEach(() => {
     UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
-    UserToken = ServerAuthRegister('z5394791@unsw.edu.au', '1234abcd', 'Mij', 'Heng').body;
+    UserTokenTwo = ServerAuthRegister('z5394791@unsw.edu.au', '1234abcd', 'Mij', 'Heng').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
     quizId.quizId, 'Who is the Rizzler?', 30, 5, [
       { answer: 'Duke Dennis', correct: true },
       { answer: 'Kai Cenat', correct: false }
     ]);
-    quizIdTwo = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
+    quizIdTwo = ServerQuizCreate(UserToken.token, 'A fun quiz', 'a very quiz').body;
   });
 
   test('Invalid token', () => {
@@ -46,7 +46,7 @@ describe('Error Cases', () => {
   });
 
   test('autoStartNum greater than 50', () => {
-    const response = serverStartSession('', quizId.quizId, 51);
+    const response = serverStartSession(UserToken.token, quizId.quizId, 51);
 
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual(ERROR);
@@ -65,16 +65,16 @@ describe('Error Cases', () => {
   test('Empty questions in a quiz', () => {
     const response = serverStartSession(UserToken.token, quizIdTwo.quizId, 20);
 
-    expect(response.statusCode).toBe(400);
     expect(response.body).toEqual(ERROR);
+    expect(response.statusCode).toBe(400);
   });
 
   test('Trashed quiz', () => {
     ServerQuizRemove(UserToken.token, quizId.quizId); 
     const response = serverStartSession(UserToken.token, quizId.quizId, 20);
 
-    expect(response.statusCode).toBe(400);
     expect(response.body).toEqual(ERROR);
+    expect(response.statusCode).toBe(400);
   });
 
   test('Not the owner', () => {
@@ -111,8 +111,8 @@ describe('Success Cases', () => {
   test('Trashed quiz', () => {
     const response = serverStartSession(UserToken.token, quizId.quizId, 20);
 
-    expect(response.statusCode).toBe(200);
     expect(response.body).toEqual({ sessionId: expect.any(Number) });
+    expect(response.statusCode).toBe(200);
   });
 
   test.todo("add a test to demonstrate players can join once that is implemented");

@@ -675,6 +675,10 @@ export function adminSessionStart (token: number, quizId: number,
     throw new Error('How');
   }
 
+  if (data.bin.find(quiz => quiz.quizId === quizId)) {
+    throw new Error('quiz is currently in the bin');
+  }
+
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
   if (!quiz) {
     throw new Error('How');
@@ -693,13 +697,16 @@ export function adminSessionStart (token: number, quizId: number,
   }
   
   let count = 0;
-
-  for (const session of data.quizSession) {
-    if (session.quiz.quizId === quizId && session.state !== GameStage.END) {
-      count++;
-    }
-    if (count > 10) {
-      throw new Error('There are more than ten currently active sessions for this quiz');
+  if (data.quizSession) {
+    for (const session of data.quizSession) {
+      if (session.quiz.quizId === quizId && session.state !== GameStage.END) {
+        console.log("activated")
+        count++;
+      }
+  
+      if (count >= 10) {
+        throw new Error('There are more than ten currently active sessions for this quiz');
+      }
     }
   }
 
