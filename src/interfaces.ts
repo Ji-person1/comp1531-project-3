@@ -137,3 +137,14 @@ export interface QuizId {
 export interface DuplicatedId {
     duplicatedQuestionId: number;
 }
+
+
+export interface SessionInfo {
+    sessionId: number;
+    state: GameStage;
+}
+  
+  export interface SessionsResponse {
+    activeSessions: SessionInfo[];
+    inactiveSessions: SessionInfo[];
+}
