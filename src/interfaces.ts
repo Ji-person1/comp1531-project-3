@@ -134,6 +134,10 @@ export interface QuizId {
     quizId: number;
 }
 
+export interface PlayerId {
+    quizId: number;
+}
+
 export interface DuplicatedId {
     duplicatedQuestionId: number;
 }

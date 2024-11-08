@@ -3,6 +3,7 @@ import { getData, setData } from './datastore';
 import { findToken, generateSessionId } from './helper';
 import {
   UserDetails, Token,
+  PlayerId,
 } from './interfaces';
 
 /**
@@ -242,6 +243,11 @@ export function adminAuthLogout (token: number): Record<string, never> {
 
   data.sessions.splice(sessionIndex, 1);
   setData(data);
+
+  return {};
+}
+
+export function playerJoin (sessionId: number, playerName: string): PlayerId {
 
   return {};
 }
