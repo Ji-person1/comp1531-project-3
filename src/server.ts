@@ -250,6 +250,31 @@ app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   }
 });
 
+//adminSessionStart
+app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { autoStartNum } = req.body;
+  const token = Number(req.header('token'));
+  try {
+    checkValidToken(token);
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
+  }
+
+  try {
+    checkQuizOwnership(token, quizId);
+  } catch (e) {
+    return res.status(403).json({ error: e.message });
+  }
+
+  try {
+    const result = adminQuizNameUpdate(token, quizId, autoStartNum);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
 // adminDescriptionUpdate
 app.put('/v2/admin/quiz/:quizId/description', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);

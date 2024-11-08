@@ -648,3 +648,44 @@ export function adminQuizRestore(token: number, quizId: number):
 
   return {};
 }
+
+/**
+ * Updates the name of a quiz when given the correct authUserId, quizId and name
+ *
+ * @param {string} token - a number used to find the linked account.
+ * @param {string} quizId - The id of the quiz.
+ * @param {string} name - the name of the quiz.
+ * @returns {object} error if failed, empty if successful.
+ */
+export function adminSessionStart (token: number, quizId: number,
+  autoStartNum: number): Record<string, never> {
+  const data = getData();
+
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+    throw new Error('How');
+  }
+
+  const user = data.users.find(user => user.id === session.authUserId);
+  if (!user) {
+    throw new Error('How');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz) {
+    throw new Error('How');
+  }
+
+  if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
+    throw new Error('Name contains invalid characters..');
+  }
+  if (name.length < 3 || name.length > 30) {
+    throw new Error('Name is either less than 3 characters or more than 30 characters.');
+  }
+  if (data.quizzes.find(quiz => quiz.creatorId === user.id && quiz.name === name)) {
+    throw new Error('Name is already used by the current logged in user for another quiz.');
+  }
+  quiz.name = name;
+  setData(data);
+  return {};
+}
