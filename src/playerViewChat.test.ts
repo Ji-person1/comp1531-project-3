@@ -1,6 +1,9 @@
 import {
   ServerClear, ServerViewChat
 } from './ServerTestCallHelper';
+import {
+  generatePlayerId
+} from './helper';
 
 const ERROR = { error: expect.any(String) };
 
@@ -12,8 +15,8 @@ describe('Error Cases', () => {
   let PlayerId: { playerId: number};
 
   test('Logout with invalid token (401 Unauthorized)', () => {
-    const invalidPlayerId = Number(-PlayerId.playerId)
-    const logoutRes = ServerViewChat(invalidPlayerId);
+    const invalidPlayerId = generatePlayerId
+    const logoutRes = ServerViewChat(-invalidPlayerId);
     expect(logoutRes.statusCode).toBe(400);
     expect(logoutRes.body).toStrictEqual(ERROR);
   });  

@@ -58,6 +58,7 @@ export interface Session {
     sessionId: number;
     authUserId: number;
     createdAt: number;
+    messages: Chat[];
 }
 
 export interface DataStore {
@@ -65,6 +66,7 @@ export interface DataStore {
     quizzes: Quiz[];
     bin: Quiz[];
     sessions: Session[];
+    players: Player[];
 }
 
 export interface quizDetails {

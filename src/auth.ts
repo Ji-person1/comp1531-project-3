@@ -2,7 +2,7 @@ import validator from 'validator';
 import { getData, setData } from './datastore';
 import { findToken, generateSessionId } from './helper';
 import {
-  UserDetails, errorObject, Token,
+  UserDetails, errorObject, Token, Chat
 } from './interfaces';
 
 /**
@@ -248,17 +248,27 @@ export function adminAuthLogout (token: number): errorObject | Record<string, ne
 }
 
 /**
- * view all messages sent by the player in the session.
+ * view all chat messages for the specific player session
  *
  * @param {number} playerId - The playerId for the current user session.
  * @returns {object} error if message is inccorect length, player ID doesn't exist,
- * or empty object if successful
+ * or message array
  */
 
-export function playerViewChat (playerId: number): Record<string, never> {
+export function playerViewChat (playerId: number): Chat[] {
   const data = getData();
 
-  const chat = data
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 player ID does not exist');
+  }
+  const playerSession = data.sessions.find((session) =>
+    session.messages.some((msg) => msg.playerId === playerId)
+  );
 
-  return {}
+  if (!playerSession) {
+    return [];
+  }
+
+  return playerSession.messages.filter((msg) => msg.playerId === playerId);
 }

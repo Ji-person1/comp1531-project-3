@@ -117,3 +117,14 @@ export function checkQuizArray (token: number, quizIds: number[]): Record<string
   return {};
 }
 
+export function generatePlayerId(): number {
+  let sessionId = generateSessionId();
+  let playerId = random5DigitNumber();;
+
+  if (!sessionId) {
+    return 0;
+  }
+
+
+  return playerId;
+}
