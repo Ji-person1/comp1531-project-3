@@ -1,6 +1,6 @@
 import {
   DuplicatedId, QuestionId, quizDetails,
-  QuizId, quizList, quizSessionId, Token, UserDetails,SessionsResponse
+  QuizId, quizList, quizSessionId, Token, UserDetails, SessionsResponse
 } from './interfaces';
 
 // Interfaces for the ServerTestCallHelper function.

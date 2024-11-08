@@ -107,7 +107,6 @@ describe('Success Cases', () => {
     expect(session1.statusCode).toBe(200);
     const session2 = serverStartSession(UserToken.token, quizId.quizId, 0);
     expect(session2.statusCode).toBe(200);
-    
     const response = ServerQuizSessions(UserToken.token, quizId.quizId);
     expect(response.statusCode).toBe(200);
     expect(response.body.activeSessions).toEqual([

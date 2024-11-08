@@ -5,7 +5,7 @@ import {
   quizList, QuizId, DuplicatedId,
   GameStage,
   QuizSession,
-  quizSessionId, SessionInfo, SessionsResponse
+  quizSessionId, SessionsResponse
 } from './interfaces';
 
 /**
@@ -728,14 +728,14 @@ export function adminSessionStart (token: number, quizId: number,
 
 /**
  * View all active and inactive sessions for a particular quiz
- * 
+ *
  * @param {number} token - The session token of the current user
  * @param {number} quizId - The ID of the quiz
  * @returns {SessionsResponse} Object containing active and inactive sessions
  */
 export function adminQuizSessions(token: number, quizId: number): SessionsResponse {
   const data = getData();
-  
+
   const session = data.sessions.find(session => session.sessionId === token);
   if (!session) {
     throw new Error('Invalid token');
@@ -750,7 +750,7 @@ export function adminQuizSessions(token: number, quizId: number): SessionsRespon
     throw new Error('User is not the owner of this quiz');
   }
 
-  const quizSessions = data.quizSession.filter(session => 
+  const quizSessions = data.quizSession.filter(session =>
     session.quiz.quizId === quizId
   );
 
