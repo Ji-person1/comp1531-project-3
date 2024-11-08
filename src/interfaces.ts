@@ -83,6 +83,7 @@ export interface QuizSession {
   quizSessionId: number;
   authUserId: number;
   createdAt: number;
+  quiz: Quiz; 
   players: PlayerSession[]; 
   questionResults: QuestionResults[];
 }
@@ -99,6 +100,7 @@ export interface DataStore {
     quizzes: Quiz[];
     bin: Quiz[];
     sessions: Session[];
+    quizSession: QuizSession[]; 
 }
 
 export interface quizDetails {

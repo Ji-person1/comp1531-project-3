@@ -2,8 +2,12 @@ import { getData, setData } from './datastore';
 import { findToken, random5DigitNumber, randomColour } from './helper';
 import {
   quizDetails, QuestionId, Questions, Answer,
-  quizList, QuizId, DuplicatedId
+  quizList, QuizId, DuplicatedId,
+  GameStage,
+  QuizSession,
+  quizSessionId
 } from './interfaces';
+import { QuizSessionId } from './serverInterfaces';
 
 /**
  * Update the description of the relevant quiz.
@@ -658,7 +662,7 @@ export function adminQuizRestore(token: number, quizId: number):
  * @returns {object} error if failed, empty if successful.
  */
 export function adminSessionStart (token: number, quizId: number,
-  autoStartNum: number): Record<string, never> {
+  autoStartNum: number): quizSessionId {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -676,16 +680,42 @@ export function adminSessionStart (token: number, quizId: number,
     throw new Error('How');
   }
 
-  if (!/^[a-zA-Z0-9 ]+$/.test(name)) {
-    throw new Error('Name contains invalid characters..');
+  if (data.bin.find(quiz => quiz.quizId === quizId)) {
+    throw new Error('quiz is currently in the bin');
   }
-  if (name.length < 3 || name.length > 30) {
-    throw new Error('Name is either less than 3 characters or more than 30 characters.');
+
+  if (quiz.questions.length === 0) {
+    throw new Error('quiz is currently in the bin');
   }
-  if (data.quizzes.find(quiz => quiz.creatorId === user.id && quiz.name === name)) {
-    throw new Error('Name is already used by the current logged in user for another quiz.');
+
+  if (autoStartNum > 50) {
+    throw new Error('the autostart number cannot be greater than 50');
   }
-  quiz.name = name;
+  
+  let count = 0;
+
+  for (const session of data.quizSession) {
+    if (session.quiz.quizId === quizId && session.state !== GameStage.END) {
+      count++;
+    }
+    if (count > 10) {
+      throw new Error('There are more than ten currently active sessions for this quiz');
+    }
+  }
+
+  const quizSessionId = random5DigitNumber(); 
+  const newQuizSession: QuizSession = {
+    state: GameStage.LOBBY,
+    quizSessionId: quizSessionId,
+    authUserId: user.id,
+    createdAt: Math.floor(Date.now() / 1000),
+    quiz: quiz,
+    players: [],
+    questionResults: []
+  }
+
+  data.quizSession.push(newQuizSession); 
+
   setData(data);
-  return {};
+  return { sessionId: quizSessionId };
 }
