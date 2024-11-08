@@ -20,7 +20,10 @@ import {
   adminSessionStart
 } from './quiz';
 import { clear } from './other';
-import { checkBinOwnership, checkQuizArray, checkQuizExistOwner, checkQuizOwnership, checkValidToken } from './helper';
+import {
+  checkBinOwnership, checkQuizArray, checkQuizExistOwner,
+  checkQuizOwnership, checkValidToken
+} from './helper';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -251,7 +254,7 @@ app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
   }
 });
 
-//adminSessionStart
+// adminSessionStart
 app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { autoStartNum } = req.body;

@@ -368,7 +368,6 @@ export function ServerQuestionDuplicate(token: string, quizId: number,
   };
 }
 
-
 export function serverStartSession(token: string, quizId: number,
   autoStartNum: number): QuizSessionId {
   const response = request('POST',
@@ -376,7 +375,7 @@ export function serverStartSession(token: string, quizId: number,
       headers: {
         token: token
       },
-      json: { autoStartNum }, 
+      json: { autoStartNum },
       timeout: TIMEOUT_MS
     });
 

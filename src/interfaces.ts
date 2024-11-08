@@ -1,13 +1,13 @@
 // A file for storing all the interfaces
 
 export enum GameStage {
-  LOBBY = "LOBBY",
-  QUESTION_COUNTDOWN = "QUESTION_COUNTDOWN",
-  QUESTION_OPEN = "QUESTION_OPEN",
-  QUESTION_CLOSE = "QUESTION_CLOSE",
-  ANSWER_SHOW = "ANSWER_SHOW",
-  FINAL_RESULTS = "FINAL_RESULTS",
-  END = "END"
+  LOBBY = 'LOBBY',
+  QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
+  QUESTION_OPEN = 'QUESTION_OPEN',
+  QUESTION_CLOSE = 'QUESTION_CLOSE',
+  ANSWER_SHOW = 'ANSWER_SHOW',
+  FINAL_RESULTS = 'FINAL_RESULTS',
+  END = 'END'
 }
 
 export interface UserDetails {
@@ -79,12 +79,12 @@ export interface PlayerSession {
 }
 
 export interface QuizSession {
-  state: GameStage; 
+  state: GameStage;
   quizSessionId: number;
   authUserId: number;
   createdAt: number;
-  quiz: Quiz; 
-  players: PlayerSession[]; 
+  quiz: Quiz;
+  players: PlayerSession[];
   questionResults: QuestionResults[];
 }
 
@@ -92,7 +92,7 @@ export interface QuestionResults {
   questionId: number;
   playersCorrect: string[];
   averageAnswerTime: number;
-  percentCorrect: number; 
+  percentCorrect: number;
 }
 
 export interface DataStore {
@@ -100,7 +100,7 @@ export interface DataStore {
     quizzes: Quiz[];
     bin: Quiz[];
     sessions: Session[];
-    quizSession: QuizSession[]; 
+    quizSession: QuizSession[];
 }
 
 export interface quizDetails {

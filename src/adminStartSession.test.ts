@@ -1,10 +1,8 @@
 import {
-    ServerAuthRegister, ServerQuizCreate, ServerQuizRemove,
-    ServerQuizTrashEmpty, ServerClear,
-    ServerAuthLogout,
-    ServerQuizTrash,
-    ServerQuizCreateQuestion,
-    serverStartSession
+  ServerAuthRegister, ServerQuizCreate, ServerQuizRemove,
+  ServerClear,
+  ServerQuizCreateQuestion,
+  serverStartSession
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -24,10 +22,10 @@ describe('Error Cases', () => {
     UserTokenTwo = ServerAuthRegister('z5394791@unsw.edu.au', '1234abcd', 'Mij', 'Heng').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
-    quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-      { answer: 'Duke Dennis', correct: true },
-      { answer: 'Kai Cenat', correct: false }
-    ]);
+      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
+        { answer: 'Duke Dennis', correct: true },
+        { answer: 'Kai Cenat', correct: false }
+      ]);
     quizIdTwo = ServerQuizCreate(UserToken.token, 'A fun quiz', 'a very quiz').body;
   });
 
@@ -70,7 +68,7 @@ describe('Error Cases', () => {
   });
 
   test('Trashed quiz', () => {
-    ServerQuizRemove(UserToken.token, quizId.quizId); 
+    ServerQuizRemove(UserToken.token, quizId.quizId);
     const response = serverStartSession(UserToken.token, quizId.quizId, 20);
 
     expect(response.body).toEqual(ERROR);
@@ -95,17 +93,15 @@ describe('Error Cases', () => {
 describe('Success Cases', () => {
   let UserToken: { token: string };
   let quizId: { quizId: number };
-  let quizIdTwo: { quizId: number };
 
   beforeEach(() => {
     UserToken = ServerAuthRegister('jim.zheng123@icloud.com', '1234abcd', 'Jim', 'Zheng').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
-    quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-      { answer: 'Duke Dennis', correct: true },
-      { answer: 'Kai Cenat', correct: false }
-    ]);
-    quizIdTwo = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
+      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
+        { answer: 'Duke Dennis', correct: true },
+        { answer: 'Kai Cenat', correct: false }
+      ]);
   });
 
   test('Trashed quiz', () => {
@@ -115,7 +111,7 @@ describe('Success Cases', () => {
     expect(response.statusCode).toBe(200);
   });
 
-  test.todo("add a test to demonstrate players can join once that is implemented");
+  test.todo('add a test to demonstrate players can join once that is implemented');
 
-  test.todo("add a test to check no new questions are added to this once a session begins");
+  test.todo('add a test to check no new questions are added to this once a session begins');
 });

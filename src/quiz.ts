@@ -7,7 +7,6 @@ import {
   QuizSession,
   quizSessionId
 } from './interfaces';
-import { QuizSessionId } from './serverInterfaces';
 
 /**
  * Update the description of the relevant quiz.
@@ -695,22 +694,22 @@ export function adminSessionStart (token: number, quizId: number,
   if (autoStartNum > 50) {
     throw new Error('the autostart number cannot be greater than 50');
   }
-  
+
   let count = 0;
   if (data.quizSession) {
     for (const session of data.quizSession) {
       if (session.quiz.quizId === quizId && session.state !== GameStage.END) {
-        console.log("activated")
+        console.log('activated');
         count++;
       }
-  
+
       if (count >= 10) {
         throw new Error('There are more than ten currently active sessions for this quiz');
       }
     }
   }
 
-  const quizSessionId = random5DigitNumber(); 
+  const quizSessionId = random5DigitNumber();
   const newQuizSession: QuizSession = {
     state: GameStage.LOBBY,
     quizSessionId: quizSessionId,
@@ -719,9 +718,9 @@ export function adminSessionStart (token: number, quizId: number,
     quiz: quiz,
     players: [],
     questionResults: []
-  }
+  };
 
-  data.quizSession.push(newQuizSession); 
+  data.quizSession.push(newQuizSession);
 
   setData(data);
   return { sessionId: quizSessionId };

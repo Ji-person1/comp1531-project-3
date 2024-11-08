@@ -80,7 +80,6 @@ export function checkQuizOwnership (token: number, quizId: number): Record<strin
   return {};
 }
 
-
 export function checkQuizExistOwner (token: number, quizId: number): Record<string, never> {
   const data = getData();
   if (isNaN(quizId)) {
@@ -96,12 +95,11 @@ export function checkQuizExistOwner (token: number, quizId: number): Record<stri
   const quizBin = data.bin.find(q => q.quizId === quizId);
   if (!quiz && !quizBin) {
     throw new Error('Quiz does not exist');
-  }
-  else if (quiz && quizBin) {
+  } else if (quiz && quizBin) {
     if (linkedUser.id !== quiz.creatorId && linkedUser.id !== quiz.creatorId) {
       throw new Error('You are not the creator of the quizId provided');
     }
-  }else if (quiz) {
+  } else if (quiz) {
     if (linkedUser.id !== quiz.creatorId) {
       throw new Error('You are not the creator of the quizId provided');
     }
