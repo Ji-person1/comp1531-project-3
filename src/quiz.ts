@@ -738,7 +738,7 @@ export function adminQuizSessions(token: number, quizId: number): SessionsRespon
   
   const session = data.sessions.find(session => session.sessionId === token);
   if (!session) {
-    throw new Error('Invalid toekn');
+    throw new Error('Invalid token');
   }
 
   const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
