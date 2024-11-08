@@ -16,10 +16,14 @@ import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrashView,
-  adminQuizRestore, quizQuestionDelete
+  adminQuizRestore, quizQuestionDelete,
+  adminSessionStart
 } from './quiz';
 import { clear } from './other';
-import { checkBinOwnership, checkQuizArray, checkQuizOwnership, checkValidToken } from './helper';
+import {
+  checkBinOwnership, checkQuizArray, checkQuizExistOwner,
+  checkQuizOwnership, checkValidToken
+} from './helper';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -244,6 +248,31 @@ app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 
   try {
     const result = adminQuizNameUpdate(token, quizId, name);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// adminSessionStart
+app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { autoStartNum } = req.body;
+  const token = Number(req.header('token'));
+  try {
+    checkValidToken(token);
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
+  }
+
+  try {
+    checkQuizExistOwner(token, quizId);
+  } catch (e) {
+    return res.status(403).json({ error: e.message });
+  }
+
+  try {
+    const result = adminSessionStart(token, quizId, autoStartNum);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });

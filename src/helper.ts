@@ -65,16 +65,44 @@ export function checkQuizOwnership (token: number, quizId: number): Record<strin
   }
   const quiz = data.quizzes.find(q => q.quizId === quizId);
   if (!quiz) {
-    throw new Error('Quiz not found');
+    throw new Error('Quiz does not found');
   }
 
   const linkedUser = findToken(data, token);
   if ('error' in linkedUser) {
-    throw new Error('Token invalid');
+    throw new Error('Token should be valid here');
   }
 
   if (linkedUser.id !== quiz.creatorId) {
     throw new Error('You are not the creator of the quizId provided');
+  }
+
+  return {};
+}
+
+export function checkQuizExistOwner (token: number, quizId: number): Record<string, never> {
+  const data = getData();
+  if (isNaN(quizId)) {
+    throw new Error('quizId is invalid');
+  }
+
+  const linkedUser = findToken(data, token);
+  if ('error' in linkedUser) {
+    throw new Error('Token should be valid here');
+  }
+
+  const quiz = data.quizzes.find(q => q.quizId === quizId);
+  const quizBin = data.bin.find(q => q.quizId === quizId);
+  if (!quiz && !quizBin) {
+    throw new Error('Quiz does not exist');
+  } else if (quiz && quizBin) {
+    if (linkedUser.id !== quiz.creatorId && linkedUser.id !== quiz.creatorId) {
+      throw new Error('You are not the creator of the quizId provided');
+    }
+  } else if (quiz) {
+    if (linkedUser.id !== quiz.creatorId) {
+      throw new Error('You are not the creator of the quizId provided');
+    }
   }
 
   return {};

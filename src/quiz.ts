@@ -2,7 +2,10 @@ import { getData, setData } from './datastore';
 import { findToken, random5DigitNumber, randomColour } from './helper';
 import {
   quizDetails, QuestionId, Questions, Answer,
-  quizList, QuizId, DuplicatedId
+  quizList, QuizId, DuplicatedId,
+  GameStage,
+  QuizSession,
+  quizSessionId
 } from './interfaces';
 
 /**
@@ -647,4 +650,78 @@ export function adminQuizRestore(token: number, quizId: number):
   setData(data);
 
   return {};
+}
+
+/**
+ * Updates the name of a quiz when given the correct authUserId, quizId and name
+ *
+ * @param {string} token - a number used to find the linked account.
+ * @param {string} quizId - The id of the quiz.
+ * @param {string} name - the name of the quiz.
+ * @returns {object} error if failed, empty if successful.
+ */
+export function adminSessionStart (token: number, quizId: number,
+  autoStartNum: number): quizSessionId {
+  const data = getData();
+
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+    throw new Error('How');
+  }
+
+  const user = data.users.find(user => user.id === session.authUserId);
+  if (!user) {
+    throw new Error('How');
+  }
+
+  if (data.bin.find(quiz => quiz.quizId === quizId)) {
+    throw new Error('quiz is currently in the bin');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz) {
+    throw new Error('How');
+  }
+
+  if (data.bin.find(quiz => quiz.quizId === quizId)) {
+    throw new Error('quiz is currently in the bin');
+  }
+
+  if (quiz.questions.length === 0) {
+    throw new Error('quiz is currently in the bin');
+  }
+
+  if (autoStartNum > 50) {
+    throw new Error('the autostart number cannot be greater than 50');
+  }
+
+  let count = 0;
+  if (data.quizSession) {
+    for (const session of data.quizSession) {
+      if (session.quiz.quizId === quizId && session.state !== GameStage.END) {
+        console.log('activated');
+        count++;
+      }
+
+      if (count >= 10) {
+        throw new Error('There are more than ten currently active sessions for this quiz');
+      }
+    }
+  }
+
+  const quizSessionId = random5DigitNumber();
+  const newQuizSession: QuizSession = {
+    state: GameStage.LOBBY,
+    quizSessionId: quizSessionId,
+    authUserId: user.id,
+    createdAt: Math.floor(Date.now() / 1000),
+    quiz: quiz,
+    players: [],
+    questionResults: []
+  };
+
+  data.quizSession.push(newQuizSession);
+
+  setData(data);
+  return { sessionId: quizSessionId };
 }
