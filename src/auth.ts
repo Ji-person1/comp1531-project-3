@@ -4,7 +4,7 @@ import { findToken, generateSessionId, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
   PlayerId,
-  GameStage,
+  GameStage, Chat
 } from './interfaces';
 
 /**
@@ -269,12 +269,32 @@ export function playerSendChat (playerId: number, message: string): Record<strin
     throw new Error('400 message length invalid (<1 or >100 characters)');
   }
 
-  data.messages.push({
-    playerId, 
+  
+  const quizSession = data.quizSession.find(
+    (session) => session.players.some((p) => p.playerId === playerId)
+  );
+
+  if (!quizSession) {
+    throw new Error('400 Player not in any active session');
+  }
+
+  let chatSession = data.chat.find((chat) => chat.sessionId === quizSession.quizSessionId);
+  if (!chatSession) {
+    chatSession = {
+      sessionId: quizSession.quizSessionId,
+      messages: []
+    };
+    data.chat.push(chatSession);
+  }
+
+  const newMessage: Chat = {
+    playerId: playerId,
     message: message,
-    timeSent: Math.floor(Date.now()/1000),
-    playerName: name
-  });
+    playerName: name,
+    timeSent: Math.floor(Date.now() / 1000) 
+  };
+
+  chatSession.messages.push(newMessage);
 
   setData(data);
 

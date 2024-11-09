@@ -10,12 +10,8 @@ import path from 'path';
 import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
-<<<<<<< HEAD
-  adminUserPasswordUpdate, adminAuthLogout, playerSendChat
-=======
-  adminUserPasswordUpdate, adminAuthLogout,
+  adminUserPasswordUpdate, adminAuthLogout, playerSendChat,
   playerJoin, playerStatus, AnswerQuestion
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -25,15 +21,11 @@ import {
   adminSessionStart, adminQuizSessions
 } from './quiz';
 import { clear } from './other';
-<<<<<<< HEAD
 import e from 'express';
-import { checkValidToken } from './helper';
-=======
 import {
   checkBinOwnership, checkQuizArray, checkQuizExistOwner,
   checkQuizOwnership, checkValidToken
 } from './helper';
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests

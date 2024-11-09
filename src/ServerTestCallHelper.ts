@@ -444,11 +444,17 @@ EmptyBody {
 }
 
 // personSendChat
-export function ServerSendChat(playerId: number): Response {
+export function ServerSendChat(playerId: number, message: string): EmptyBody {
   const response = request('POST',
-    `${SERVER_URL}'/v1/player/${playerId}/chat'`, {
+    `${SERVER_URL}/v1/player/${playerId}/chat`, {
+      json: {
+        message: message
+      },
       timeout: TIMEOUT_MS
     });
 
-  return convToResponse(response);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }

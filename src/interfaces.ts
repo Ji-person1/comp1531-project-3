@@ -104,13 +104,9 @@ export interface DataStore {
     quizzes: Quiz[];
     bin: Quiz[];
     sessions: Session[];
-<<<<<<< HEAD
-    players: Player[];
-    messages: Chat[]
-=======
     quizSession: QuizSession[];
     players: PlayerSession[];
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
+    chat: ChatSession[];
 }
 
 export interface quizDetails {
@@ -152,7 +148,6 @@ export interface DuplicatedId {
     duplicatedQuestionId: number;
 }
 
-<<<<<<< HEAD
 export interface Player {
     playerName: string;
     score: number;
@@ -166,7 +161,6 @@ export interface Chat {
     playerName: string;
     timeSent: number;
 }
-=======
 export interface SessionInfo {
     sessionId: number;
     state: GameStage;
@@ -182,4 +176,8 @@ export interface PlayerStatusResponse {
     numQuestions: number,
     atQuestion: number
 }
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
+
+export interface ChatSession {
+    sessionId: number;
+    messages: Chat[];
+}

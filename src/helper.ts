@@ -65,20 +65,12 @@ export function checkQuizOwnership (token: number, quizId: number): Record<strin
   }
   const quiz = data.quizzes.find(q => q.quizId === quizId);
   if (!quiz) {
-<<<<<<< HEAD
-    throw new Error('Quiz not found');
-=======
     throw new Error('Quiz does not found');
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
   }
 
   const linkedUser = findToken(data, token);
   if ('error' in linkedUser) {
-<<<<<<< HEAD
-    throw new Error('Token invalid');
-=======
     throw new Error('Token should be valid here');
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
   }
 
   if (linkedUser.id !== quiz.creatorId) {
@@ -88,8 +80,6 @@ export function checkQuizOwnership (token: number, quizId: number): Record<strin
   return {};
 }
 
-<<<<<<< HEAD
-=======
 export function checkQuizExistOwner (token: number, quizId: number): Record<string, never> {
   const data = getData();
   if (isNaN(quizId)) {
@@ -118,7 +108,6 @@ export function checkQuizExistOwner (token: number, quizId: number): Record<stri
   return {};
 }
 
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
 export function checkBinOwnership (token: number, quizId: number): Record<string, never> {
   const data = getData();
   const linkedUser = findToken(data, token);
@@ -157,8 +146,6 @@ export function checkQuizArray (token: number, quizIds: number[]): Record<string
 
   return {};
 }
-<<<<<<< HEAD
-=======
 
 export function getAnswerId(questionId: number): number[] {
   const data = getData();
@@ -214,4 +201,3 @@ export function setLobby(sessionId: number): Record<string, never> {
 
   return {};
 }
->>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
