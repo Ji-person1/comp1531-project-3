@@ -3,7 +3,7 @@ import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
-  SessionResponse
+  SessionResponse, PlayerStatusResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -411,6 +411,15 @@ export function serverPlayerJoin(sessionId: number, playerName: string): PLayerI
       timeout: TIMEOUT_MS
     });
 
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerStatus
+export function serverPlayerStatus(playerId: number): PlayerStatusResponse {
+  const response = request('GET', `${SERVER_URL}/v1/player/${playerId}`);
   return {
     body: JSON.parse(response.body.toString()),
     statusCode: response.statusCode,
