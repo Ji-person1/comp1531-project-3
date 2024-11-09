@@ -17,7 +17,7 @@ import {
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrashView,
   adminQuizRestore, quizQuestionDelete,
-  adminSessionStart
+  adminSessionStart, adminQuizSessions
 } from './quiz';
 import { clear } from './other';
 import {
@@ -540,6 +540,31 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
 
   try {
     const result = adminAuthLogout(token);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// adminquizSessions
+app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const token = Number(req.header('token'));
+
+  try {
+    checkValidToken(token);
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
+  }
+
+  try {
+    checkQuizExistOwner(token, quizId);
+  } catch (e) {
+    return res.status(403).json({ error: e.message });
+  }
+
+  try {
+    const result = adminQuizSessions(token, quizId);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });

@@ -2,7 +2,8 @@ import request from 'sync-request-curl';
 import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, QuestionIdResponse,
-  QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse
+  QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
+  SessionResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -376,6 +377,19 @@ export function serverStartSession(token: string, quizId: number,
         token: token
       },
       json: { autoStartNum },
+      timeout: TIMEOUT_MS
+    });
+
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+export function ServerQuizSessions(token: string, quizId: number): SessionResponse {
+  const response = request('GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/sessions`, {
+      headers: { token: token },
       timeout: TIMEOUT_MS
     });
 
