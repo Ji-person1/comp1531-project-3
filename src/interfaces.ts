@@ -77,6 +77,7 @@ export interface PlayerSession {
   score: number;
   numQuestions: number;
   atQuestion: number;
+  quizsessionId: number;
 }
 
 export interface QuizSession {
@@ -94,6 +95,8 @@ export interface QuestionResults {
   playersCorrect: string[];
   averageAnswerTime: number;
   percentCorrect: number;
+  numWrong: number;
+  numRight: number;
 }
 
 export interface DataStore {
@@ -102,6 +105,7 @@ export interface DataStore {
     bin: Quiz[];
     sessions: Session[];
     quizSession: QuizSession[];
+    players: PlayerSession[];
 }
 
 export interface quizDetails {

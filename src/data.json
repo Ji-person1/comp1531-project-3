@@ -13,92 +13,24 @@
   ],
   "quizzes": [
     {
-      "quizId": 86334,
+      "quizId": 63927,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731133978,
-      "timeLastEdited": 1731133978,
-      "numQuestions": 1,
-      "questions": [
-        {
-          "questionId": 38567,
-          "question": "Who is the Rizzler?",
-          "timeLimit": 30,
-          "points": 5,
-          "answerOptions": [
-            {
-              "answer": "Duke Dennis",
-              "correct": true,
-              "colour": "purple",
-              "answerId": 91086
-            },
-            {
-              "answer": "Kai Cenat",
-              "correct": false,
-              "colour": "red",
-              "answerId": 43298
-            }
-          ]
-        }
-      ]
+      "timeCreated": 1731163634,
+      "timeLastEdited": 1731163634,
+      "numQuestions": 0,
+      "questions": []
     }
   ],
   "sessions": [
     {
-      "sessionId": 26104,
+      "sessionId": 15328,
       "authUserId": 1,
-      "createdAt": 1731133978
+      "createdAt": 1731163634
     }
   ],
   "bin": [],
-  "quizSession": [
-    {
-      "state": "LOBBY",
-      "quizSessionId": 50094,
-      "authUserId": 1,
-      "createdAt": 1731133978,
-      "quiz": {
-        "quizId": 86334,
-        "creatorId": 1,
-        "name": "functional quiz",
-        "description": "a test quiz",
-        "timeCreated": 1731133978,
-        "timeLastEdited": 1731133978,
-        "numQuestions": 1,
-        "questions": [
-          {
-            "questionId": 38567,
-            "question": "Who is the Rizzler?",
-            "timeLimit": 30,
-            "points": 5,
-            "answerOptions": [
-              {
-                "answer": "Duke Dennis",
-                "correct": true,
-                "colour": "purple",
-                "answerId": 91086
-              },
-              {
-                "answer": "Kai Cenat",
-                "correct": false,
-                "colour": "red",
-                "answerId": 43298
-              }
-            ]
-          }
-        ]
-      },
-      "players": [
-        {
-          "playerId": 53654,
-          "playerName": "Jim",
-          "score": 0,
-          "numQuestions": 0,
-          "atQuestion": 0
-        }
-      ],
-      "questionResults": []
-    }
-  ]
+  "quizSession": [],
+  "players": []
 }

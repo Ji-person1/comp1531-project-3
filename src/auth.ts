@@ -277,11 +277,62 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
     score: 0,
     numQuestions: 0,
     atQuestion: 0,
+    quizsessionId: sessionId
   };
   sessionQuiz.players.push(newPlayer);
+  data.players.push(newPlayer);
   setData(data);
 
   return { playerId: playerId };
+}
+
+export function AnswerQuestion (playerId: number, questionPosition: number, answerIds: number[]):
+Record<string, never> {
+  const data = getData();
+
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+
+  const session = data.quizSession.find(q => q.quizSessionId === player.quizsessionId);
+  if (!session) {
+    throw new Error('this player is somehow not in a quiz');
+  }
+  if (session.state !== GameStage.QUESTION_OPEN) {
+    throw new Error('this player is somehow not in a quiz');
+  }
+  const quiz = session.quiz;
+  if (questionPosition < 0 || questionPosition > quiz.questions.length + 1) {
+    throw new Error('Invalid position for questionPosition.');
+  }
+
+  const uniqueAnswers = new Set(answerIds);
+  if (uniqueAnswers.size !== answerIds.length) {
+    throw new Error('Duplicate answers are not allowed.');
+  }
+
+  const findquestion = quiz.questions[questionPosition - 1];
+  answerIds.forEach(answerId => {
+    const answer = findquestion.answerOptions.find(a => a.answerId === answerId);
+    if (!answer) {
+      throw new Error(`Answer with ID ${answerId} not found in the answer options.`);
+    }
+    const seshResults = session.questionResults;
+    if (answer.correct === true) {
+      player.score += findquestion.points;
+      seshResults[questionPosition - 1].playersCorrect.push(player.playerName);
+      // increment average answer name
+      seshResults[questionPosition - 1].numRight += 1;
+    } else {
+      seshResults[questionPosition - 1].numWrong += 1;
+    }
+    const correct = seshResults[questionPosition - 1].numRight;
+    const incorrect = seshResults[questionPosition - 1].numWrong;
+    seshResults[questionPosition - 1].percentCorrect = correct / incorrect * 100;
+    setData(data);
+  });
+  return {};
 }
 
 /**
