@@ -30,7 +30,7 @@ describe('Error Cases', () => {
     playerId = serverPlayerJoin(sessionId.sessionId, "Swapnav").body
   });
 
-  test('Invalid name', () => {
+  test('player ID does not exist', () => {
     const response = serverPlayerJoin(sessionId.sessionId, '--..');
 
     expect(response.statusCode).toBe(400);
