@@ -416,3 +416,12 @@ export function serverPlayerJoin(sessionId: number, playerName: string): PLayerI
     statusCode: response.statusCode,
   };
 }
+
+// playerStatus
+export const serverPlayerStatus = (playerId: number) => {
+  const res = request('GET', SERVER_URL + `/v1/player/${playerId}`);
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: JSON.parse(res.statusCode.toString())
+  };
+};
