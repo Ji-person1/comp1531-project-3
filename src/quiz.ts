@@ -717,7 +717,14 @@ export function adminSessionStart (token: number, quizId: number,
     createdAt: Math.floor(Date.now() / 1000),
     quiz: quiz,
     players: [],
-    questionResults: []
+    questionResults: quiz.questions.map(question => ({
+      questionId: question.questionId,
+      playersCorrect: [],
+      averageAnswerTime: 0,
+      percentCorrect: 0,
+      numRight: 0,
+      numWrong: 0
+    }))
   };
 
   data.quizSession.push(newQuizSession);
