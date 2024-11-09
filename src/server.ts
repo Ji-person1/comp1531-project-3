@@ -11,7 +11,8 @@ import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
   adminUserPasswordUpdate, adminAuthLogout,
-  playerJoin
+  playerJoin,
+  playerQuestionResults
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -585,6 +586,18 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 
 
 // playerQuestionResults
+app.get ('/v1/player/:playerid/question/:questionposition/results' , (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerId);
+  const questionposition = parseInt(req.params.questionposition);
+
+  try {
+    const result = playerQuestionResults(playerId, questionposition);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+
+});
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

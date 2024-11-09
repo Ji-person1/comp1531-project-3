@@ -5,6 +5,7 @@ import {
   UserDetails, Token,
   PlayerId,
   GameStage,
+  QuestionResults,
 } from './interfaces';
 
 /**
@@ -283,3 +284,8 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
 
   return { playerId: playerId };
 }
+
+export function playerQuestionResults (playerId: number, questionposition: number): QuestionResults {
+
+  return;
+};
