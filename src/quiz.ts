@@ -5,7 +5,7 @@ import {
   quizList, QuizId, DuplicatedId,
   GameStage,
   QuizSession,
-  quizSessionId
+  quizSessionId, SessionsResponse
 } from './interfaces';
 
 /**
@@ -724,4 +724,54 @@ export function adminSessionStart (token: number, quizId: number,
 
   setData(data);
   return { sessionId: quizSessionId };
+}
+
+/**
+ * View all active and inactive sessions for a particular quiz
+ *
+ * @param {number} token - The session token of the current user
+ * @param {number} quizId - The ID of the quiz
+ * @returns {SessionsResponse} Object containing active and inactive sessions
+ */
+export function adminQuizSessions(token: number, quizId: number): SessionsResponse {
+  const data = getData();
+
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+    throw new Error('Invalid token');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz) {
+    throw new Error('Quiz ID does not lead to a valid quiz');
+  }
+
+  if (quiz.creatorId !== session.authUserId) {
+    throw new Error('User is not the owner of this quiz');
+  }
+
+  const quizSessions = data.quizSession.filter(session =>
+    session.quiz.quizId === quizId
+  );
+
+  const activeSessions = quizSessions
+    .filter(session => session.state !== GameStage.END)
+    .map(session => ({
+      sessionId: session.quizSessionId,
+      state: session.state
+    }))
+    .sort((a, b) => a.sessionId - b.sessionId);
+
+  const inactiveSessions = quizSessions
+    .filter(session => session.state === GameStage.END)
+    .map(session => ({
+      sessionId: session.quizSessionId,
+      state: session.state
+    }))
+    .sort((a, b) => a.sessionId - b.sessionId);
+
+  return {
+    activeSessions,
+    inactiveSessions
+  };
 }
