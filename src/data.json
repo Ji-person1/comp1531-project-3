@@ -13,114 +13,24 @@
   ],
   "quizzes": [
     {
-      "quizId": 63717,
+      "quizId": 63927,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731162928,
-      "timeLastEdited": 1731162928,
-      "numQuestions": 1,
-      "questions": [
-        {
-          "questionId": 25804,
-          "question": "Who is the Rizzler?",
-          "timeLimit": 30,
-          "points": 5,
-          "answerOptions": [
-            {
-              "answer": "Duke Dennis",
-              "correct": true,
-              "colour": "purple",
-              "answerId": 91171
-            },
-            {
-              "answer": "Kai Cenat",
-              "correct": false,
-              "colour": "purple",
-              "answerId": 24474
-            }
-          ]
-        }
-      ]
+      "timeCreated": 1731163634,
+      "timeLastEdited": 1731163634,
+      "numQuestions": 0,
+      "questions": []
     }
   ],
   "sessions": [
     {
-      "sessionId": 77694,
+      "sessionId": 15328,
       "authUserId": 1,
-      "createdAt": 1731162928
+      "createdAt": 1731163634
     }
   ],
   "bin": [],
-  "quizSession": [
-    {
-      "state": "QUESTION_OPEN",
-      "quizSessionId": 22626,
-      "authUserId": 1,
-      "createdAt": 1731162928,
-      "quiz": {
-        "quizId": 63717,
-        "creatorId": 1,
-        "name": "functional quiz",
-        "description": "a test quiz",
-        "timeCreated": 1731162928,
-        "timeLastEdited": 1731162928,
-        "numQuestions": 1,
-        "questions": [
-          {
-            "questionId": 25804,
-            "question": "Who is the Rizzler?",
-            "timeLimit": 30,
-            "points": 5,
-            "answerOptions": [
-              {
-                "answer": "Duke Dennis",
-                "correct": true,
-                "colour": "purple",
-                "answerId": 91171
-              },
-              {
-                "answer": "Kai Cenat",
-                "correct": false,
-                "colour": "purple",
-                "answerId": 24474
-              }
-            ]
-          }
-        ]
-      },
-      "players": [
-        {
-          "playerId": 24369,
-          "playerName": "Jim",
-          "score": 0,
-          "numQuestions": 0,
-          "atQuestion": 0,
-          "quizsessionId": 22626
-        }
-      ],
-      "questionResults": [
-        {
-          "questionId": 25804,
-          "playersCorrect": [
-            "Jim"
-          ],
-          "averageAnswerTime": 0,
-          "percentCorrect": null,
-          "numRight": 0,
-          "numWrong": 0
-        }
-      ]
-    }
-  ],
-  "players": [
-    {
-      "playerId": 24369,
-      "playerName": "Jim",
-      "score": 5,
-      "numQuestions": 0,
-      "atQuestion": 0,
-      "quizsessionId": 22626
-    }
-  ]
+  "quizSession": [],
+  "players": []
 }
