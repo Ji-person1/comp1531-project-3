@@ -4,6 +4,8 @@ import {
   ServerQuizCreateQuestion,
   ServerQuestionDuplicate,
   ServerClear,
+  ServerQuizQuestionDelete,
+  ServerQuizInfo,
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -27,8 +29,22 @@ describe('Error cases', () => {
       ]).body;
   });
 
+  test('question does not exist', () => {
+    const res = ServerQuestionDuplicate(UserToken.token, quizId.quizId, -questionId.questionId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(400);
+  });
+
+  test('question no longer exists', () => {
+    ServerQuizQuestionDelete(UserToken.token, quizId.quizId, questionId.questionId);
+    const res = ServerQuestionDuplicate(UserToken.token, quizId.quizId, questionId.questionId);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toBe(400);
+  });
+
   test('invalid token', () => {
-    const res = ServerQuestionDuplicate('-1', quizId.quizId, questionId.questionId);
+    const res = ServerQuestionDuplicate(Number(-UserToken.token).toString(),
+      quizId.quizId, questionId.questionId);
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toBe(401);
   });
@@ -44,12 +60,6 @@ describe('Error cases', () => {
     const res = ServerQuestionDuplicate(otherUserToken.token, quizId.quizId, questionId.questionId);
     expect(res.body).toStrictEqual(ERROR);
     expect(res.statusCode).toBe(403);
-  });
-
-  test('question does not exist', () => {
-    const res = ServerQuestionDuplicate(UserToken.token, quizId.quizId, -questionId.questionId);
-    expect(res.body).toStrictEqual(ERROR);
-    expect(res.statusCode).toBe(400);
   });
 });
 
@@ -73,5 +83,64 @@ describe('Success cases', () => {
     const resId = res.body;
     expect(resId.duplicatedQuestionId).toStrictEqual(questionId.questionId);
     expect(res.statusCode).toBe(200);
+  });
+
+  test('Check with quizInfo', () => {
+    const res = ServerQuestionDuplicate(UserToken.token, quizId.quizId, questionId.questionId);
+    const resId = res.body;
+    expect(resId.duplicatedQuestionId).toStrictEqual(questionId.questionId);
+    expect(res.statusCode).toBe(200);
+    const resInfo = ServerQuizInfo(UserToken.token, quizId.quizId);
+    expect(resInfo.body).toStrictEqual({
+      quizId: quizId.quizId,
+      name: 'first quiz',
+      timeCreated: expect.any(Number),
+      timeLastEdited: expect.any(Number),
+      description: 'a test quiz',
+      numQuestions: 2,
+      questions: [
+        {
+          questionId: expect.any(Number),
+          question: 'Who is the Rizzler?',
+          timeLimit: 30,
+          points: 5,
+          answerOptions: [
+            {
+              answerId: expect.any(Number),
+              answer: 'Duke Dennis',
+              colour: expect.any(String),
+              correct: true
+            },
+            {
+              answerId: expect.any(Number),
+              answer: 'Kai Cenat',
+              colour: expect.any(String),
+              correct: false
+            },
+          ]
+        },
+        {
+          questionId: expect.any(Number),
+          question: 'Who is the Rizzler?',
+          timeLimit: 30,
+          points: 5,
+          answerOptions: [
+            {
+              answerId: expect.any(Number),
+              answer: 'Duke Dennis',
+              colour: expect.any(String),
+              correct: true
+            },
+            {
+              answerId: expect.any(Number),
+              answer: 'Kai Cenat',
+              colour: expect.any(String),
+              correct: false
+            },
+          ]
+        }
+      ]
+    });
+    expect(resInfo.statusCode).toStrictEqual(200);
   });
 });

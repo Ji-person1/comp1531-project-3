@@ -1,5 +1,15 @@
 // A file for storing all the interfaces
 
+export enum GameStage {
+  LOBBY = 'LOBBY',
+  QUESTION_COUNTDOWN = 'QUESTION_COUNTDOWN',
+  QUESTION_OPEN = 'QUESTION_OPEN',
+  QUESTION_CLOSE = 'QUESTION_CLOSE',
+  ANSWER_SHOW = 'ANSWER_SHOW',
+  FINAL_RESULTS = 'FINAL_RESULTS',
+  END = 'END'
+}
+
 export interface UserDetails {
     user : {
         userId: number;
@@ -51,6 +61,7 @@ export interface Questions {
 export interface Answer {
     answer: string;
     correct: boolean;
+    answerId?: number;
     colour?: string;
 }
 
@@ -60,13 +71,46 @@ export interface Session {
     createdAt: number;
 }
 
+export interface PlayerSession {
+  playerId: number;
+  playerName: string;
+  score: number;
+  numQuestions: number;
+  atQuestion: number;
+  quizsessionId: number;
+}
+
+export interface QuizSession {
+  state: GameStage;
+  quizSessionId: number;
+  authUserId: number;
+  createdAt: number;
+  quiz: Quiz;
+  players: PlayerSession[];
+  questionResults: QuestionResults[];
+}
+
+export interface QuestionResults {
+  questionId: number;
+  playersCorrect: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+  numWrong: number;
+  numRight: number;
+}
+
 export interface DataStore {
     users: User[];
     quizzes: Quiz[];
     bin: Quiz[];
     sessions: Session[];
+<<<<<<< HEAD
     players: Player[];
     messages: Chat[]
+=======
+    quizSession: QuizSession[];
+    players: PlayerSession[];
+>>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
 }
 
 export interface quizDetails {
@@ -80,11 +124,15 @@ export interface quizDetails {
 }
 
 export interface QuestionId {
-    questionId: number
+    questionId: number;
 }
 
 export interface quizList {
-    quizzes: QuizListInfo[]
+    quizzes: QuizListInfo[];
+}
+
+export interface quizSessionId {
+  sessionId: number;
 }
 
 interface QuizListInfo {
@@ -96,10 +144,15 @@ export interface QuizId {
     quizId: number;
 }
 
+export interface PlayerId {
+    playerId: number;
+}
+
 export interface DuplicatedId {
     duplicatedQuestionId: number;
 }
 
+<<<<<<< HEAD
 export interface Player {
     playerName: string;
     score: number;
@@ -113,3 +166,20 @@ export interface Chat {
     playerName: string;
     timeSent: number;
 }
+=======
+export interface SessionInfo {
+    sessionId: number;
+    state: GameStage;
+}
+
+export interface SessionsResponse {
+    activeSessions: SessionInfo[];
+    inactiveSessions: SessionInfo[];
+}
+
+export interface PlayerStatusResponse {
+    state: GameStage,
+    numQuestions: number,
+    atQuestion: number
+}
+>>>>>>> 4bbb3e06622a94c4b0db6d88ad1a2f261f3300e3
