@@ -283,3 +283,24 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
 
   return { playerId: playerId };
 }
+
+/**
+ * Retrieves the status of a player based on their ID
+ * @param {number} playerId - The ID number of the player
+ * @returns {state, numQuestions, atQuestion}
+ * - information about the session and where the player is at
+ */
+export function playerStatus(playerId: number):
+{ state: GameStage, numQuestions: number, atQuestion: number } {
+  const data = getData();
+  const sessionQuiz = data.quizSession.find(s => s.players.some(p => p.playerId === playerId));
+  if (!sessionQuiz) {
+    throw new Error('400: player Id not found');
+  }
+  const player = sessionQuiz.players.find(p => p.playerId === playerId);
+  return {
+    state: sessionQuiz.state,
+    numQuestions: player.numQuestions,
+    atQuestion: player.atQuestion
+  };
+}
