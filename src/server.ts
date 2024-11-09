@@ -11,7 +11,8 @@ import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
   adminUserPasswordUpdate, adminAuthLogout,
-  playerJoin
+  playerJoin,
+  AnswerQuestion
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -76,6 +77,37 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, playerName } = req.body;
   try {
     const result = playerJoin(sessionId, playerName);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// AnswerQuestion
+app.post('/v1/player/:playerid/question/:questionposition/answer', (req: Request, res: Response) => {
+  const { answerId } = req.body;
+  const playerId = parseInt(req.params.playerid as string);
+  const questionPosition = parseInt(req.params.questionposition as string);
+
+  let parsedAnswerIds: number[] = [];
+
+  if (Array.isArray(answerId)) {
+    parsedAnswerIds = (answerId as string[]).map(id => Number(id)).filter(id => !isNaN(id));
+  } else if (typeof answerId === 'string') {
+    try {
+      parsedAnswerIds = JSON.parse(answerId);
+      if (!Array.isArray(parsedAnswerIds)) {
+        throw new Error();
+      }
+    } catch (error) {
+      return res.status(400).json({ error: 'answer IDs are not valid or not an array' });
+    }
+  } else {
+    return res.status(400).json({ error: 'answer IDs are missing or invalid' });
+  }
+
+  try {
+    const result = AnswerQuestion(playerId, questionPosition, parsedAnswerIds);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });

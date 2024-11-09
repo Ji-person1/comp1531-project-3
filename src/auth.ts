@@ -283,3 +283,9 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
 
   return { playerId: playerId };
 }
+
+export function AnswerQuestion (playerId: number, questionPosition: number, answerIds: number[]): 
+Record<string, never> {
+
+  return {}
+}

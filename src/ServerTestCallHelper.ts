@@ -416,3 +416,20 @@ export function serverPlayerJoin(sessionId: number, playerName: string): PLayerI
     statusCode: response.statusCode,
   };
 }
+
+// AnswerQuestion
+export function serverAnswerSubmit(playerId: number, questionPosition: number, answerId: number[]): 
+EmptyBody {
+  const response = request('POST',
+    `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}/answer`, {
+      json: {
+        answerIds: answerId,
+      },
+      timeout: TIMEOUT_MS
+    });
+
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}

@@ -146,3 +146,18 @@ export function checkQuizArray (token: number, quizIds: number[]): Record<string
 
   return {};
 }
+
+//helper functions for test assistance
+export function getAnswerId (questionId: number): number[] {
+
+  return [1, 2, 3]
+}
+
+export function setOpen (sessionId: number): Record<string, never> {
+
+  return {}
+}
+
+export function setLobby (sessionId: number): Record<string, never> {
+  return {}
+}
