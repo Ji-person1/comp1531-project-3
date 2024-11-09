@@ -84,41 +84,41 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
 
 // AnswerQuestion
 app.post('/v1/player/:playerid/question/:questionposition/answer',
-(req: Request, res: Response) => {
-  const { answerIds } = req.body;
-  const playerId = parseInt(req.params.playerid as string);
-  const questionPosition = parseInt(req.params.questionposition as string);
+  (req: Request, res: Response) => {
+    const { answerIds } = req.body;
+    const playerId = parseInt(req.params.playerid as string);
+    const questionPosition = parseInt(req.params.questionposition as string);
 
-  let parsedAnswerIds: number[] = [];
+    let parsedAnswerIds: number[] = [];
 
-  if (Array.isArray(answerIds)) {
-    parsedAnswerIds = answerIds.map(id => Number(id)).filter(id => !isNaN(id));
-  } else if (typeof answerIds === 'string') {
-    try {
-      const parsed = JSON.parse(answerIds);
-      if (!Array.isArray(parsed)) throw new Error('Parsed answerId is not an array');
-      parsedAnswerIds = parsed.map(id => Number(id)).filter(id => !isNaN(id));
-    } catch (error) {
-      console.error('Error parsing answerId:', error);
-      return res.status(400).json({ error: 'answer IDs are not valid or not an array' });
+    if (Array.isArray(answerIds)) {
+      parsedAnswerIds = answerIds.map(id => Number(id)).filter(id => !isNaN(id));
+    } else if (typeof answerIds === 'string') {
+      try {
+        const parsed = JSON.parse(answerIds);
+        if (!Array.isArray(parsed)) throw new Error('Parsed answerId is not an array');
+        parsedAnswerIds = parsed.map(id => Number(id)).filter(id => !isNaN(id));
+      } catch (error) {
+        console.error('Error parsing answerId:', error);
+        return res.status(400).json({ error: 'answer IDs are not valid or not an array' });
+      }
+    } else if (typeof answerIds === 'number') {
+      parsedAnswerIds = [answerIds];
+    } else {
+      return res.status(400).json({ error: 'answer IDs are missing or invalid' });
     }
-  } else if (typeof answerIds === 'number') {
-    parsedAnswerIds = [answerIds];
-  } else {
-    return res.status(400).json({ error: 'answer IDs are missing or invalid' });
-  }
 
-  if (parsedAnswerIds.length === 0) {
-    return res.status(400).json({ error: 'No valid answer IDs provided' });
-  }
+    if (parsedAnswerIds.length === 0) {
+      return res.status(400).json({ error: 'No valid answer IDs provided' });
+    }
 
-  try {
-    const result = AnswerQuestion(playerId, questionPosition, parsedAnswerIds);
-    return res.status(200).json(result);
-  } catch (e) {
-    return res.status(400).json({ error: e.message });
-  }
-});
+    try {
+      const result = AnswerQuestion(playerId, questionPosition, parsedAnswerIds);
+      return res.status(200).json(result);
+    } catch (e) {
+      return res.status(400).json({ error: e.message });
+    }
+  });
 
 // playerStatus
 app.get('/v1/player/:playerid', (req: Request, res: Response) => {
