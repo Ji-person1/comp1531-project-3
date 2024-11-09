@@ -72,6 +72,7 @@ export interface Session {
 }
 
 export interface PlayerSession {
+  playerId: number; 
   playerName: string;
   score: number;
   numQuestions: number;
@@ -135,7 +136,7 @@ export interface QuizId {
 }
 
 export interface PlayerId {
-    quizId: number;
+    playerId: number;
 }
 
 export interface DuplicatedId {
