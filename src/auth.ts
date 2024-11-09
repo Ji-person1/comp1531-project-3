@@ -1,8 +1,10 @@
 import validator from 'validator';
 import { getData, setData } from './datastore';
-import { findToken, generateSessionId } from './helper';
+import { findToken, generateSessionId, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
+  PlayerId,
+  GameStage,
 } from './interfaces';
 
 /**
@@ -244,4 +246,40 @@ export function adminAuthLogout (token: number): Record<string, never> {
   setData(data);
 
   return {};
+}
+
+export function playerJoin (sessionId: number, playerName: string): PlayerId {
+  const data = getData();
+
+  const nameTest = /^[a-zA-Z\s'-]+$/;
+
+  if (!nameTest.test(playerName)) {
+    throw new Error('Invalid characters in first name');
+  }
+
+  const sessionQuiz = data.quizSession.find(q => q.quizSessionId === sessionId);
+  if (!sessionQuiz) {
+    throw new Error('Quiz session not found');
+  }
+
+  if (sessionQuiz.players.find(p => p.playerName === playerName)) {
+    throw new Error('Player name is already in use');
+  }
+
+  if (sessionQuiz.state !== GameStage.LOBBY) {
+    throw new Error('The session is not in the lobby state.');
+  }
+
+  const playerId = random5DigitNumber();
+  const newPlayer = {
+    playerId: playerId,
+    playerName: playerName,
+    score: 0,
+    numQuestions: 0,
+    atQuestion: 0,
+  };
+  sessionQuiz.players.push(newPlayer);
+  setData(data);
+
+  return { playerId: playerId };
 }

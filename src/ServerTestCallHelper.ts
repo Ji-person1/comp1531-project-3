@@ -1,7 +1,7 @@
 import request from 'sync-request-curl';
 import { port, url } from './config.json';
 import {
-  DuplicateIdResponse, EmptyBody, ListResponse, QuestionIdResponse,
+  DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
   SessionResponse
 } from './serverInterfaces';
@@ -369,6 +369,7 @@ export function ServerQuestionDuplicate(token: string, quizId: number,
   };
 }
 
+// startSession
 export function serverStartSession(token: string, quizId: number,
   autoStartNum: number): QuizSessionId {
   const response = request('POST',
@@ -390,6 +391,23 @@ export function ServerQuizSessions(token: string, quizId: number): SessionRespon
   const response = request('GET',
     `${SERVER_URL}/v1/admin/quiz/${quizId}/sessions`, {
       headers: { token: token },
+      timeout: TIMEOUT_MS
+    });
+
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerJoin
+export function serverPlayerJoin(sessionId: number, playerName: string): PLayerIdResponse {
+  const response = request('POST',
+    `${SERVER_URL}/v1/player/join`, {
+      json: {
+        sessionId: sessionId,
+        playerName: playerName
+      },
       timeout: TIMEOUT_MS
     });
 

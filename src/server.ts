@@ -10,7 +10,8 @@ import path from 'path';
 import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
-  adminUserPasswordUpdate, adminAuthLogout
+  adminUserPasswordUpdate, adminAuthLogout,
+  playerJoin
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -64,6 +65,17 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   try {
     const result = adminAuthRegister(email, password, nameFirst, nameLast);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// playerJoin
+app.post('/v1/player/join', (req: Request, res: Response) => {
+  const { sessionId, playerName } = req.body;
+  try {
+    const result = playerJoin(sessionId, playerName);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });

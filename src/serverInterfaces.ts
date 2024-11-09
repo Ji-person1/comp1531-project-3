@@ -1,5 +1,5 @@
 import {
-  DuplicatedId, QuestionId, quizDetails,
+  DuplicatedId, QuestionId, quizDetails, PlayerId,
   QuizId, quizList, quizSessionId, Token, UserDetails, SessionsResponse
 } from './interfaces';
 
@@ -51,5 +51,10 @@ export interface QuizSessionId {
 
 export interface SessionResponse {
     body: SessionsResponse,
+    statusCode: number
+}
+
+export interface PLayerIdResponse {
+    body: PlayerId,
     statusCode: number
 }
