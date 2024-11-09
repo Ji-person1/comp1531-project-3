@@ -59,7 +59,7 @@ export interface PLayerIdResponse {
     statusCode: number
 }
 
-export interface playerStatusResponse {
-    body: playerStatusResponse,
+export interface PlayerStatusResponse {
+    body: PlayerStatusResponse,
     statusCode: number
 }
