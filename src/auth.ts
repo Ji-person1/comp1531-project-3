@@ -296,6 +296,8 @@ export function playerSendChat (playerId: number, message: string): Record<strin
 
   chatSession.messages.push(newMessage);
 
+  data.chat.push(chatSession);
+
   setData(data);
 
   return {};

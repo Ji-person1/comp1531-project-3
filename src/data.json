@@ -13,21 +13,31 @@
   ],
   "quizzes": [
     {
-      "quizId": 63927,
+      "quizId": 47188,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731163634,
-      "timeLastEdited": 1731163634,
+      "timeCreated": 1731175501,
+      "timeLastEdited": 1731175501,
+      "numQuestions": 0,
+      "questions": []
+    },
+    {
+      "quizId": 86830,
+      "creatorId": 1,
+      "name": "Usable quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731175501,
+      "timeLastEdited": 1731175501,
       "numQuestions": 0,
       "questions": []
     }
   ],
   "sessions": [
     {
-      "sessionId": 15328,
+      "sessionId": 58145,
       "authUserId": 1,
-      "createdAt": 1731163634
+      "createdAt": 1731175501
     }
   ],
   "bin": [],

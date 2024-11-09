@@ -634,7 +634,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 });
 
 // playerSendChat
-app.post('/v1/player/:playerid/chat', (req: Request, res: Response) =>  {
+app.post('/v1/player/:playerId/chat', (req: Request, res: Response) =>  {
   const playerId = Number(req.params.playerId);
   const { message } = req.body;
 
