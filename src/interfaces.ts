@@ -152,3 +152,9 @@ export interface SessionsResponse {
     activeSessions: SessionInfo[];
     inactiveSessions: SessionInfo[];
 }
+
+export interface PlayerStatusResponse {
+    state: GameStage,
+    numQuestions: number,
+    atQuestion: number
+}
