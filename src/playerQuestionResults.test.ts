@@ -3,7 +3,8 @@ import {
   ServerClear,
   ServerQuizCreateQuestion,
   serverStartSession,
-  serverPlayerJoin
+  serverPlayerJoin,
+  serverPlayerQuestionResults
 } from './ServerTestCallHelper';
 
 const ERROR = { error: expect.any(String) };
@@ -31,7 +32,7 @@ describe('Error Cases', () => {
   });
 
   test('player ID does not exist', () => {
-    const response = serverPlayerJoin(sessionId.sessionId, '--..');
+    const response = serverPlayerQuestionResults(-playerId.playerId, 1);
 
     expect(response.statusCode).toBe(400);
     expect(response.body).toEqual(ERROR);
