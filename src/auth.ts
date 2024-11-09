@@ -249,37 +249,37 @@ export function adminAuthLogout (token: number): Record<string, never> {
 }
 
 export function playerJoin (sessionId: number, playerName: string): PlayerId {
-  const data = getData(); 
+  const data = getData();
 
   const nameTest = /^[a-zA-Z\s'-]+$/;
 
   if (!nameTest.test(playerName)) {
     throw new Error('Invalid characters in first name');
-  } 
+  }
 
-  const sessionQuiz = data.quizSession.find(q => q.quizSessionId === sessionId); 
+  const sessionQuiz = data.quizSession.find(q => q.quizSessionId === sessionId);
   if (!sessionQuiz) {
-    throw new Error('Quiz session not found'); 
+    throw new Error('Quiz session not found');
   }
 
   if (sessionQuiz.players.find(p => p.playerName === playerName)) {
     throw new Error('Player name is already in use');
-  } 
-
-  if(sessionQuiz.state !== GameStage.LOBBY) {
-    throw new Error('The session is not in the lobby state.'); 
   }
 
-  const playerId = random5DigitNumber(); 
+  if (sessionQuiz.state !== GameStage.LOBBY) {
+    throw new Error('The session is not in the lobby state.');
+  }
+
+  const playerId = random5DigitNumber();
   const newPlayer = {
     playerId: playerId,
     playerName: playerName,
     score: 0,
     numQuestions: 0,
     atQuestion: 0,
-  }
+  };
   sessionQuiz.players.push(newPlayer);
-  setData(data); 
+  setData(data);
 
   return { playerId: playerId };
 }

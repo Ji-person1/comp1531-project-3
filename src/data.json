@@ -13,33 +13,92 @@
   ],
   "quizzes": [
     {
-      "quizId": 64916,
+      "quizId": 86334,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731104313,
-      "timeLastEdited": 1731104313,
-      "numQuestions": 0,
-      "questions": []
-    },
-    {
-      "quizId": 86166,
-      "creatorId": 1,
-      "name": "Usable quiz",
-      "description": "a test quiz",
-      "timeCreated": 1731104313,
-      "timeLastEdited": 1731104313,
-      "numQuestions": 0,
-      "questions": []
+      "timeCreated": 1731133978,
+      "timeLastEdited": 1731133978,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 38567,
+          "question": "Who is the Rizzler?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": true,
+              "colour": "purple",
+              "answerId": 91086
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": false,
+              "colour": "red",
+              "answerId": 43298
+            }
+          ]
+        }
+      ]
     }
   ],
   "sessions": [
     {
-      "sessionId": 52989,
+      "sessionId": 26104,
       "authUserId": 1,
-      "createdAt": 1731104313
+      "createdAt": 1731133978
     }
   ],
   "bin": [],
-  "quizSession": []
+  "quizSession": [
+    {
+      "state": "LOBBY",
+      "quizSessionId": 50094,
+      "authUserId": 1,
+      "createdAt": 1731133978,
+      "quiz": {
+        "quizId": 86334,
+        "creatorId": 1,
+        "name": "functional quiz",
+        "description": "a test quiz",
+        "timeCreated": 1731133978,
+        "timeLastEdited": 1731133978,
+        "numQuestions": 1,
+        "questions": [
+          {
+            "questionId": 38567,
+            "question": "Who is the Rizzler?",
+            "timeLimit": 30,
+            "points": 5,
+            "answerOptions": [
+              {
+                "answer": "Duke Dennis",
+                "correct": true,
+                "colour": "purple",
+                "answerId": 91086
+              },
+              {
+                "answer": "Kai Cenat",
+                "correct": false,
+                "colour": "red",
+                "answerId": 43298
+              }
+            ]
+          }
+        ]
+      },
+      "players": [
+        {
+          "playerId": 53654,
+          "playerName": "Jim",
+          "score": 0,
+          "numQuestions": 0,
+          "atQuestion": 0
+        }
+      ],
+      "questionResults": []
+    }
+  ]
 }

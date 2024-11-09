@@ -71,7 +71,7 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
   }
 });
 
-//playerJoin
+// playerJoin
 app.post('/v1/player/join', (req: Request, res: Response) => {
   const { sessionId, playerName } = req.body;
   try {

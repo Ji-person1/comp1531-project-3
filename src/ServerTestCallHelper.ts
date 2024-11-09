@@ -369,7 +369,7 @@ export function ServerQuestionDuplicate(token: string, quizId: number,
   };
 }
 
-//startSession
+// startSession
 export function serverStartSession(token: string, quizId: number,
   autoStartNum: number): QuizSessionId {
   const response = request('POST',
@@ -400,11 +400,11 @@ export function ServerQuizSessions(token: string, quizId: number): SessionRespon
   };
 }
 
-//playerJoin
+// playerJoin
 export function serverPlayerJoin(sessionId: number, playerName: string): PLayerIdResponse {
   const response = request('POST',
     `${SERVER_URL}/v1/player/join`, {
-      json: {  
+      json: {
         sessionId: sessionId,
         playerName: playerName
       },

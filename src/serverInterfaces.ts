@@ -1,5 +1,5 @@
 import {
-  DuplicatedId, QuestionId, quizDetails, PlayerId, 
+  DuplicatedId, QuestionId, quizDetails, PlayerId,
   QuizId, quizList, quizSessionId, Token, UserDetails, SessionsResponse
 } from './interfaces';
 
