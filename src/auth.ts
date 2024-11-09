@@ -293,7 +293,7 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
 export function playerStatus(playerId: number):
 { state: GameStage, numQuestions: number, atQuestion: number } {
   const data = getData();
-  const sessionQuiz = data.quizSession.find(s => s.players.some(p => p.playerId === playerId));
+  const sessionQuiz = data.quizSession.find(s => s.players.find(p => p.playerId === playerId));
   if (!sessionQuiz) {
     throw new Error('400: player Id not found');
   }
