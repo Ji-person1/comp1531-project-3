@@ -3,7 +3,7 @@ import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
-  SessionResponse
+  SessionResponse, playerStatusResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -418,10 +418,10 @@ export function serverPlayerJoin(sessionId: number, playerName: string): PLayerI
 }
 
 // playerStatus
-export const serverPlayerStatus = (playerId: number) => {
-  const res = request('GET', SERVER_URL + `/v1/player/${playerId}`);
+export function serverPlayerStatus(playerId: number): playerStatusResponse {
+  const response = request('GET', `${SERVER_URL}/v1/player/${playerId}`);
   return {
-    body: JSON.parse(res.body.toString()),
-    statusCode: JSON.parse(res.statusCode.toString())
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
   };
-};
+}
