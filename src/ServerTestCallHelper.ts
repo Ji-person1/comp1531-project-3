@@ -3,7 +3,7 @@ import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
-  SessionResponse, PLayerStatusResponse
+  SessionResponse, PLayerStatusResponse, QsInfoResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -437,6 +437,18 @@ EmptyBody {
       timeout: TIMEOUT_MS
     });
 
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerQuestionInfo
+export function serverPlayerQuestionInfo(playerId: number,
+  questionPosition: number): QsInfoResponse {
+  const response = request(
+    'GET', `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}`
+  );
   return {
     body: JSON.parse(response.body.toString()),
     statusCode: response.statusCode,
