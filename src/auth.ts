@@ -251,7 +251,7 @@ export function adminAuthLogout (token: number): Record<string, never> {
 }
 
 /**
- * return all messages that are in the same session as the player, 
+ * return all messages that are in the same session as the player,
  * in the order they were sent.
  *
  * @param {number} playerId - The playerId for the current user session.
@@ -259,7 +259,7 @@ export function adminAuthLogout (token: number): Record<string, never> {
  */
 export function playerViewChat (playerId: number): Chat[] {
   const data = getData();
-  
+
   const player = data.players.find(p => p.playerId === playerId);
   if (!player) {
     throw new Error('400 Player Id not found');

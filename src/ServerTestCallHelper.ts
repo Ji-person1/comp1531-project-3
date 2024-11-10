@@ -446,15 +446,18 @@ EmptyBody {
 
 // playerViewChat
 export function ServerViewChat(playerId: number): ChatResponse {
-  const response = request('GET',
-    `${SERVER_URL}'/v1/player/${playerId}/chat'`, {
+  const response = request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/chat`,
+    {
       timeout: TIMEOUT_MS
-    });
+    }
+  );
 
-    return {
-      body: JSON.parse(response.body.toString()),
-      statusCode: response.statusCode,
-    };
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // personSendChat

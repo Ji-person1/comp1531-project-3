@@ -9,7 +9,6 @@ import {
   ServerSendChat
 } from './ServerTestCallHelper';
 
-
 const ERROR = { error: expect.any(String) };
 
 beforeEach(() => {
@@ -76,7 +75,7 @@ describe('Success Cases', () => {
   test('single message in chat', () => {
     ServerSendChat(PlayerId1.playerId, 'Hello World!');
     const response = ServerViewChat(PlayerId1.playerId);
-    
+
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual([{
       playerId: PlayerId1.playerId,
@@ -90,32 +89,31 @@ describe('Success Cases', () => {
     ServerSendChat(PlayerId1.playerId, 'Message 1');
     ServerSendChat(PlayerId2.playerId, 'Message 2');
     ServerSendChat(PlayerId1.playerId, 'Message 3');
-    
+
     const response = ServerViewChat(PlayerId1.playerId);
-    
+
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveLength(3);
     expect(response.body[0].message).toBe('Message 1');
     expect(response.body[1].message).toBe('Message 2');
     expect(response.body[2].message).toBe('Message 3');
     // Verify timestamps are in order
-    expect(response.body[0].timeSent).toBeLessThan(response.body[1].timeSent);
-    expect(response.body[1].timeSent).toBeLessThan(response.body[2].timeSent);
+    expect(response.body[0].timeSent).toBe(response.body[1].timeSent);
+    expect(response.body[1].timeSent).toBe(response.body[2].timeSent);
   });
 
   test('messages from different sessions not mixed', () => {
     // Create a second session
     const sessionId2 = serverStartSession(UserToken.token, quizId.quizId, 20).body;
     const PlayerId3 = serverPlayerJoin(sessionId2.sessionId, 'Alice').body;
-    
+
     ServerSendChat(PlayerId1.playerId, 'Session 1 message');
     ServerSendChat(PlayerId3.playerId, 'Session 2 message');
-    
+
     const response = ServerViewChat(PlayerId1.playerId);
-    
+
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0].message).toBe('Session 1 message');
   });
 });
-

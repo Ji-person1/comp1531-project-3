@@ -11,7 +11,7 @@ import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
   adminUserPasswordUpdate, adminAuthLogout, playerViewChat,
-  playerJoin, playerStatus, AnswerQuestion,  playerSendChat, playerQuestionInfo
+  playerJoin, playerStatus, AnswerQuestion, playerSendChat, playerQuestionInfo
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -646,14 +646,14 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 });
 
 // playerViewChat
-app.get('/v1/player/:playerId/chat', (req: Request, res: Response) =>  {
+app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
 
   try {
     const result = playerViewChat(playerId);
     res.status(200).json(result);
   } catch (e) {
-    return res.status(400).json({ error: e.message});
+    return res.status(400).json({ error: e.message });
   }
 });
 

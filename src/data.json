@@ -2,9 +2,9 @@
   "users": [
     {
       "id": 1,
-      "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
+      "email": "example@unsw.edu.au",
+      "nameFirst": "hao",
+      "nameLast": "wu",
       "password": "1234abcd",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
@@ -13,36 +13,114 @@
   ],
   "quizzes": [
     {
-      "quizId": 71907,
+      "quizId": 62483,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731223143,
-      "timeLastEdited": 1731223143,
-      "numQuestions": 0,
-      "questions": []
-    },
-    {
-      "quizId": 57302,
-      "creatorId": 1,
-      "name": "Usable quiz",
-      "description": "a test quiz",
-      "timeCreated": 1731223143,
-      "timeLastEdited": 1731223143,
-      "numQuestions": 0,
-      "questions": []
+      "timeCreated": 1731252793,
+      "timeLastEdited": 1731252793,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 47368,
+          "question": "Who is the Rizzler?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": true,
+              "colour": "blue",
+              "answerId": 52216
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": false,
+              "colour": "purple",
+              "answerId": 92384
+            }
+          ]
+        }
+      ]
     }
   ],
   "sessions": [
     {
-      "sessionId": 83275,
+      "sessionId": 24190,
       "authUserId": 1,
-      "createdAt": 1731223143
+      "createdAt": 1731252793
     }
   ],
   "bin": [],
-  "quizSession": [],
-  "players": [],
+  "quizSession": [
+    {
+      "state": "LOBBY",
+      "quizSessionId": 15951,
+      "authUserId": 1,
+      "createdAt": 1731252793,
+      "quiz": {
+        "quizId": 62483,
+        "creatorId": 1,
+        "name": "functional quiz",
+        "description": "a test quiz",
+        "timeCreated": 1731252793,
+        "timeLastEdited": 1731252793,
+        "numQuestions": 1,
+        "questions": [
+          {
+            "questionId": 47368,
+            "question": "Who is the Rizzler?",
+            "timeLimit": 30,
+            "points": 5,
+            "answerOptions": [
+              {
+                "answer": "Duke Dennis",
+                "correct": true,
+                "colour": "blue",
+                "answerId": 52216
+              },
+              {
+                "answer": "Kai Cenat",
+                "correct": false,
+                "colour": "purple",
+                "answerId": 92384
+              }
+            ]
+          }
+        ]
+      },
+      "players": [
+        {
+          "playerId": 57225,
+          "playerName": "hao",
+          "score": 0,
+          "numQuestions": 0,
+          "atQuestion": 0,
+          "quizsessionId": 15951
+        }
+      ],
+      "questionResults": [
+        {
+          "questionId": 47368,
+          "playersCorrect": [],
+          "averageAnswerTime": 0,
+          "percentCorrect": 0,
+          "numRight": 0,
+          "numWrong": 0
+        }
+      ]
+    }
+  ],
+  "players": [
+    {
+      "playerId": 57225,
+      "playerName": "hao",
+      "score": 0,
+      "numQuestions": 0,
+      "atQuestion": 0,
+      "quizsessionId": 15951
+    }
+  ],
   "chat": [
     {
       "sessionId": 24353,
@@ -1619,6 +1697,802 @@
           "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "playerName": "Swapnav",
           "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 99857,
+      "messages": [
+        {
+          "playerId": 34030,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 99857,
+      "messages": [
+        {
+          "playerId": 34030,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 54623,
+      "messages": [
+        {
+          "playerId": 99513,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        },
+        {
+          "playerId": 57476,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731251966
+        },
+        {
+          "playerId": 99513,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 54623,
+      "messages": [
+        {
+          "playerId": 99513,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 54623,
+      "messages": [
+        {
+          "playerId": 99513,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        },
+        {
+          "playerId": 57476,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 54623,
+      "messages": [
+        {
+          "playerId": 99513,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        },
+        {
+          "playerId": 57476,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731251966
+        },
+        {
+          "playerId": 99513,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 11700,
+      "messages": [
+        {
+          "playerId": 44704,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 11700,
+      "messages": [
+        {
+          "playerId": 44704,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 69041,
+      "messages": [
+        {
+          "playerId": 84495,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 69041,
+      "messages": [
+        {
+          "playerId": 84495,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731251966
+        }
+      ]
+    },
+    {
+      "sessionId": 44362,
+      "messages": [
+        {
+          "playerId": 55545,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 44362,
+      "messages": [
+        {
+          "playerId": 55545,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 60123,
+      "messages": [
+        {
+          "playerId": 48095,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        },
+        {
+          "playerId": 48095,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        },
+        {
+          "playerId": 48095,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 60123,
+      "messages": [
+        {
+          "playerId": 48095,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 60123,
+      "messages": [
+        {
+          "playerId": 48095,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        },
+        {
+          "playerId": 48095,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 60123,
+      "messages": [
+        {
+          "playerId": 48095,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        },
+        {
+          "playerId": 48095,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        },
+        {
+          "playerId": 48095,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 68914,
+      "messages": [
+        {
+          "playerId": 25033,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 68914,
+      "messages": [
+        {
+          "playerId": 25033,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731251976
+        }
+      ]
+    },
+    {
+      "sessionId": 96068,
+      "messages": [
+        {
+          "playerId": 51206,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 96068,
+      "messages": [
+        {
+          "playerId": 51206,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 23409,
+      "messages": [
+        {
+          "playerId": 44711,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        },
+        {
+          "playerId": 76027,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252384
+        },
+        {
+          "playerId": 44711,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 23409,
+      "messages": [
+        {
+          "playerId": 44711,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 23409,
+      "messages": [
+        {
+          "playerId": 44711,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        },
+        {
+          "playerId": 76027,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 23409,
+      "messages": [
+        {
+          "playerId": 44711,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        },
+        {
+          "playerId": 76027,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252384
+        },
+        {
+          "playerId": 44711,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 40072,
+      "messages": [
+        {
+          "playerId": 82794,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 40072,
+      "messages": [
+        {
+          "playerId": 82794,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 47393,
+      "messages": [
+        {
+          "playerId": 59406,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 47393,
+      "messages": [
+        {
+          "playerId": 59406,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731252384
+        }
+      ]
+    },
+    {
+      "sessionId": 55887,
+      "messages": [
+        {
+          "playerId": 92091,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 55887,
+      "messages": [
+        {
+          "playerId": 92091,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 27034,
+      "messages": [
+        {
+          "playerId": 97220,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        },
+        {
+          "playerId": 30051,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252455
+        },
+        {
+          "playerId": 97220,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 27034,
+      "messages": [
+        {
+          "playerId": 97220,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 27034,
+      "messages": [
+        {
+          "playerId": 97220,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        },
+        {
+          "playerId": 30051,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 27034,
+      "messages": [
+        {
+          "playerId": 97220,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        },
+        {
+          "playerId": 30051,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252455
+        },
+        {
+          "playerId": 97220,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 23451,
+      "messages": [
+        {
+          "playerId": 88483,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 23451,
+      "messages": [
+        {
+          "playerId": 88483,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 94773,
+      "messages": [
+        {
+          "playerId": 98528,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 94773,
+      "messages": [
+        {
+          "playerId": 98528,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731252455
+        }
+      ]
+    },
+    {
+      "sessionId": 84181,
+      "messages": [
+        {
+          "playerId": 17145,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 84181,
+      "messages": [
+        {
+          "playerId": 17145,
+          "message": "Hello World!",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 41189,
+      "messages": [
+        {
+          "playerId": 94088,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        },
+        {
+          "playerId": 48078,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252783
+        },
+        {
+          "playerId": 94088,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 41189,
+      "messages": [
+        {
+          "playerId": 94088,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 41189,
+      "messages": [
+        {
+          "playerId": 94088,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        },
+        {
+          "playerId": 48078,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 41189,
+      "messages": [
+        {
+          "playerId": 94088,
+          "message": "Message 1",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        },
+        {
+          "playerId": 48078,
+          "message": "Message 2",
+          "playerName": "Bob",
+          "timeSent": 1731252783
+        },
+        {
+          "playerId": 94088,
+          "message": "Message 3",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 67672,
+      "messages": [
+        {
+          "playerId": 69621,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 67672,
+      "messages": [
+        {
+          "playerId": 69621,
+          "message": "Session 1 message",
+          "playerName": "Jim",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 86383,
+      "messages": [
+        {
+          "playerId": 74034,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 86383,
+      "messages": [
+        {
+          "playerId": 74034,
+          "message": "Session 2 message",
+          "playerName": "Alice",
+          "timeSent": 1731252783
+        }
+      ]
+    },
+    {
+      "sessionId": 17075,
+      "messages": [
+        {
+          "playerId": 36187,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 17075,
+      "messages": [
+        {
+          "playerId": 36187,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 17309,
+      "messages": [
+        {
+          "playerId": 64450,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        },
+        {
+          "playerId": 64450,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        },
+        {
+          "playerId": 64450,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 17309,
+      "messages": [
+        {
+          "playerId": 64450,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 17309,
+      "messages": [
+        {
+          "playerId": 64450,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        },
+        {
+          "playerId": 64450,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 17309,
+      "messages": [
+        {
+          "playerId": 64450,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        },
+        {
+          "playerId": 64450,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        },
+        {
+          "playerId": 64450,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 68803,
+      "messages": [
+        {
+          "playerId": 73622,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
+        }
+      ]
+    },
+    {
+      "sessionId": 68803,
+      "messages": [
+        {
+          "playerId": 73622,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731252787
         }
       ]
     }
