@@ -1,7 +1,45 @@
 {
-  "users": [],
-  "quizzes": [],
-  "sessions": [],
+  "users": [
+    {
+      "id": 1,
+      "email": "jim.zheng123@icloud.com",
+      "nameFirst": "Jim",
+      "nameLast": "Zheng",
+      "password": "1234abcd",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 71907,
+      "creatorId": 1,
+      "name": "functional quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731223143,
+      "timeLastEdited": 1731223143,
+      "numQuestions": 0,
+      "questions": []
+    },
+    {
+      "quizId": 57302,
+      "creatorId": 1,
+      "name": "Usable quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731223143,
+      "timeLastEdited": 1731223143,
+      "numQuestions": 0,
+      "questions": []
+    }
+  ],
+  "sessions": [
+    {
+      "sessionId": 83275,
+      "authUserId": 1,
+      "createdAt": 1731223143
+    }
+  ],
   "bin": [],
   "quizSession": [],
   "players": [],
@@ -1345,6 +1383,242 @@
           "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "playerName": "Swapnav",
           "timeSent": 1731217557
+        }
+      ]
+    },
+    {
+      "sessionId": 67903,
+      "messages": [
+        {
+          "playerId": 36270,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 67903,
+      "messages": [
+        {
+          "playerId": 36270,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 62643,
+      "messages": [
+        {
+          "playerId": 89921,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        },
+        {
+          "playerId": 89921,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        },
+        {
+          "playerId": 89921,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 62643,
+      "messages": [
+        {
+          "playerId": 89921,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 62643,
+      "messages": [
+        {
+          "playerId": 89921,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        },
+        {
+          "playerId": 89921,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 62643,
+      "messages": [
+        {
+          "playerId": 89921,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        },
+        {
+          "playerId": 89921,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        },
+        {
+          "playerId": 89921,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 69506,
+      "messages": [
+        {
+          "playerId": 94305,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 69506,
+      "messages": [
+        {
+          "playerId": 94305,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731222970
+        }
+      ]
+    },
+    {
+      "sessionId": 42657,
+      "messages": [
+        {
+          "playerId": 51596,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 42657,
+      "messages": [
+        {
+          "playerId": 51596,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 27511,
+      "messages": [
+        {
+          "playerId": 11354,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        },
+        {
+          "playerId": 11354,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        },
+        {
+          "playerId": 11354,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 27511,
+      "messages": [
+        {
+          "playerId": 11354,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 27511,
+      "messages": [
+        {
+          "playerId": 11354,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        },
+        {
+          "playerId": 11354,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 27511,
+      "messages": [
+        {
+          "playerId": 11354,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        },
+        {
+          "playerId": 11354,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        },
+        {
+          "playerId": 11354,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 58750,
+      "messages": [
+        {
+          "playerId": 85552,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
+        }
+      ]
+    },
+    {
+      "sessionId": 58750,
+      "messages": [
+        {
+          "playerId": 85552,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731223137
         }
       ]
     }

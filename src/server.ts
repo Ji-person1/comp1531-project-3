@@ -18,7 +18,7 @@ import {
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrashView,
   adminQuizRestore, quizQuestionDelete,
-  adminSessionStart, adminQuizSessions
+  adminSessionStart, adminQuizSessions, adminQuizThumbnailUpdate
 } from './quiz';
 import { clear } from './other';
 import {
@@ -657,6 +657,31 @@ app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
     return res.status(400).json({ error: e.message });
   }
 });
+
+// adminQuizThumbnailUpdate
+app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { thumbnailUrl } = req.body;
+  const token = Number(req.header('token'));
+  console.log('Received request:', { quizId, thumbnailUrl, token });
+  try {
+    checkValidToken(token);
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
+  }
+  try {
+    checkQuizOwnership(token, quizId);
+  } catch (e) {
+    return res.status(403).json({ error: e.message });
+  }
+  try {
+    const result = adminQuizThumbnailUpdate(token, quizId, thumbnailUrl);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
