@@ -108,6 +108,7 @@ export interface DataStore {
     sessions: Session[];
     quizSession: QuizSession[];
     players: PlayerSession[];
+    chat: ChatSession[];
 }
 
 export interface quizDetails {
@@ -149,6 +150,19 @@ export interface DuplicatedId {
     duplicatedQuestionId: number;
 }
 
+export interface Player {
+    playerName: string;
+    score: number;
+    playerId: number;
+    time: number;
+}
+
+export interface Chat {
+    playerId: number;
+    message: string;
+    playerName: string;
+    timeSent: number;
+}
 export interface SessionInfo {
     sessionId: number;
     state: GameStage;
@@ -163,6 +177,11 @@ export interface PlayerStatusResponse {
     state: GameStage,
     numQuestions: number,
     atQuestion: number
+}
+
+export interface ChatSession {
+    sessionId: number;
+    messages: Chat[];
 }
 
 export interface QuestionInfo {
