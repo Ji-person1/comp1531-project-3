@@ -1,5 +1,5 @@
-import { getData } from './datastore';
-import { DataStore, errorObject, User } from './interfaces';
+import { getData, setData } from './datastore';
+import { DataStore, errorObject, GameStage, User } from './interfaces';
 
 export function generateSessionId(): number {
   const data = getData();
@@ -26,15 +26,17 @@ export function randomColour (): string {
   return colours[randomIndex];
 }
 
+// note that theoretically i don't need to have this be able to verify errors
+// since checkvalid already does this to an extent
 export function findToken (data: DataStore, token: number): User | errorObject {
   const session = data.sessions.find(session => session.sessionId === token);
   if (!session) {
-    return { error: '401 invalid session' };
+    throw new Error('Session not found/invalid');
   }
 
   const user = data.users.find(user => user.id === session.authUserId);
   if (!user) {
-    return { error: '401 token is not linked to a user' };
+    throw new Error('User not found/invalid');
   }
   return user;
 }
@@ -63,16 +65,44 @@ export function checkQuizOwnership (token: number, quizId: number): Record<strin
   }
   const quiz = data.quizzes.find(q => q.quizId === quizId);
   if (!quiz) {
-    throw new Error('Quiz not found');
+    throw new Error('Quiz does not found');
   }
 
   const linkedUser = findToken(data, token);
   if ('error' in linkedUser) {
-    throw new Error('Token invalid');
+    throw new Error('Token should be valid here');
   }
 
   if (linkedUser.id !== quiz.creatorId) {
     throw new Error('You are not the creator of the quizId provided');
+  }
+
+  return {};
+}
+
+export function checkQuizExistOwner (token: number, quizId: number): Record<string, never> {
+  const data = getData();
+  if (isNaN(quizId)) {
+    throw new Error('quizId is invalid');
+  }
+
+  const linkedUser = findToken(data, token);
+  if ('error' in linkedUser) {
+    throw new Error('Token should be valid here');
+  }
+
+  const quiz = data.quizzes.find(q => q.quizId === quizId);
+  const quizBin = data.bin.find(q => q.quizId === quizId);
+  if (!quiz && !quizBin) {
+    throw new Error('Quiz does not exist');
+  } else if (quiz && quizBin) {
+    if (linkedUser.id !== quiz.creatorId && linkedUser.id !== quiz.creatorId) {
+      throw new Error('You are not the creator of the quizId provided');
+    }
+  } else if (quiz) {
+    if (linkedUser.id !== quiz.creatorId) {
+      throw new Error('You are not the creator of the quizId provided');
+    }
   }
 
   return {};
@@ -117,14 +147,57 @@ export function checkQuizArray (token: number, quizIds: number[]): Record<string
   return {};
 }
 
-export function generatePlayerId(): number {
-  let sessionId = generateSessionId();
-  let playerId = random5DigitNumber();;
+export function getAnswerId(questionId: number): number[] {
+  const data = getData();
 
-  if (!sessionId) {
-    return 0;
+  // Find the quiz containing the question with the given questionId
+  const quizWithQuestion = data.quizzes.find(quiz =>
+    quiz.questions.some(question => question.questionId === questionId)
+  );
+
+  if (!quizWithQuestion) {
+    throw new Error('Question not found in any quiz');
   }
 
+  // Find the specific question in the quiz
+  const question = quizWithQuestion.questions.find(q => q.questionId === questionId);
+  if (!question) {
+    throw new Error('Question not found');
+  }
 
-  return playerId;
+  // Map through answerOptions to get answerIds
+  const answerIds = question.answerOptions
+    .filter(option => option.answerId !== undefined) // Ensure answerId exists
+    .map(option => option.answerId as number); // Cast to number
+
+  return answerIds;
+}
+
+export function setOpen(sessionId: number): Record<string, never> {
+  const data = getData();
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session) {
+    throw new Error('Session not found');
+  }
+
+  session.state = GameStage.QUESTION_OPEN;
+
+  setData(data);
+
+  return {};
+}
+
+export function setLobby(sessionId: number): Record<string, never> {
+  const data = getData();
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session) {
+    throw new Error('Session not found');
+  }
+
+  session.state = GameStage.LOBBY;
+
+  setData(data);
+
+  return {};
 }
