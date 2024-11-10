@@ -11,7 +11,7 @@ import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
   adminUserPasswordUpdate, adminAuthLogout, playerSendChat,
-  playerJoin, playerStatus, AnswerQuestion
+  playerJoin, playerStatus, AnswerQuestion, playerQuestionInfo
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -126,6 +126,18 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   try {
     const result = playerStatus(playerId);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// playerQuestionInfo
+app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+  const playerId = parseInt(req.params.playerid);
+  const position = parseInt(req.params.questionposition);
+  try {
+    const result = playerQuestionInfo(playerId, position);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
