@@ -288,6 +288,13 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
   return { playerId: playerId };
 }
 
+/**
+ * Retrieves the question results of a player based on their ID and question position
+ * @param {number} playerId - The ID number of the player
+ * @param {number} questionposition - position of the question
+ * @returns {QuestionResults}
+ * - the results of the question
+ */
 export function playerQuestionResults (playerId: number, questionposition: number): QuestionResults {
 
   return;

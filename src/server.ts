@@ -650,10 +650,22 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 // playerQuestionResults
 app.get ('/v1/player/:playerid/question/:questionposition/results' , (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerId);
-  const questionposition = parseInt(req.params.questionposition);
+  const questionPosition = parseInt(req.params.questionposition);
+
+  if (isNaN(playerId) || playerId <= 0) {
+    return res.status(400).json({ 
+      error: 'Invalid player ID format' 
+    });
+  }
+
+  if (isNaN(questionPosition) || questionPosition <= 0) {
+    return res.status(400).json({ 
+      error: 'Invalid question position format' 
+    });
+  }
 
   try {
-    const result = playerQuestionResults(playerId, questionposition);
+    const result = playerQuestionResults(playerId, questionPosition);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
