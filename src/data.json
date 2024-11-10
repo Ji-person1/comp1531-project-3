@@ -2,9 +2,9 @@
   "users": [
     {
       "id": 1,
-      "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
+      "email": "neev.saikia123@icloud.com",
+      "nameFirst": "Neev",
+      "nameLast": "Saikia",
       "password": "1234abcd",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
@@ -13,24 +13,112 @@
   ],
   "quizzes": [
     {
-      "quizId": 63927,
+      "quizId": 60399,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731163634,
-      "timeLastEdited": 1731163634,
-      "numQuestions": 0,
-      "questions": []
+      "timeCreated": 1731225204,
+      "timeLastEdited": 1731225204,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 67553,
+          "question": "Who is the Rizzler?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": true,
+              "colour": "blue",
+              "answerId": 39398
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": false,
+              "colour": "purple",
+              "answerId": 14477
+            }
+          ]
+        }
+      ]
     }
   ],
   "sessions": [
     {
-      "sessionId": 15328,
+      "sessionId": 59182,
       "authUserId": 1,
-      "createdAt": 1731163634
+      "createdAt": 1731225204
     }
   ],
   "bin": [],
-  "quizSession": [],
-  "players": []
+  "quizSession": [
+    {
+      "state": "ANSWER_SHOW",
+      "quizSessionId": 88455,
+      "authUserId": 1,
+      "createdAt": 1731225204,
+      "quiz": {
+        "quizId": 60399,
+        "creatorId": 1,
+        "name": "functional quiz",
+        "description": "a test quiz",
+        "timeCreated": 1731225204,
+        "timeLastEdited": 1731225204,
+        "numQuestions": 1,
+        "questions": [
+          {
+            "questionId": 67553,
+            "question": "Who is the Rizzler?",
+            "timeLimit": 30,
+            "points": 5,
+            "answerOptions": [
+              {
+                "answer": "Duke Dennis",
+                "correct": true,
+                "colour": "blue",
+                "answerId": 39398
+              },
+              {
+                "answer": "Kai Cenat",
+                "correct": false,
+                "colour": "purple",
+                "answerId": 14477
+              }
+            ]
+          }
+        ]
+      },
+      "players": [
+        {
+          "playerId": 32098,
+          "playerName": "Neev",
+          "score": 0,
+          "numQuestions": 0,
+          "atQuestion": 0,
+          "quizsessionId": 88455
+        }
+      ],
+      "questionResults": [
+        {
+          "questionId": 67553,
+          "playersCorrect": [],
+          "averageAnswerTime": 0,
+          "percentCorrect": 0,
+          "numRight": 0,
+          "numWrong": 0
+        }
+      ]
+    }
+  ],
+  "players": [
+    {
+      "playerId": 32098,
+      "playerName": "Neev",
+      "score": 0,
+      "numQuestions": 0,
+      "atQuestion": 0,
+      "quizsessionId": 88455
+    }
+  ]
 }

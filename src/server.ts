@@ -652,18 +652,6 @@ app.get ('/v1/player/:playerid/question/:questionposition/results' , (req: Reque
   const playerId = parseInt(req.params.playerId);
   const questionPosition = parseInt(req.params.questionposition);
 
-  if (isNaN(playerId) || playerId <= 0) {
-    return res.status(400).json({ 
-      error: 'Invalid player ID format' 
-    });
-  }
-
-  if (isNaN(questionPosition) || questionPosition <= 0) {
-    return res.status(400).json({ 
-      error: 'Invalid question position format' 
-    });
-  }
-
   try {
     const result = playerQuestionResults(playerId, questionPosition);
     return res.status(200).json(result);

@@ -417,6 +417,7 @@ export function serverPlayerJoin(sessionId: number, playerName: string): PLayerI
   };
 }
 
+// playerQuestionResults
 export function serverPlayerQuestionResults(playerId: number, questionposition: number): QuestionResultsResponse {
   const response = request('GET',
     `${SERVER_URL}/v1/player/${playerId}/question/${questionposition}/results`, {

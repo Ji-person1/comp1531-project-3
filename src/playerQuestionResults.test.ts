@@ -10,6 +10,7 @@ import {
   serverPlayerStatus
 } from './ServerTestCallHelper';
 import { GameStage } from './interfaces';
+import { setAnswerShow } from './helper';
 
 const ERROR = { error: expect.any(String) };
 
@@ -31,7 +32,8 @@ describe('Player Question Results', () => {
       ]);
 
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
-    playerId = serverPlayerJoin(sessionId.sessionId, "TestPlayer").body;
+    playerId = serverPlayerJoin(sessionId.sessionId, "Neev").body;
+    setAnswerShow(sessionId.sessionId);
   });
 
   describe('Success cases', () => {
@@ -42,7 +44,7 @@ describe('Player Question Results', () => {
       serverAnswerSubmit(playerId.playerId, 1, [1]);
       
       const response = serverPlayerQuestionResults(playerId.playerId, 1);
-      
+      console.log(response);
       expect(response.statusCode).toBe(200);
       expect(response.body).toEqual(expect.objectContaining({
         questionId: expect.any(Number),
