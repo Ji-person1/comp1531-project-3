@@ -61,7 +61,7 @@ export interface Questions {
 
 export interface Answer {
     answer: string;
-    correct: boolean;
+    correct?: boolean;
     answerId?: number;
     colour?: string;
 }
