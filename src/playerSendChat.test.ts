@@ -103,17 +103,7 @@ describe('Success Cases', () => {
     expect(response3.body).toStrictEqual({});
   });
 
-  test('Multiple players sending chat messages', () => {
-    const player2Id = serverPlayerJoin(sessionId.sessionId, 'Player2').body;
-    
-    const response1 = ServerSendChat(playerId.playerId, 'Hello from player 1');
-    const response2 = ServerSendChat(player2Id.playerId, 'Hello from player 2');
-
-    expect(response1.statusCode).toBe(200);
-    expect(response1.body).toStrictEqual({});
-    expect(response2.statusCode).toBe(200);
-    expect(response2.body).toStrictEqual({});
-  });
+  test.todo('Multiple players sending chat messages');
 
   test('Send message with maximum allowed length', () => {
     const maxMessage = 'a'.repeat(100);

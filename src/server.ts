@@ -26,6 +26,7 @@ import {
   checkBinOwnership, checkQuizArray, checkQuizExistOwner,
   checkQuizOwnership, checkValidToken
 } from './helper';
+import { getData } from './datastore';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -637,7 +638,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 app.post('/v1/player/:playerId/chat', (req: Request, res: Response) =>  {
   const playerId = Number(req.params.playerId);
   const { message } = req.body;
-
+  console.log(getData());
   try {
     const result = playerSendChat(playerId, message);
     res.status(200).json(result);
