@@ -1,6 +1,7 @@
 import {
   DuplicatedId, QuestionId, quizDetails, PlayerId,
-  QuizId, quizList, quizSessionId, Token, UserDetails, SessionsResponse, QuestionResults
+  QuizId, quizList, quizSessionId, Token, UserDetails, SessionsResponse, QuestionResults, PlayerStatusResponse,
+  QuestionInfo
 } from './interfaces';
 
 // Interfaces for the ServerTestCallHelper function.
@@ -61,5 +62,14 @@ export interface PLayerIdResponse {
 
 export interface QuestionResultsResponse {
     body: QuestionResults,
+    statusCode: number
+}
+export interface PLayerStatusResponse {
+    body: PlayerStatusResponse,
+    statusCode: number
+}
+
+export interface QsInfoResponse {
+    body: QuestionInfo,
     statusCode: number
 }

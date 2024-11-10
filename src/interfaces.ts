@@ -47,7 +47,8 @@ export interface Quiz {
     timeCreated: number;
     timeLastEdited: number;
     numQuestions: number;
-    questions: Questions[]
+    questions: Questions[];
+    thumbnailUrl?: string,
 }
 
 export interface Questions {
@@ -60,7 +61,7 @@ export interface Questions {
 
 export interface Answer {
     answer: string;
-    correct: boolean;
+    correct?: boolean;
     answerId?: number;
     colour?: string;
 }
@@ -77,6 +78,7 @@ export interface PlayerSession {
   score: number;
   numQuestions: number;
   atQuestion: number;
+  quizsessionId: number;
 }
 
 export interface QuizSession {
@@ -87,6 +89,7 @@ export interface QuizSession {
   quiz: Quiz;
   players: PlayerSession[];
   questionResults: QuestionResults[];
+  thumbnailUrl?: string;
 }
 
 export interface QuestionResults {
@@ -94,6 +97,8 @@ export interface QuestionResults {
   playersCorrect: string[];
   averageAnswerTime: number;
   percentCorrect: number;
+  numWrong: number;
+  numRight: number;
 }
 
 export interface DataStore {
@@ -102,6 +107,7 @@ export interface DataStore {
     bin: Quiz[];
     sessions: Session[];
     quizSession: QuizSession[];
+    players: PlayerSession[];
 }
 
 export interface quizDetails {
@@ -151,4 +157,19 @@ export interface SessionInfo {
 export interface SessionsResponse {
     activeSessions: SessionInfo[];
     inactiveSessions: SessionInfo[];
+}
+
+export interface PlayerStatusResponse {
+    state: GameStage,
+    numQuestions: number,
+    atQuestion: number
+}
+
+export interface QuestionInfo {
+    questionId: number,
+    question: string,
+    timeLimit: number,
+    thumbnailUrl?: string,
+    points: number,
+    answerOptions: Answer[]
 }

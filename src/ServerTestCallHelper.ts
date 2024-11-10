@@ -3,7 +3,7 @@ import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
-  SessionResponse, QuestionResultsResponse
+  SessionResponse, QuestionResultsResponse,  PLayerStatusResponse, QsInfoResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -427,6 +427,44 @@ export function serverPlayerQuestionResults(playerId: number, questionposition: 
       timeout: TIMEOUT_MS
     });
 
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerStatus
+export function serverPlayerStatus(playerId: number): PLayerStatusResponse {
+  const response = request('GET', `${SERVER_URL}/v1/player/${playerId}`);
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// AnswerQuestion
+export function serverAnswerSubmit(playerId: number, questionPosition: number, answerId: number[]):
+EmptyBody {
+  const response = request('POST',
+    `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}/answer`, {
+      json: {
+        answerIds: answerId,
+      },
+      timeout: TIMEOUT_MS
+    });
+
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerQuestionInfo
+export function serverPlayerQuestionInfo(playerId: number,
+  questionPosition: number): QsInfoResponse {
+  const response = request(
+    'GET', `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}`
+  );
   return {
     body: JSON.parse(response.body.toString()),
     statusCode: response.statusCode,

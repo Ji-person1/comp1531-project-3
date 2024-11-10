@@ -1,5 +1,5 @@
-import { getData } from './datastore';
-import { DataStore, errorObject, User } from './interfaces';
+import { getData, setData } from './datastore';
+import { DataStore, errorObject, GameStage, User } from './interfaces';
 
 export function generateSessionId(): number {
   const data = getData();
@@ -143,6 +143,61 @@ export function checkQuizArray (token: number, quizIds: number[]): Record<string
       throw new Error(`You are not the creator of the quiz with quizId ${quizId}`);
     }
   }
+
+  return {};
+}
+
+export function getAnswerId(questionId: number): number[] {
+  const data = getData();
+
+  // Find the quiz containing the question with the given questionId
+  const quizWithQuestion = data.quizzes.find(quiz =>
+    quiz.questions.some(question => question.questionId === questionId)
+  );
+
+  if (!quizWithQuestion) {
+    throw new Error('Question not found in any quiz');
+  }
+
+  // Find the specific question in the quiz
+  const question = quizWithQuestion.questions.find(q => q.questionId === questionId);
+  if (!question) {
+    throw new Error('Question not found');
+  }
+
+  // Map through answerOptions to get answerIds
+  const answerIds = question.answerOptions
+    .filter(option => option.answerId !== undefined) // Ensure answerId exists
+    .map(option => option.answerId as number); // Cast to number
+
+  return answerIds;
+}
+
+export function setOpen(sessionId: number): Record<string, never> {
+  const data = getData();
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session) {
+    throw new Error('Session not found');
+  }
+
+  session.state = GameStage.QUESTION_OPEN;
+
+  setData(data);
+
+  return {};
+}
+
+export function setLobby(sessionId: number): Record<string, never> {
+  const data = getData();
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session) {
+    throw new Error('Session not found');
+  }
+
+  session.state = GameStage.LOBBY;
+
+  setData(data);
 
   return {};
 }

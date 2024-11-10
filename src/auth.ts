@@ -5,7 +5,8 @@ import {
   UserDetails, Token,
   PlayerId,
   GameStage,
-  QuestionResults,
+  QuestionResults, QuestionInfo,
+  Answer,
 } from './interfaces';
 
 /**
@@ -278,8 +279,10 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
     score: 0,
     numQuestions: 0,
     atQuestion: 0,
+    quizsessionId: sessionId
   };
   sessionQuiz.players.push(newPlayer);
+  data.players.push(newPlayer);
   setData(data);
 
   return { playerId: playerId };
@@ -289,3 +292,121 @@ export function playerQuestionResults (playerId: number, questionposition: numbe
 
   return;
 };
+export function AnswerQuestion (playerId: number, questionPosition: number, answerIds: number[]):
+Record<string, never> {
+  const data = getData();
+
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+
+  const session = data.quizSession.find(q => q.quizSessionId === player.quizsessionId);
+  if (!session) {
+    throw new Error('this player is somehow not in a quiz');
+  }
+  if (session.state !== GameStage.QUESTION_OPEN) {
+    throw new Error('this player is somehow not in a quiz');
+  }
+  const quiz = session.quiz;
+  if (questionPosition < 0 || questionPosition > quiz.questions.length + 1) {
+    throw new Error('Invalid position for questionPosition.');
+  }
+
+  const uniqueAnswers = new Set(answerIds);
+  if (uniqueAnswers.size !== answerIds.length) {
+    throw new Error('Duplicate answers are not allowed.');
+  }
+
+  const findquestion = quiz.questions[questionPosition - 1];
+  answerIds.forEach(answerId => {
+    const answer = findquestion.answerOptions.find(a => a.answerId === answerId);
+    if (!answer) {
+      throw new Error(`Answer with ID ${answerId} not found in the answer options.`);
+    }
+    const seshResults = session.questionResults;
+    if (answer.correct === true) {
+      player.score += findquestion.points;
+      seshResults[questionPosition - 1].playersCorrect.push(player.playerName);
+      // increment average answer name
+      seshResults[questionPosition - 1].numRight += 1;
+    } else {
+      seshResults[questionPosition - 1].numWrong += 1;
+    }
+    const correct = seshResults[questionPosition - 1].numRight;
+    const incorrect = seshResults[questionPosition - 1].numWrong;
+    seshResults[questionPosition - 1].percentCorrect = correct / incorrect * 100;
+    setData(data);
+  });
+  return {};
+}
+
+/**
+ * Retrieves the status of a player based on their ID
+ * @param {number} playerId - The ID number of the player
+ * @returns {state, numQuestions, atQuestion}
+ * - information about the session and where the player is at
+ */
+export function playerStatus(playerId: number):
+{ state: GameStage, numQuestions: number, atQuestion: number } {
+  const data = getData();
+  const sessionQuiz = data.quizSession.find(s => s.players.find(p => p.playerId === playerId));
+  if (!sessionQuiz) {
+    throw new Error('400: player Id not found');
+  }
+  const player = sessionQuiz.players.find(p => p.playerId === playerId);
+  return {
+    state: sessionQuiz.state,
+    numQuestions: player.numQuestions,
+    atQuestion: player.atQuestion
+  };
+}
+
+/**
+ * Gets information about the question for the player
+ * @param {number} playerId - The ID number of the player
+ * @param {number} questionPosition - The position of the question the player is at
+ * @returns {QuestionInfo} - the question information, errorObject if failed
+ */
+export function playerQuestionInfo(playerId:number,
+  questionPosition:number): QuestionInfo {
+  const data = getData();
+  const session = data.quizSession.find((s) => s.players.find((p) => p.playerId === playerId));
+  if (!session) {
+    throw new Error('400: Player ID does not exist');
+  }
+
+  const player = session.players.find(p => p.playerId === playerId);
+  const question = session.quiz.questions[questionPosition - 1];
+
+  if (!question) {
+    throw new Error('400: Question position is not valid for the session this player is in');
+  }
+
+  if (player.atQuestion !== questionPosition) {
+    throw new Error('400: Session not currently on this question');
+  }
+
+  if (
+    session.state === GameStage.LOBBY ||
+    session.state === GameStage.QUESTION_COUNTDOWN ||
+    session.state === GameStage.FINAL_RESULTS ||
+    session.state === GameStage.END
+  ) {
+    throw new Error('400: Cannot get question in the current session state');
+  }
+
+  const answers = question.answerOptions.map((answer: Answer) => ({
+    answerId: answer.answerId,
+    answer: answer.answer,
+    colour: answer.colour
+  }));
+
+  return {
+    questionId: question.questionId,
+    question: question.question,
+    timeLimit: question.timeLimit,
+    points: question.points,
+    answerOptions: answers
+  };
+}
