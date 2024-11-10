@@ -3,7 +3,8 @@ import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
-  SessionResponse, PLayerStatusResponse
+  SessionResponse, PLayerStatusResponse, QsInfoResponse,
+  ChatResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -444,11 +445,56 @@ EmptyBody {
 }
 
 // playerViewChat
-export function ServerViewChat(playerId: number): Response {
+export function ServerViewChat(playerId: number): ChatResponse {
   const response = request('GET',
     `${SERVER_URL}'/v1/player/${playerId}/chat'`, {
       timeout: TIMEOUT_MS
     });
 
-  return convToResponse(response);
+    return {
+      body: JSON.parse(response.body.toString()),
+      statusCode: response.statusCode,
+    };
+}
+
+// personSendChat
+export function ServerSendChat(playerId: number, message: string): EmptyBody {
+  const response = request('POST',
+    `${SERVER_URL}/v1/player/${playerId}/chat`, {
+      json: {
+        message: message
+      },
+      timeout: TIMEOUT_MS
+    });
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerQuestionInfo
+export function serverPlayerQuestionInfo(playerId: number,
+  questionPosition: number): QsInfoResponse {
+  const response = request(
+    'GET', `${SERVER_URL}/v1/player/${playerId}/question/${questionPosition}`
+  );
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// adminquizthumbnail
+export function ServerQuizThumbnailUpdate(token: string, quizId: number, thumbnailUrl: string):
+EmptyBody {
+  const response = request('PUT',
+      `${SERVER_URL}/v1/admin/quiz/${quizId}/thumbnail`, {
+        headers: { token: token },
+        json: { thumbnailUrl },
+        timeout: TIMEOUT_MS
+      });
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }

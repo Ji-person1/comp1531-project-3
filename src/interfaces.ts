@@ -47,7 +47,8 @@ export interface Quiz {
     timeCreated: number;
     timeLastEdited: number;
     numQuestions: number;
-    questions: Questions[]
+    questions: Questions[];
+    thumbnailUrl?: string,
 }
 
 export interface Questions {
@@ -60,7 +61,7 @@ export interface Questions {
 
 export interface Answer {
     answer: string;
-    correct: boolean;
+    correct?: boolean;
     answerId?: number;
     colour?: string;
 }
@@ -88,6 +89,7 @@ export interface QuizSession {
   quiz: Quiz;
   players: PlayerSession[];
   questionResults: QuestionResults[];
+  thumbnailUrl?: string;
 }
 
 export interface QuestionResults {
@@ -106,6 +108,7 @@ export interface DataStore {
     sessions: Session[];
     quizSession: QuizSession[];
     players: PlayerSession[];
+    chat: ChatSession[];
 }
 
 export interface quizDetails {
@@ -157,11 +160,9 @@ export interface Player {
 export interface Chat {
     playerId: number;
     message: string;
-    playerName: string,
+    playerName: string;
     timeSent: number;
-
 }
-
 export interface SessionInfo {
     sessionId: number;
     state: GameStage;
@@ -176,4 +177,18 @@ export interface PlayerStatusResponse {
     state: GameStage,
     numQuestions: number,
     atQuestion: number
+}
+
+export interface ChatSession {
+    sessionId: number;
+    messages: Chat[];
+}
+
+export interface QuestionInfo {
+    questionId: number,
+    question: string,
+    timeLimit: number,
+    thumbnailUrl?: string,
+    points: number,
+    answerOptions: Answer[]
 }

@@ -4,7 +4,9 @@ import { findToken, generateSessionId, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
   PlayerId,
-  GameStage,
+  GameStage, Chat,
+  QuestionInfo,
+  Answer,
 } from './interfaces';
 
 /**
@@ -248,7 +250,81 @@ export function adminAuthLogout (token: number): Record<string, never> {
   return {};
 }
 
+/**
+ * return all messages that are in the same session as the player, 
+ * in the order they were sent.
+ *
+ * @param {number} playerId - The playerId for the current user session.
+ * @returns {object} if  player ID doesn't exist or message array if successful.
+ */
+export function playerViewChat (playerId: number): Chat[] {
+  const data = getData();
+  
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 Player Id not found');
+  }
 
+  const chatSession = data.chat.find(c => c.sessionId === player.quizsessionId);
+  if (!chatSession) {
+    return [];
+  }
+
+  return chatSession.messages.sort((a, b) => a.timeSent - b.timeSent);
+}
+
+/**
+ * Send a new chat message to everyone in the session.
+ *
+ * @param {number} playerId - The playerId for the current user session.
+ * @param {string} message - The message string that is sent to the chat.
+ * @returns {object} error if message is inccorect length, player ID doesn't exist,
+ * or empty object if successful
+ */
+export function playerSendChat (playerId: number, message: string): Record<string, never> {
+  const data = getData();
+  const player = data.players.find((p) => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 Player Id not found');
+  }
+
+  const name = player.playerName;
+
+  if (message.length < 1 || message.length > 100) {
+    throw new Error('400 message length invalid (<1 or >100 characters)');
+  }
+
+  const quizSession = data.quizSession.find(
+    (session) => session.players.some((p) => p.playerId === playerId)
+  );
+
+  if (!quizSession) {
+    throw new Error('400 Player not in any active session');
+  }
+
+  let chatSession = data.chat.find((chat) => chat.sessionId === quizSession.quizSessionId);
+  if (!chatSession) {
+    chatSession = {
+      sessionId: quizSession.quizSessionId,
+      messages: []
+    };
+    data.chat.push(chatSession);
+  }
+
+  const newMessage: Chat = {
+    playerId: playerId,
+    message: message,
+    playerName: name,
+    timeSent: Math.floor(Date.now() / 1000)
+  };
+
+  chatSession.messages.push(newMessage);
+
+  data.chat.push(chatSession);
+
+  setData(data);
+  return {};
+}
 
 export function playerJoin (sessionId: number, playerName: string): PlayerId {
   const data = getData();
@@ -355,5 +431,54 @@ export function playerStatus(playerId: number):
     state: sessionQuiz.state,
     numQuestions: player.numQuestions,
     atQuestion: player.atQuestion
+  };
+}
+
+/**
+ * Gets information about the question for the player
+ * @param {number} playerId - The ID number of the player
+ * @param {number} questionPosition - The position of the question the player is at
+ * @returns {QuestionInfo} - the question information, errorObject if failed
+ */
+export function playerQuestionInfo(playerId:number,
+  questionPosition:number): QuestionInfo {
+  const data = getData();
+  const session = data.quizSession.find((s) => s.players.find((p) => p.playerId === playerId));
+  if (!session) {
+    throw new Error('400: Player ID does not exist');
+  }
+
+  const player = session.players.find(p => p.playerId === playerId);
+  const question = session.quiz.questions[questionPosition - 1];
+
+  if (!question) {
+    throw new Error('400: Question position is not valid for the session this player is in');
+  }
+
+  if (player.atQuestion !== questionPosition) {
+    throw new Error('400: Session not currently on this question');
+  }
+
+  if (
+    session.state === GameStage.LOBBY ||
+    session.state === GameStage.QUESTION_COUNTDOWN ||
+    session.state === GameStage.FINAL_RESULTS ||
+    session.state === GameStage.END
+  ) {
+    throw new Error('400: Cannot get question in the current session state');
+  }
+
+  const answers = question.answerOptions.map((answer: Answer) => ({
+    answerId: answer.answerId,
+    answer: answer.answer,
+    colour: answer.colour
+  }));
+
+  return {
+    questionId: question.questionId,
+    question: question.question,
+    timeLimit: question.timeLimit,
+    points: question.points,
+    answerOptions: answers
   };
 }
