@@ -452,11 +452,10 @@ export function ServerSendChat(playerId: number, message: string): EmptyBody {
       },
       timeout: TIMEOUT_MS
     });
-    return {
-      body: JSON.parse(response.body.toString()),
-      statusCode: response.statusCode,
-    };
-  
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
 }
 
 // playerQuestionInfo

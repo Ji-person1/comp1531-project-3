@@ -4,7 +4,7 @@ import { findToken, generateSessionId, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
   PlayerId,
-  GameStage, Chat, 
+  GameStage, Chat,
   QuestionInfo,
   Answer,
 } from './interfaces';
