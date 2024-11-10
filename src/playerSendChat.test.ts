@@ -21,7 +21,7 @@ describe('Error Cases', () => {
   let playerId: { playerId: number };
 
   beforeEach(() => {
-    UserToken = ServerAuthRegister('swapnav.saikia123@icloud.com', '1234abcd', 'Swapnav', 'Saikia').body;
+    UserToken = ServerAuthRegister('neev.saikia123@icloud.com', '1234abcd', 'Neev', 'Saikia').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
       quizId.quizId, 'Who is the Rizzler?', 30, 5, [
@@ -57,9 +57,9 @@ describe('Error Cases', () => {
     const newQuizId = ServerQuizCreate(newToken.token, 'new quiz', 'test quiz').body;
     const newSessionId = serverStartSession(newToken.token, newQuizId.quizId, 20).body;
     const newPlayerId = serverPlayerJoin(newSessionId.sessionId, 'NewPlayer').body;
-    
+
     ServerClear();
-    
+
     const response = ServerSendChat(newPlayerId.playerId, 'Hello World');
     expect(response.statusCode).toBe(400);
     expect(response.body).toStrictEqual(ERROR);
@@ -73,7 +73,7 @@ describe('Success Cases', () => {
   let playerId: { playerId: number };
 
   beforeEach(() => {
-    UserToken = ServerAuthRegister('swapnav.saikia123@icloud.com', '1234abcd', 'Swapnav', 'Saikia').body;
+    UserToken = ServerAuthRegister('neev.saikia123@icloud.com', '1234abcd', 'Neev', 'Saikia').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
       quizId.quizId, 'Who is the Rizzler?', 30, 5, [

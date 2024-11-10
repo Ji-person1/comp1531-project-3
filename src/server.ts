@@ -21,7 +21,6 @@ import {
   adminSessionStart, adminQuizSessions
 } from './quiz';
 import { clear } from './other';
-import e from 'express';
 import {
   checkBinOwnership, checkQuizArray, checkQuizExistOwner,
   checkQuizOwnership, checkValidToken
@@ -635,7 +634,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 });
 
 // playerSendChat
-app.post('/v1/player/:playerId/chat', (req: Request, res: Response) =>  {
+app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
   const { message } = req.body;
   console.log(getData());
@@ -643,7 +642,7 @@ app.post('/v1/player/:playerId/chat', (req: Request, res: Response) =>  {
     const result = playerSendChat(playerId, message);
     res.status(200).json(result);
   } catch (e) {
-    return res.status(400).json({ error: e.message});
+    return res.status(400).json({ error: e.message });
   }
 });
 // ====================================================================

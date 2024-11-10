@@ -257,7 +257,7 @@ export function adminAuthLogout (token: number): Record<string, never> {
  * or empty object if successful
  */
 export function playerSendChat (playerId: number, message: string): Record<string, never> {
-  const data =  getData();
+  const data = getData();
   const player = data.players.find((p) => p.playerId === playerId);
   if (!player) {
     throw new Error('400 Player Id not found');
@@ -269,7 +269,6 @@ export function playerSendChat (playerId: number, message: string): Record<strin
     throw new Error('400 message length invalid (<1 or >100 characters)');
   }
 
-  
   const quizSession = data.quizSession.find(
     (session) => session.players.some((p) => p.playerId === playerId)
   );
@@ -291,7 +290,7 @@ export function playerSendChat (playerId: number, message: string): Record<strin
     playerId: playerId,
     message: message,
     playerName: name,
-    timeSent: Math.floor(Date.now() / 1000) 
+    timeSent: Math.floor(Date.now() / 1000)
   };
 
   chatSession.messages.push(newMessage);
@@ -299,10 +298,9 @@ export function playerSendChat (playerId: number, message: string): Record<strin
   data.chat.push(chatSession);
 
   setData(data);
-
   return {};
-  
 }
+
 export function playerJoin (sessionId: number, playerName: string): PlayerId {
   const data = getData();
 
