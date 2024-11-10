@@ -3,7 +3,8 @@ import { port, url } from './config.json';
 import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
-  SessionResponse, PLayerStatusResponse, QsInfoResponse
+  SessionResponse, PLayerStatusResponse, QsInfoResponse,
+  ChatResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -436,6 +437,22 @@ EmptyBody {
       },
       timeout: TIMEOUT_MS
     });
+
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
+
+// playerViewChat
+export function ServerViewChat(playerId: number): ChatResponse {
+  const response = request(
+    'GET',
+    `${SERVER_URL}/v1/player/${playerId}/chat`,
+    {
+      timeout: TIMEOUT_MS
+    }
+  );
 
   return {
     body: JSON.parse(response.body.toString()),

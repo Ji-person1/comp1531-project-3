@@ -10,8 +10,8 @@ import path from 'path';
 import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
-  adminUserPasswordUpdate, adminAuthLogout, playerSendChat,
-  playerJoin, playerStatus, AnswerQuestion, playerQuestionInfo
+  adminUserPasswordUpdate, adminAuthLogout, playerViewChat,
+  playerJoin, playerStatus, AnswerQuestion, playerSendChat, playerQuestionInfo
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -640,6 +640,18 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   try {
     const result = adminQuizSessions(token, quizId);
     return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// playerViewChat
+app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
+  const playerId = Number(req.params.playerId);
+
+  try {
+    const result = playerViewChat(playerId);
+    res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
   }

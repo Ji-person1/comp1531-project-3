@@ -251,6 +251,29 @@ export function adminAuthLogout (token: number): Record<string, never> {
 }
 
 /**
+ * return all messages that are in the same session as the player,
+ * in the order they were sent.
+ *
+ * @param {number} playerId - The playerId for the current user session.
+ * @returns {object} if  player ID doesn't exist or message array if successful.
+ */
+export function playerViewChat (playerId: number): Chat[] {
+  const data = getData();
+
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 Player Id not found');
+  }
+
+  const chatSession = data.chat.find(c => c.sessionId === player.quizsessionId);
+  if (!chatSession) {
+    return [];
+  }
+
+  return chatSession.messages.sort((a, b) => a.timeSent - b.timeSent);
+}
+
+/**
  * Send a new chat message to everyone in the session.
  *
  * @param {number} playerId - The playerId for the current user session.
