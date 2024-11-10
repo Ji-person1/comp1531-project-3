@@ -782,3 +782,46 @@ export function adminQuizSessions(token: number, quizId: number): SessionsRespon
     inactiveSessions
   };
 }
+
+/**
+ * Update the thumbnail URL for a specific quiz
+ *
+ * @param {number} token - The session token of the current user
+ * @param {number} quizId - The ID of the quiz to update
+ * @param {string} thumbnailUrl - The new thumbnail URL
+ * @returns {Record<string, never>} Empty object if successful
+ */
+export function adminQuizThumbnailUpdate(token: number, quizId: number, thumbnailUrl: string):
+Record<string, never> {
+  const data = getData();
+
+  const user = findToken(data, token);
+  if ('error' in user) {
+    throw new Error('Invalid token');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz) {
+    throw new Error('Quiz not found');
+  }
+
+  if (quiz.creatorId !== user.id) {
+    throw new Error('User is not the owner of this quiz');
+  }
+
+  // Validate thumbnail URL
+  if (!thumbnailUrl.match(/^https?:\/\//i)) {
+    throw new Error('Thumbnail URL must begin with http:// or https://');
+  }
+
+  const validExtensions = ['.jpg', '.jpeg', '.png'];
+  if (!validExtensions.some(ext => thumbnailUrl.toLowerCase().endsWith(ext))) {
+    throw new Error('Thumbnail URL must end with .jpg, .jpeg, or .png');
+  }
+
+  quiz.thumbnailUrl = thumbnailUrl;
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+
+  setData(data);
+  return {};
+}

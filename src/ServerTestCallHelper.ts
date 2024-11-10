@@ -469,3 +469,18 @@ export function serverPlayerQuestionInfo(playerId: number,
     statusCode: response.statusCode,
   };
 }
+
+// adminquizthumbnail
+export function ServerQuizThumbnailUpdate(token: string, quizId: number, thumbnailUrl: string):
+EmptyBody {
+  const response = request('PUT',
+      `${SERVER_URL}/v1/admin/quiz/${quizId}/thumbnail`, {
+        headers: { token: token },
+        json: { thumbnailUrl },
+        timeout: TIMEOUT_MS
+      });
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
