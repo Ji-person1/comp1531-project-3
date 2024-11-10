@@ -4,7 +4,9 @@ import { findToken, generateSessionId, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
   PlayerId,
-  GameStage, Chat
+  GameStage, Chat, 
+  QuestionInfo,
+  Answer,
 } from './interfaces';
 
 /**
@@ -406,5 +408,54 @@ export function playerStatus(playerId: number):
     state: sessionQuiz.state,
     numQuestions: player.numQuestions,
     atQuestion: player.atQuestion
+  };
+}
+
+/**
+ * Gets information about the question for the player
+ * @param {number} playerId - The ID number of the player
+ * @param {number} questionPosition - The position of the question the player is at
+ * @returns {QuestionInfo} - the question information, errorObject if failed
+ */
+export function playerQuestionInfo(playerId:number,
+  questionPosition:number): QuestionInfo {
+  const data = getData();
+  const session = data.quizSession.find((s) => s.players.find((p) => p.playerId === playerId));
+  if (!session) {
+    throw new Error('400: Player ID does not exist');
+  }
+
+  const player = session.players.find(p => p.playerId === playerId);
+  const question = session.quiz.questions[questionPosition - 1];
+
+  if (!question) {
+    throw new Error('400: Question position is not valid for the session this player is in');
+  }
+
+  if (player.atQuestion !== questionPosition) {
+    throw new Error('400: Session not currently on this question');
+  }
+
+  if (
+    session.state === GameStage.LOBBY ||
+    session.state === GameStage.QUESTION_COUNTDOWN ||
+    session.state === GameStage.FINAL_RESULTS ||
+    session.state === GameStage.END
+  ) {
+    throw new Error('400: Cannot get question in the current session state');
+  }
+
+  const answers = question.answerOptions.map((answer: Answer) => ({
+    answerId: answer.answerId,
+    answer: answer.answer,
+    colour: answer.colour
+  }));
+
+  return {
+    questionId: question.questionId,
+    question: question.question,
+    timeLimit: question.timeLimit,
+    points: question.points,
+    answerOptions: answers
   };
 }

@@ -2,9 +2,9 @@
   "users": [
     {
       "id": 1,
-      "email": "example@unsw.edu.au",
-      "nameFirst": "hao",
-      "nameLast": "wu",
+      "email": "jim.zheng123@icloud.com",
+      "nameFirst": "Jim",
+      "nameLast": "Zheng",
       "password": "1234abcd",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
@@ -13,114 +13,36 @@
   ],
   "quizzes": [
     {
-      "quizId": 42019,
+      "quizId": 80264,
       "creatorId": 1,
       "name": "functional quiz",
       "description": "a test quiz",
-      "timeCreated": 1731212689,
-      "timeLastEdited": 1731212689,
-      "numQuestions": 1,
-      "questions": [
-        {
-          "questionId": 90878,
-          "question": "Who is the Rizzler?",
-          "timeLimit": 30,
-          "points": 5,
-          "answerOptions": [
-            {
-              "answer": "Duke Dennis",
-              "correct": true,
-              "colour": "orange",
-              "answerId": 72009
-            },
-            {
-              "answer": "Kai Cenat",
-              "correct": false,
-              "colour": "red",
-              "answerId": 93110
-            }
-          ]
-        }
-      ]
+      "timeCreated": 1731216147,
+      "timeLastEdited": 1731216147,
+      "numQuestions": 0,
+      "questions": []
+    },
+    {
+      "quizId": 58718,
+      "creatorId": 1,
+      "name": "Usable quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731216147,
+      "timeLastEdited": 1731216147,
+      "numQuestions": 0,
+      "questions": []
     }
   ],
   "sessions": [
     {
-      "sessionId": 49045,
+      "sessionId": 50868,
       "authUserId": 1,
-      "createdAt": 1731212689
+      "createdAt": 1731216147
     }
   ],
   "bin": [],
-  "quizSession": [
-    {
-      "state": "LOBBY",
-      "quizSessionId": 43760,
-      "authUserId": 1,
-      "createdAt": 1731212689,
-      "quiz": {
-        "quizId": 42019,
-        "creatorId": 1,
-        "name": "functional quiz",
-        "description": "a test quiz",
-        "timeCreated": 1731212689,
-        "timeLastEdited": 1731212689,
-        "numQuestions": 1,
-        "questions": [
-          {
-            "questionId": 90878,
-            "question": "Who is the Rizzler?",
-            "timeLimit": 30,
-            "points": 5,
-            "answerOptions": [
-              {
-                "answer": "Duke Dennis",
-                "correct": true,
-                "colour": "orange",
-                "answerId": 72009
-              },
-              {
-                "answer": "Kai Cenat",
-                "correct": false,
-                "colour": "red",
-                "answerId": 93110
-              }
-            ]
-          }
-        ]
-      },
-      "players": [
-        {
-          "playerId": 55783,
-          "playerName": "hao",
-          "score": 0,
-          "numQuestions": 0,
-          "atQuestion": 0,
-          "quizsessionId": 43760
-        }
-      ],
-      "questionResults": [
-        {
-          "questionId": 90878,
-          "playersCorrect": [],
-          "averageAnswerTime": 0,
-          "percentCorrect": 0,
-          "numRight": 0,
-          "numWrong": 0
-        }
-      ]
-    }
-  ],
-  "players": [
-    {
-      "playerId": 55783,
-      "playerName": "hao",
-      "score": 0,
-      "numQuestions": 0,
-      "atQuestion": 0,
-      "quizsessionId": 43760
-    }
-  ],
+  "quizSession": [],
+  "players": [],
   "chat": [
     {
       "sessionId": 24353,
@@ -1107,6 +1029,124 @@
           "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "playerName": "Swapnav",
           "timeSent": 1731212686
+        }
+      ]
+    },
+    {
+      "sessionId": 75784,
+      "messages": [
+        {
+          "playerId": 25789,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 75784,
+      "messages": [
+        {
+          "playerId": 25789,
+          "message": "Hello World",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 89150,
+      "messages": [
+        {
+          "playerId": 97824,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        },
+        {
+          "playerId": 97824,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        },
+        {
+          "playerId": 97824,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 89150,
+      "messages": [
+        {
+          "playerId": 97824,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 89150,
+      "messages": [
+        {
+          "playerId": 97824,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        },
+        {
+          "playerId": 97824,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 89150,
+      "messages": [
+        {
+          "playerId": 97824,
+          "message": "First message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        },
+        {
+          "playerId": 97824,
+          "message": "Second message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        },
+        {
+          "playerId": 97824,
+          "message": "Third message",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 45335,
+      "messages": [
+        {
+          "playerId": 88938,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
+        }
+      ]
+    },
+    {
+      "sessionId": 45335,
+      "messages": [
+        {
+          "playerId": 88938,
+          "message": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "playerName": "Swapnav",
+          "timeSent": 1731216138
         }
       ]
     }
