@@ -10,23 +10,22 @@ import path from 'path';
 import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
-  adminUserPasswordUpdate, adminAuthLogout,
-  playerJoin,
-  playerQuestionResults, playerStatus, AnswerQuestion,
-  playerQuestionInfo
+  adminUserPasswordUpdate, adminAuthLogout, playerViewChat,
+  playerJoin, playerStatus, AnswerQuestion, playerSendChat, playerQuestionInfo, playerQuestionResults
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrashView,
   adminQuizRestore, quizQuestionDelete,
-  adminSessionStart, adminQuizSessions
+  adminSessionStart, adminQuizSessions, adminQuizThumbnailUpdate
 } from './quiz';
 import { clear } from './other';
 import {
   checkBinOwnership, checkQuizArray, checkQuizExistOwner,
   checkQuizOwnership, checkValidToken
 } from './helper';
+import { getData } from './datastore';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -658,7 +657,55 @@ app.get ('/v1/player/:playerid/question/:questionposition/results' , (req: Reque
   } catch (e) {
     return res.status(400).json({ error: e.message });
   }
+});
 
+// playerViewChat
+app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
+  const playerId = Number(req.params.playerId);
+
+  try {
+    const result = playerViewChat(playerId);
+    res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// playerSendChat
+app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
+  const playerId = Number(req.params.playerId);
+  const { message } = req.body;
+  console.log(getData());
+  try {
+    const result = playerSendChat(playerId, message);
+    res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
+
+// adminQuizThumbnailUpdate
+app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizId);
+  const { thumbnailUrl } = req.body;
+  const token = Number(req.header('token'));
+  console.log('Received request:', { quizId, thumbnailUrl, token });
+  try {
+    checkValidToken(token);
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
+  }
+  try {
+    checkQuizOwnership(token, quizId);
+  } catch (e) {
+    return res.status(403).json({ error: e.message });
+  }
+  try {
+    const result = adminQuizThumbnailUpdate(token, quizId, thumbnailUrl);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
 });
 
 // ====================================================================

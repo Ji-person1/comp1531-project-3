@@ -4,8 +4,8 @@ import { findToken, generateSessionId, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
   PlayerId,
-  GameStage,
-  QuestionResults, QuestionInfo,
+  GameStage, Chat,
+  QuestionInfo, QuestionResults,
   Answer,
 } from './interfaces';
 
@@ -247,6 +247,82 @@ export function adminAuthLogout (token: number): Record<string, never> {
   data.sessions.splice(sessionIndex, 1);
   setData(data);
 
+  return {};
+}
+
+/**
+ * return all messages that are in the same session as the player,
+ * in the order they were sent.
+ *
+ * @param {number} playerId - The playerId for the current user session.
+ * @returns {object} if  player ID doesn't exist or message array if successful.
+ */
+export function playerViewChat (playerId: number): Chat[] {
+  const data = getData();
+
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 Player Id not found');
+  }
+
+  const chatSession = data.chat.find(c => c.sessionId === player.quizsessionId);
+  if (!chatSession) {
+    return [];
+  }
+
+  return chatSession.messages.sort((a, b) => a.timeSent - b.timeSent);
+}
+
+/**
+ * Send a new chat message to everyone in the session.
+ *
+ * @param {number} playerId - The playerId for the current user session.
+ * @param {string} message - The message string that is sent to the chat.
+ * @returns {object} error if message is inccorect length, player ID doesn't exist,
+ * or empty object if successful
+ */
+export function playerSendChat (playerId: number, message: string): Record<string, never> {
+  const data = getData();
+  const player = data.players.find((p) => p.playerId === playerId);
+  if (!player) {
+    throw new Error('400 Player Id not found');
+  }
+
+  const name = player.playerName;
+
+  if (message.length < 1 || message.length > 100) {
+    throw new Error('400 message length invalid (<1 or >100 characters)');
+  }
+
+  const quizSession = data.quizSession.find(
+    (session) => session.players.some((p) => p.playerId === playerId)
+  );
+
+  if (!quizSession) {
+    throw new Error('400 Player not in any active session');
+  }
+
+  let chatSession = data.chat.find((chat) => chat.sessionId === quizSession.quizSessionId);
+  if (!chatSession) {
+    chatSession = {
+      sessionId: quizSession.quizSessionId,
+      messages: []
+    };
+    data.chat.push(chatSession);
+  }
+
+  const newMessage: Chat = {
+    playerId: playerId,
+    message: message,
+    playerName: name,
+    timeSent: Math.floor(Date.now() / 1000)
+  };
+
+  chatSession.messages.push(newMessage);
+
+  data.chat.push(chatSession);
+
+  setData(data);
   return {};
 }
 
