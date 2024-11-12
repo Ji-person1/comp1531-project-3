@@ -11,7 +11,8 @@ import process from 'process';
 import {
   adminAuthRegister, adminAuthLogin, adminUserDetails, adminUserDetailsUpdate,
   adminUserPasswordUpdate, adminAuthLogout, playerViewChat,
-  playerJoin, playerStatus, AnswerQuestion, playerSendChat, playerQuestionInfo
+  playerJoin, playerStatus, AnswerQuestion, playerSendChat,
+  playerQuestionInfo, playerQuestionResults
 } from './auth';
 import {
   adminQuizList, adminQuizCreate, adminQuizDescriptionUpdate, adminQuizNameUpdate, adminQuizInfo,
@@ -25,7 +26,6 @@ import {
   checkBinOwnership, checkQuizArray, checkQuizExistOwner,
   checkQuizOwnership, checkValidToken
 } from './helper';
-import { getData } from './datastore';
 // Set up web app
 const app = express();
 // Use middleware that allows us to access the JSON body of requests
@@ -1084,6 +1084,20 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
   }
 });
 
+// playerQuestionResults
+app.get('/v1/player/:playerId/question/:questionposition/results',
+  (req: Request, res: Response) => {
+    const playerId = parseInt(req.params.playerId);
+    const questionPosition = parseInt(req.params.questionposition);
+
+    try {
+      const result = playerQuestionResults(playerId, questionPosition);
+      return res.status(200).json(result);
+    } catch (e) {
+      return res.status(400).json({ error: e.message });
+    }
+  });
+
 // playerViewChat
 app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
@@ -1100,7 +1114,7 @@ app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
 app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
   const { message } = req.body;
-  console.log(getData());
+
   try {
     const result = playerSendChat(playerId, message);
     res.status(200).json(result);

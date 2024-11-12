@@ -7,7 +7,7 @@ import {
   UserDetails, Token,
   PlayerId,
   GameStage, Chat,
-  QuestionInfo,
+  QuestionInfo, QuestionResults,
   Answer,
 } from './interfaces';
 
@@ -365,6 +365,50 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
   setData(data);
 
   return { playerId: playerId };
+}
+
+/**
+ * Retrieves the question results of a player based on their ID and question position
+ * @param {number} playerId - The ID number of the player
+ * @param {number} questionposition - position of the question
+ * @returns {QuestionResults}
+ * - the results of the question
+ */
+export function playerQuestionResults (playerId: number,
+  questionposition: number): QuestionResults {
+  const data = getData();
+
+  const player = data.players.find(p => p.playerId === playerId);
+  if (!player) {
+    throw new Error('Player not found');
+  }
+
+  const quizSession = data.quizSession.find(qs => qs.quizSessionId === player.quizsessionId);
+  if (!quizSession) {
+    throw new Error('Quiz session not found');
+  }
+
+  if (quizSession.state !== GameStage.ANSWER_SHOW) {
+    throw new Error('Game not in ANSWER_SHOW state');
+  }
+
+  if (questionposition <= 0 || questionposition > quizSession.quiz.questions.length) {
+    throw new Error('Question position is invalid');
+  }
+
+  const questionResult = quizSession.questionResults[questionposition - 1];
+  if (!questionResult) {
+    throw new Error('Question results not found');
+  }
+
+  return {
+    questionId: questionResult.questionId,
+    playersCorrect: questionResult.playersCorrect,
+    averageAnswerTime: questionResult.averageAnswerTime,
+    percentCorrect: questionResult.percentCorrect,
+    numWrong: questionResult.numWrong,
+    numRight: questionResult.numRight
+  };
 }
 
 export function AnswerQuestion (playerId: number, questionPosition: number, answerIds: number[]):
