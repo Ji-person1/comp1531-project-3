@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { getData, setData } from './datastore';
 import { DataStore, errorObject, GameStage, User } from './interfaces';
 
@@ -215,4 +216,15 @@ export function setAnswerShow(sessionId: number): Record<string, never> {
   setData(data);
 
   return {};
+}
+
+// function for hashing a password
+export function hashPassword(password: string): string {
+  return crypto.createHash('sha256').update(password).digest('hex');
+}
+
+// compares a password to the hash
+export function comparePassword(password: string, hash: string): boolean {
+  const passwordHash = hashPassword(password);
+  return passwordHash === hash;
 }

@@ -8,6 +8,7 @@ export function clear(): Record<string, never> {
   data.bin = [];
   data.quizSession = [];
   data.players = [];
+  data.chat = [];
 
   setData(data);
   return {};
