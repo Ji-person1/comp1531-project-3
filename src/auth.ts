@@ -373,7 +373,7 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
  */
 export function playerQuestionResults (playerId: number, questionposition: number): QuestionResults {
   const data = getData();
-  
+
   const player = data.players.find(p => p.playerId === playerId);
   if (!player) {
     throw new Error('Player not found');

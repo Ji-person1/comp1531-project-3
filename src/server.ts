@@ -647,7 +647,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 
 
 // playerQuestionResults
-app.get ('/v1/player/:playerid/question/:questionposition/results' , (req: Request, res: Response) => {
+app.get ('/v1/player/:playerId/question/:questionposition/results' , (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerId);
   const questionPosition = parseInt(req.params.questionposition);
 
@@ -675,7 +675,7 @@ app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
 app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
   const { message } = req.body;
-  console.log(getData());
+
   try {
     const result = playerSendChat(playerId, message);
     res.status(200).json(result);
