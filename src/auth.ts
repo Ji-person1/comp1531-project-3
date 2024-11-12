@@ -1,6 +1,8 @@
 import validator from 'validator';
 import { getData, setData } from './datastore';
-import { comparePassword, findToken, generateSessionId, hashPassword, random5DigitNumber } from './helper';
+import {
+  comparePassword, findToken, generateSessionId, hashPassword, random5DigitNumber
+} from './helper';
 import {
   UserDetails, Token,
   PlayerId,
