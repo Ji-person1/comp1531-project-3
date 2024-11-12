@@ -201,3 +201,18 @@ export function setLobby(sessionId: number): Record<string, never> {
 
   return {};
 }
+
+export function setAnswerShow(sessionId: number): Record<string, never> {
+  const data = getData();
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session) {
+    throw new Error('Session not found');
+  }
+
+  session.state = GameStage.ANSWER_SHOW;
+
+  setData(data);
+
+  return {};
+}
