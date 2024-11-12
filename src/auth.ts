@@ -1,6 +1,6 @@
 import validator from 'validator';
 import { getData, setData } from './datastore';
-import { findToken, generateSessionId, random5DigitNumber } from './helper';
+import { comparePassword, findToken, generateSessionId, hashPassword, random5DigitNumber } from './helper';
 import {
   UserDetails, Token,
   PlayerId,
@@ -51,13 +51,14 @@ export function adminAuthRegister (email: string, password: string, nameFirst: s
   }
   const authUserId = data.users.length > 0 ? data.users[data.users.length - 1].id + 1 : 1;
   const emptyPasswordArray: string[] = [];
+  const hashedPassword = hashPassword(password);
 
   const newUser = {
     id: authUserId,
     email: email,
     nameFirst: nameFirst,
     nameLast: nameLast,
-    password: password,
+    password: hashedPassword,
     numSuccessfulLogins: 1,
     numFailedPasswordsSinceLastLogin: 0,
     prevPasswords: emptyPasswordArray
@@ -93,7 +94,7 @@ export function adminAuthLogin (email: string, password: string): Token {
     throw new Error('400 email not found');
   }
 
-  if (user.password !== password) {
+  if (!comparePassword(password, user.password)) {
     user.numFailedPasswordsSinceLastLogin++;
     setData(data);
     throw new Error('400 wrong password');
