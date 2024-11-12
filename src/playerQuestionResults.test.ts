@@ -36,7 +36,7 @@ describe('Error Cases', () => {
       ]).body;
 
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
-    playerId = serverPlayerJoin(sessionId.sessionId, "Neev").body;
+    playerId = serverPlayerJoin(sessionId.sessionId, 'Neev').body;
     answerId = getAnswerId(questionId.questionId);
     setOpen(sessionId.sessionId);
     serverAnswerSubmit(playerId.playerId, 1, answerId);
@@ -95,7 +95,7 @@ describe('Success cases', () => {
       ]).body;
 
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
-    playerId = serverPlayerJoin(sessionId.sessionId, "Neev").body;
+    playerId = serverPlayerJoin(sessionId.sessionId, 'Neev').body;
     answerId = getAnswerId(questionId.questionId);
     setOpen(sessionId.sessionId);
     serverAnswerSubmit(playerId.playerId, 1, answerId);
@@ -103,10 +103,9 @@ describe('Success cases', () => {
   });
 
   test('Successfully retrieves question results in ANSWER_SHOW state', () => {
-    
     const playerStatus = serverPlayerStatus(playerId.playerId).body;
     expect(playerStatus.state).toBe(GameStage.ANSWER_SHOW);
-    
+
     const response = serverPlayerQuestionResults(playerId.playerId, 1);
     expect(response.statusCode).toBe(200);
     expect(response.body).toEqual(expect.objectContaining({

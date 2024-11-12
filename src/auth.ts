@@ -371,7 +371,8 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
  * @returns {QuestionResults}
  * - the results of the question
  */
-export function playerQuestionResults (playerId: number, questionposition: number): QuestionResults {
+export function playerQuestionResults (playerId: number,
+  questionposition: number): QuestionResults {
   const data = getData();
 
   const player = data.players.find(p => p.playerId === playerId);
@@ -405,7 +406,7 @@ export function playerQuestionResults (playerId: number, questionposition: numbe
     numWrong: questionResult.numWrong,
     numRight: questionResult.numRight
   };
-};
+}
 
 export function AnswerQuestion (playerId: number, questionPosition: number, answerIds: number[]):
 Record<string, never> {
