@@ -825,3 +825,89 @@ Record<string, never> {
   setData(data);
   return {};
 }
+
+/**
+ * Updates the state of a particular quiz session by sending an action command.
+ *
+ * @param {number} token - The session token of the current user
+ * @param {number} quizId - The ID of the quiz
+ * @param {number} sessionId - The ID of the session to update
+ * @param {string} action - The action command to update the session state
+ * @returns {Record<string, never>} Empty object if successful
+ */
+export function adminQuizSessionUpdate(
+  token: number,
+  quizId: number,
+  sessionId: number,
+  action: string
+): Record<string, never> {
+  const data = getData();
+
+  const user = findToken(data, token);
+  if ('error' in user) {
+    throw new Error('Token is invalid');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== user.id) {
+    throw new Error('Quiz not found or user is not the owner');
+  }
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session || session.quiz.quizId !== quizId) {
+    throw new Error('Session Id does not refer to a valid session within this quiz');
+  }
+
+  const validActions = ['NEXT_QUESTION', 'SKIP_COUNTDOWN', 'GO_TO_ANSWER',
+    'GO_TO_FINAL_RESULTS', 'END'];
+  if (!validActions.includes(action)) {
+    throw new Error('Action provided is not a valid Action enum');
+  }
+
+  const stateTransitions: Record<GameStage, Record<string, GameStage>> = {
+    [GameStage.LOBBY]: {
+      NEXT_QUESTION: GameStage.QUESTION_COUNTDOWN,
+      END: GameStage.END
+    },
+    [GameStage.QUESTION_COUNTDOWN]: {
+      SKIP_COUNTDOWN: GameStage.QUESTION_OPEN,
+      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
+    },
+    [GameStage.QUESTION_OPEN]: {
+      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
+    },
+    [GameStage.QUESTION_CLOSE]: {
+      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
+    },
+    [GameStage.ANSWER_SHOW]: {
+      NEXT_QUESTION: GameStage.QUESTION_COUNTDOWN,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
+    },
+    [GameStage.FINAL_RESULTS]: {
+      END: GameStage.END
+    },
+    [GameStage.END]: {}
+  };
+  const validTransitions = stateTransitions[session.state];
+  if (!validTransitions || !validTransitions[action]) {
+    throw new Error('Action enum cannot be applied in the current state');
+  }
+
+  session.state = validTransitions[action];
+
+  if (validTransitions[action] === GameStage.QUESTION_OPEN) {
+    session.players.forEach(player => {
+      player.atQuestion++;
+    });
+  }
+
+  setData(data);
+  return {};
+}
