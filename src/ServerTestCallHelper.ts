@@ -519,3 +519,21 @@ EmptyBody {
     statusCode: response.statusCode,
   };
 }
+
+// adminQuizSessionUpdate
+export function ServerSessionUpdate(token: string, quizId: number, sessionId: number, action: string):
+EmptyBody {
+  const response = request(
+    'PUT',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: { token },
+      json: { action },
+      timeout: TIMEOUT_MS
+    }
+  );
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}

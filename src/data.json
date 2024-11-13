@@ -2,45 +2,106 @@
   "users": [
     {
       "id": 1,
-      "email": "jim.zheng123@icloud.com",
-      "nameFirst": "Jim",
-      "nameLast": "Zheng",
-      "password": "221b37fcdb52d0f7c39bbd0be211db0e1c00ca5fbecd5788780463026c6b964b",
-      "numSuccessfulLogins": 2,
-      "numFailedPasswordsSinceLastLogin": 0,
-      "prevPasswords": []
-    },
-    {
-      "id": 2,
-      "email": "z5394791@unsw.edu.au",
-      "nameFirst": "Zim",
-      "nameLast": "Zheng",
-      "password": "779e93b42b3ca84ee49d52d6e6e770fd3f98eafe4064e4f7be9425de31643c28",
+      "email": "Swastik1@gmail.com",
+      "nameFirst": "Swastik",
+      "nameLast": "Mishra",
+      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
     }
   ],
-  "quizzes": [],
+  "quizzes": [
+    {
+      "quizId": 22809,
+      "creatorId": 1,
+      "name": "Test Quiz",
+      "description": "This is a test quiz",
+      "timeCreated": 1731494875,
+      "timeLastEdited": 1731494875,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 10355,
+          "question": "Heads or Tails?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Head",
+              "correct": true,
+              "colour": "red",
+              "answerId": 24537
+            },
+            {
+              "answer": "Tail",
+              "correct": false,
+              "colour": "orange",
+              "answerId": 29348
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "sessions": [
     {
-      "sessionId": 92411,
+      "sessionId": 40696,
       "authUserId": 1,
-      "createdAt": 1731416483
-    },
-    {
-      "sessionId": 79257,
-      "authUserId": 2,
-      "createdAt": 1731416483
-    },
-    {
-      "sessionId": 46908,
-      "authUserId": 1,
-      "createdAt": 1731416483
+      "createdAt": 1731494875
     }
   ],
   "bin": [],
-  "quizSession": [],
+  "quizSession": [
+    {
+      "state": "LOBBY",
+      "quizSessionId": 46227,
+      "authUserId": 1,
+      "createdAt": 1731494875,
+      "quiz": {
+        "quizId": 22809,
+        "creatorId": 1,
+        "name": "Test Quiz",
+        "description": "This is a test quiz",
+        "timeCreated": 1731494875,
+        "timeLastEdited": 1731494875,
+        "numQuestions": 1,
+        "questions": [
+          {
+            "questionId": 10355,
+            "question": "Heads or Tails?",
+            "timeLimit": 30,
+            "points": 5,
+            "answerOptions": [
+              {
+                "answer": "Head",
+                "correct": true,
+                "colour": "red",
+                "answerId": 24537
+              },
+              {
+                "answer": "Tail",
+                "correct": false,
+                "colour": "orange",
+                "answerId": 29348
+              }
+            ]
+          }
+        ]
+      },
+      "players": [],
+      "questionResults": [
+        {
+          "questionId": 10355,
+          "playersCorrect": [],
+          "averageAnswerTime": 0,
+          "percentCorrect": 0,
+          "numRight": 0,
+          "numWrong": 0
+        }
+      ]
+    }
+  ],
   "players": [],
   "chat": []
 }
