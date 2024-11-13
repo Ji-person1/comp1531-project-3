@@ -19,7 +19,7 @@ import {
   adminQuizRemove, adminQuizTransfer, adminQuizCreateQuestion, adminQuizUpdateQuestion,
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrashView,
   adminQuizRestore, quizQuestionDelete,
-  adminSessionStart, adminQuizSessions, adminQuizThumbnailUpdate
+  adminSessionStart, adminQuizSessions, adminQuizThumbnailUpdate, adminQuizSessionUpdate
 } from './quiz';
 import { clear } from './other';
 import {
@@ -1147,6 +1147,32 @@ app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
   }
 });
 
+// adminQuizSessionUpdate
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+  const quizId = parseInt(req.params.quizid);
+  const sessionId = parseInt(req.params.sessionid);
+  const token = Number(req.header('token'));
+  const { action } = req.body;
+
+  try {
+    checkValidToken(token);
+  } catch (e) {
+    return res.status(401).json({ error: e.message });
+  }
+
+  try {
+    checkQuizExistOwner(token, quizId);
+  } catch (e) {
+    return res.status(403).json({ error: e.message });
+  }
+
+  try {
+    const result = adminQuizSessionUpdate(token, quizId, sessionId, action);
+    return res.status(200).json(result);
+  } catch (e) {
+    return res.status(400).json({ error: e.message });
+  }
+});
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================

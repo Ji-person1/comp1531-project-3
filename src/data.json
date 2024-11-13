@@ -2,10 +2,10 @@
   "users": [
     {
       "id": 1,
-      "email": "Swastik1@gmail.com",
-      "nameFirst": "Swastik",
-      "nameLast": "Mishra",
-      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "email": "example@unsw.edu.au",
+      "nameFirst": "hao",
+      "nameLast": "wu",
+      "password": "221b37fcdb52d0f7c39bbd0be211db0e1c00ca5fbecd5788780463026c6b964b",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
@@ -13,31 +13,31 @@
   ],
   "quizzes": [
     {
-      "quizId": 22809,
+      "quizId": 51111,
       "creatorId": 1,
-      "name": "Test Quiz",
-      "description": "This is a test quiz",
-      "timeCreated": 1731494875,
-      "timeLastEdited": 1731494875,
+      "name": "functional quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731496370,
+      "timeLastEdited": 1731496370,
       "numQuestions": 1,
       "questions": [
         {
-          "questionId": 10355,
-          "question": "Heads or Tails?",
+          "questionId": 48748,
+          "question": "Who is the Rizzler?",
           "timeLimit": 30,
           "points": 5,
           "answerOptions": [
             {
-              "answer": "Head",
+              "answer": "Duke Dennis",
               "correct": true,
-              "colour": "red",
-              "answerId": 24537
+              "colour": "purple",
+              "answerId": 28584
             },
             {
-              "answer": "Tail",
+              "answer": "Kai Cenat",
               "correct": false,
-              "colour": "orange",
-              "answerId": 29348
+              "colour": "purple",
+              "answerId": 39778
             }
           ]
         }
@@ -46,53 +46,62 @@
   ],
   "sessions": [
     {
-      "sessionId": 40696,
+      "sessionId": 10902,
       "authUserId": 1,
-      "createdAt": 1731494875
+      "createdAt": 1731496370
     }
   ],
   "bin": [],
   "quizSession": [
     {
       "state": "LOBBY",
-      "quizSessionId": 46227,
+      "quizSessionId": 38921,
       "authUserId": 1,
-      "createdAt": 1731494875,
+      "createdAt": 1731496370,
       "quiz": {
-        "quizId": 22809,
+        "quizId": 51111,
         "creatorId": 1,
-        "name": "Test Quiz",
-        "description": "This is a test quiz",
-        "timeCreated": 1731494875,
-        "timeLastEdited": 1731494875,
+        "name": "functional quiz",
+        "description": "a test quiz",
+        "timeCreated": 1731496370,
+        "timeLastEdited": 1731496370,
         "numQuestions": 1,
         "questions": [
           {
-            "questionId": 10355,
-            "question": "Heads or Tails?",
+            "questionId": 48748,
+            "question": "Who is the Rizzler?",
             "timeLimit": 30,
             "points": 5,
             "answerOptions": [
               {
-                "answer": "Head",
+                "answer": "Duke Dennis",
                 "correct": true,
-                "colour": "red",
-                "answerId": 24537
+                "colour": "purple",
+                "answerId": 28584
               },
               {
-                "answer": "Tail",
+                "answer": "Kai Cenat",
                 "correct": false,
-                "colour": "orange",
-                "answerId": 29348
+                "colour": "purple",
+                "answerId": 39778
               }
             ]
           }
         ]
       },
-      "players": [],
+      "players": [
+        {
+          "playerId": 77019,
+          "playerName": "hao",
+          "score": 0,
+          "numQuestions": 0,
+          "atQuestion": 0,
+          "quizsessionId": 38921
+        }
+      ],
       "questionResults": [
         {
-          "questionId": 10355,
+          "questionId": 48748,
           "playersCorrect": [],
           "averageAnswerTime": 0,
           "percentCorrect": 0,
@@ -102,6 +111,15 @@
       ]
     }
   ],
-  "players": [],
+  "players": [
+    {
+      "playerId": 77019,
+      "playerName": "hao",
+      "score": 0,
+      "numQuestions": 0,
+      "atQuestion": 0,
+      "quizsessionId": 38921
+    }
+  ],
   "chat": []
 }
