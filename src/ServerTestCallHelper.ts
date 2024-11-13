@@ -4,7 +4,7 @@ import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
   SessionResponse, PLayerStatusResponse, QsInfoResponse,
-  ChatResponse, QuestionResultsResponse
+  ChatResponse, QuestionResultsResponse, SessionResultResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -536,5 +536,19 @@ EmptyBody {
   return {
     body: JSON.parse(response.body.toString()),
     statusCode: response.statusCode,
+  };
+}
+
+// quizSessionResults
+export function ServerQuizSessionResults(token:string, quizId:number, sessionId:number):
+SessionResultResponse {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}/results`,
+    { headers: { token } }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: JSON.parse(res.statusCode.toString()),
   };
 }

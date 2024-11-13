@@ -5,7 +5,8 @@ import {
   quizList, QuizId, DuplicatedId,
   GameStage,
   QuizSession,
-  quizSessionId, SessionsResponse
+  quizSessionId, SessionsResponse,
+  UsersRankedByScore, QuestionResultOutput
 } from './interfaces';
 
 /**
@@ -910,4 +911,51 @@ export function adminQuizSessionUpdate(
 
   setData(data);
   return {};
+}
+
+/**
+ * Retrieves the results for a given session for the auth user
+ * @param {number} token - The ID of the quiz owner
+ * @param {number} quizId - The ID number of the quiz
+ * @param {number} sessionId - The ID number of the session
+ * @returns {object}
+ */
+export function quizSessionResults(token: number, quizId: number, sessionId: number):
+{usersRankedByScore: UsersRankedByScore[], questionResults: QuestionResultOutput[]} {
+  const data = getData();
+  const user = findToken(data, token);
+  if ('error' in user) {
+    throw new Error('Token is invalid');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== user.id) {
+    throw new Error('Quiz not found or user is not the owner');
+  }
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session || session.quiz.quizId !== quizId) {
+    throw new Error('Session Id does not refer to a valid session within this quiz');
+  }
+
+  if (session.state !== GameStage.FINAL_RESULTS) {
+    throw new Error('400: Session is not in FINAL_RESULTS state');
+  }
+
+  const usersRankedByScore = session.players.sort((a, b) => b.score - a.score).map((player) => ({
+    playerName: player.playerName,
+    score: player.score,
+  }));
+
+  const questionResults = session.questionResults.map((q) => ({
+    questionId: q.questionId,
+    playersCorrect: q.playersCorrect,
+    averageAnswerTime: q.averageAnswerTime,
+    percentCorrect: q.percentCorrect
+  }));
+
+  return {
+    usersRankedByScore: usersRankedByScore,
+    questionResults: questionResults
+  };
 }
