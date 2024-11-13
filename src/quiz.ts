@@ -1,5 +1,5 @@
 import { getData, setData } from './datastore';
-import { findToken, random5DigitNumber, randomColour } from './helper';
+import { findToken, random5DigitNumber, randomColour, generateCsvHeaders } from './helper';
 import {
   quizDetails, QuestionId, Questions, Answer,
   quizList, QuizId, DuplicatedId,
@@ -8,7 +8,7 @@ import {
   quizSessionId, SessionsResponse,
   UsersRankedByScore, QuestionResultOutput
 } from './interfaces';
-
+import fs from 'fs';
 /**
  * Update the description of the relevant quiz.
  *
@@ -958,4 +958,39 @@ export function quizSessionResults(token: number, quizId: number, sessionId: num
     usersRankedByScore: usersRankedByScore,
     questionResults: questionResults
   };
+}
+
+/**
+ * Allows the authuser to download a CSV for a given sessions results
+ * @param {number} token - The authUserId of the quiz owner
+ * @param {number} quizId - The ID number of the quiz
+ * @param {number} sessionId - The ID number of the session
+ * @returns {url} - which the authuser can paste into a webbrowser so that the csv can download
+ */
+export function quizSessionResultsCSV(token: number, quizId: number, sessionId: number):
+{url: string} {
+  const data = getData();
+  const user = findToken(data, token);
+  if ('error' in user) {
+    throw new Error('Token is invalid');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== user.id) {
+    throw new Error('Quiz not found or user is not the owner');
+  }
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session || session.quiz.quizId !== quizId) {
+    throw new Error('Session Id does not refer to a valid session within this quiz');
+  }
+
+  if (session.state !== GameStage.FINAL_RESULTS) {
+    throw new Error('400: Session is not in FINAL_RESULTS state');
+  }
+
+  const csv: string = generateCsvHeaders(session);
+  fs.writeFileSync('./src/results.csv', csv);
+
+  return { url: 'http://127.0.0.1/' };
 }
