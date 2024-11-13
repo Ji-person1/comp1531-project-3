@@ -565,3 +565,24 @@ CsvResponse {
     statusCode: JSON.parse(res.statusCode.toString()),
   };
 }
+
+// quizSessionStatus
+export function ServerSessionStatus(
+  token: string,
+  quizId: number,
+  sessionId: number
+): EmptyBody {
+  const response = request(
+    'GET',
+    `${SERVER_URL}/v1/admin/quiz/${quizId}/session/${sessionId}`,
+    {
+      headers: { token },
+      timeout: TIMEOUT_MS
+    }
+  );
+
+  return {
+    body: JSON.parse(response.body.toString()),
+    statusCode: response.statusCode,
+  };
+}
