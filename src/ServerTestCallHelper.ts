@@ -4,7 +4,7 @@ import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
   SessionResponse, PLayerStatusResponse, QsInfoResponse,
-  ChatResponse, QuestionResultsResponse, SessionResultResponse
+  ChatResponse, QuestionResultsResponse, SessionResultResponse, CsvResponse
 } from './serverInterfaces';
 import { Answer, errorObject } from './interfaces';
 
@@ -545,6 +545,19 @@ SessionResultResponse {
   const res = request(
     'GET',
     SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}/results`,
+    { headers: { token } }
+  );
+  return {
+    body: JSON.parse(res.body.toString()),
+    statusCode: JSON.parse(res.statusCode.toString()),
+  };
+}
+
+export function ServerQuizSessionResultsCSV(token: string, quizId: number, sessionId: number):
+CsvResponse {
+  const res = request(
+    'GET',
+    SERVER_URL + `/v1/admin/quiz/${quizId}/session/${sessionId}/results/csv`,
     { headers: { token } }
   );
   return {

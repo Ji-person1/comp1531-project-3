@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import { getData, setData } from './datastore';
-import { DataStore, errorObject, GameStage, User } from './interfaces';
+import { DataStore, errorObject, GameStage, User, QuizSession } from './interfaces';
 
 export function generateSessionId(): number {
   const data = getData();
@@ -227,4 +227,16 @@ export function hashPassword(password: string): string {
 export function comparePassword(password: string, hash: string): boolean {
   const passwordHash = hashPassword(password);
   return passwordHash === hash;
+}
+
+// generate a string of csv headers
+export function generateCsvHeaders(session: QuizSession):string {
+  const numQuestions = session.quiz.numQuestions;
+
+  const headers = ['Players'];
+  for (let i = 1; i < numQuestions + 1; i++) {
+    headers.push(`question${i}score`);
+    headers.push(`question${i}rank`);
+  }
+  return headers.join();
 }
