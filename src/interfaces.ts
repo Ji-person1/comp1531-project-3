@@ -192,3 +192,20 @@ export interface QuestionInfo {
     points: number,
     answerOptions: Answer[]
 }
+
+export interface SessionReslut {
+    usersRankedByScore: UsersRankedByScore[],
+    questionResults: QuestionResultOutput[]
+}
+
+export interface UsersRankedByScore {
+    playerName: string,
+    score: number
+}
+
+export interface QuestionResultOutput {
+    questionId: number,
+    playersCorrect: string[],
+    averageAnswerTime: number,
+    percentCorrect: number
+}
