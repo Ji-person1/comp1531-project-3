@@ -826,7 +826,6 @@ Record<string, never> {
   return {};
 }
 
-
 /**
  * Updates the state of a particular quiz session by sending an action command.
  *
@@ -859,39 +858,40 @@ export function adminQuizSessionUpdate(
     throw new Error('Session Id does not refer to a valid session within this quiz');
   }
 
-  const validActions = ['NEXT_QUESTION', 'SKIP_COUNTDOWN', 'GO_TO_ANSWER', 'GO_TO_FINAL_RESULTS', 'END'];
+  const validActions = ['NEXT_QUESTION', 'SKIP_COUNTDOWN', 'GO_TO_ANSWER',
+    'GO_TO_FINAL_RESULTS', 'END'];
   if (!validActions.includes(action)) {
     throw new Error('Action provided is not a valid Action enum');
   }
 
   const stateTransitions: Record<GameStage, Record<string, GameStage>> = {
     [GameStage.LOBBY]: {
-      'NEXT_QUESTION': GameStage.QUESTION_COUNTDOWN,
-      'END': GameStage.END
+      NEXT_QUESTION: GameStage.QUESTION_COUNTDOWN,
+      END: GameStage.END
     },
     [GameStage.QUESTION_COUNTDOWN]: {
-      'SKIP_COUNTDOWN': GameStage.QUESTION_OPEN,
-      'GO_TO_ANSWER': GameStage.ANSWER_SHOW,
-      'GO_TO_FINAL_RESULTS': GameStage.FINAL_RESULTS,
-      'END': GameStage.END
+      SKIP_COUNTDOWN: GameStage.QUESTION_OPEN,
+      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
     },
     [GameStage.QUESTION_OPEN]: {
-      'GO_TO_ANSWER': GameStage.ANSWER_SHOW,
-      'GO_TO_FINAL_RESULTS': GameStage.FINAL_RESULTS,
-      'END': GameStage.END
+      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
     },
     [GameStage.QUESTION_CLOSE]: {
-      'GO_TO_ANSWER': GameStage.ANSWER_SHOW,
-      'GO_TO_FINAL_RESULTS': GameStage.FINAL_RESULTS,
-      'END': GameStage.END
+      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
     },
     [GameStage.ANSWER_SHOW]: {
-      'NEXT_QUESTION': GameStage.QUESTION_COUNTDOWN,
-      'GO_TO_FINAL_RESULTS': GameStage.FINAL_RESULTS,
-      'END': GameStage.END
+      NEXT_QUESTION: GameStage.QUESTION_COUNTDOWN,
+      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
+      END: GameStage.END
     },
     [GameStage.FINAL_RESULTS]: {
-      'END': GameStage.END
+      END: GameStage.END
     },
     [GameStage.END]: {}
   };

@@ -521,7 +521,8 @@ EmptyBody {
 }
 
 // adminQuizSessionUpdate
-export function ServerSessionUpdate(token: string, quizId: number, sessionId: number, action: string):
+export function ServerSessionUpdate(token: string, quizId: number, sessionId: number,
+  action: string):
 EmptyBody {
   const response = request(
     'PUT',
