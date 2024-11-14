@@ -1,3 +1,4 @@
+import { QuestionBody } from './interfaces';
 import {
   ServerAuthRegister, ServerQuizCreate,
   ServerClear,
@@ -12,6 +13,16 @@ beforeEach(() => {
   ServerClear();
 });
 
+const questionBody: QuestionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ],
+};
+
 describe('Error Cases of playerQuestionInfo', () => {
   let UserToken: { token: string };
   let quizId: { quizId: number };
@@ -24,10 +35,7 @@ describe('Error Cases of playerQuestionInfo', () => {
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(
       UserToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 4, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]
+      quizId.quizId, questionBody
     );
     sessionId = serverStartSession(UserToken.token, quizId.quizId, 20).body;
     playerId = serverPlayerJoin(sessionId.sessionId, 'hao').body;

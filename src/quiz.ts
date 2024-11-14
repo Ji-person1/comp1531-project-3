@@ -6,7 +6,8 @@ import {
   GameStage,
   QuizSession,
   quizSessionId, SessionsResponse,
-  UsersRankedByScore, QuestionResultOutput
+  UsersRankedByScore, QuestionResultOutput,
+  QuestionBody
 } from './interfaces';
 
 /**
@@ -264,14 +265,12 @@ export function adminQuizTransfer(token: number, quizId: number,
  *
  * @param {number} token - The session token of the current user.
  * @param {number} quizId - The ID of the quiz to add the question to
- * @param {string} question - The question text
- * @param {number} duration - The time limit for the question in seconds
- * @param {number} points - The points that the queston is worth
- * @param {Answer[]} answers - An array of answers
+ * @param {object} questionBody - which contains question, timeLimit,
+ * point, answerOptions and thumbnailUrl
  * @returns {object} object with new questionId if successful or error object if unsuccessful
  */
-export function adminQuizCreateQuestion(token: number, quizId: number, question: string,
-  duration: number, points: number, answers: Answer[]): QuestionId {
+export function adminQuizCreateQuestion(token: number, quizId: number, questionBody: QuestionBody):
+QuestionId {
   const data = getData();
 
   const session = data.sessions.find(session => session.sessionId === token);
@@ -283,6 +282,13 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
   if (!quiz || quiz.creatorId !== session.authUserId) {
     throw new Error('how');
   }
+
+  const question = questionBody.question;
+  const duration = questionBody.timeLimit;
+  const points = questionBody.points;
+  const answers = questionBody.answerOptions;
+  // this is for v2
+  const thumbnailUrl = questionBody.thumbnailUrl;
 
   if (!question) {
     throw new Error('400: Question is invalid');
@@ -334,7 +340,9 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
     question,
     timeLimit: duration,
     points,
-    answerOptions: colouredAnswers
+    answerOptions: colouredAnswers,
+    // this is for v2
+    thumbnailUrl,
   };
 
   quiz.numQuestions++;
@@ -360,7 +368,7 @@ export function adminQuizCreateQuestion(token: number, quizId: number, question:
  */
 
 export function adminQuizUpdateQuestion(token: number, quizId: number, questionId: number,
-  question: string, duration: number, points: number, answers: Answer[]
+  questionBody: QuestionBody
 ): Record<string, never> {
   const data = getData();
 
@@ -373,6 +381,13 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
   if (!quiz || quiz.creatorId !== session.authUserId) {
     throw new Error('Token is valid, but quizId is not owned or invalid');
   }
+
+  const question = questionBody.question;
+  const duration = questionBody.timeLimit;
+  const points = questionBody.points;
+  const answers = questionBody.answerOptions;
+  // this is for v2
+  const thumbnailUrl = questionBody.thumbnailUrl;
 
   if (question.length < 5 || question.length > 50) {
     throw new Error('Question is less than length 5 or greater than length 50');
@@ -424,7 +439,9 @@ export function adminQuizUpdateQuestion(token: number, quizId: number, questionI
     question,
     timeLimit: duration,
     points,
-    answerOptions: colouredAnswers
+    answerOptions: colouredAnswers,
+    // this is for v2
+    thumbnailUrl,
   };
 
   quiz.timeLastEdited = Math.floor(Date.now() / 1000);
@@ -958,4 +975,186 @@ export function quizSessionResults(token: number, quizId: number, sessionId: num
     usersRankedByScore: usersRankedByScore,
     questionResults: questionResults
   };
+}
+
+/**
+ * Creates a new question for a quiz.
+ *
+ * @param {number} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz to add the question to
+ * @param {object} questionBody - which contains question, timeLimit,
+ * point, answerOptions and thumbnailUrl
+ * @returns {object} object with new questionId if successful or error object if unsuccessful
+ */
+export function adminQuizCreateQuestionV1(token: number, quizId: number,
+  questionBody: QuestionBody): QuestionId {
+  const data = getData();
+
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+    throw new Error('how');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== session.authUserId) {
+    throw new Error('how');
+  }
+
+  const question = questionBody.question;
+  const duration = questionBody.timeLimit;
+  const points = questionBody.points;
+  const answers = questionBody.answerOptions;
+
+  if (!question) {
+    throw new Error('400: Question is invalid');
+  } else if (question.length < 5 || question.length > 50) {
+    throw new Error('Question string is less than length 5 or greater length 50');
+  }
+
+  if (!answers) {
+    throw new Error('Question is invalid');
+  } else if (answers.length < 2 || answers.length > 6) {
+    throw new Error('The question has less than 2 answers or more than 6 answers');
+  }
+
+  if (duration <= 0) {
+    throw new Error('The question time limit is not positive');
+  }
+
+  const totalDuration = quiz.questions.reduce((sum, question) => sum + question.timeLimit, 0) +
+    duration;
+  if (totalDuration > 180) {
+    throw new Error('The quiz is longer than 3 minutes');
+  }
+
+  if (points < 1 || points > 10) {
+    throw new Error('The points awarded for the question are less than 1 or greater than 10');
+  }
+
+  if (answers.some(answer => answer.answer.length < 1 || answer.answer.length > 30)) {
+    throw new Error('The length of an answer is invalid');
+  }
+
+  if (answers.length !== new Set(answers.map(answer => answer.answer)).size) {
+    throw new Error('Answer strings are duplicates of one another');
+  }
+
+  if (!answers.some(answer => answer.correct)) {
+    throw new Error('There are no correct answers');
+  }
+
+  const colouredAnswers = answers.map((answer:Answer): Answer => ({
+    ...answer,
+    colour: randomColour(),
+    answerId: random5DigitNumber()
+  }));
+
+  const randomQuestionId = Math.floor(10000 + Math.random() * 90000);
+  const newQuestion: Questions = {
+    questionId: randomQuestionId,
+    question,
+    timeLimit: duration,
+    points,
+    answerOptions: colouredAnswers,
+  };
+
+  quiz.numQuestions++;
+  quiz.questions.push(newQuestion);
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+
+  setData(data);
+
+  return { questionId: randomQuestionId };
+}
+
+/**
+ * Updates the details of a particular question within a quiz.
+ *
+ * @param {number} token - The session token of the current user.
+ * @param {number} quizId - The ID of the quiz containing the question.
+ * @param {number} questionId - The ID of the question to be updated.
+ * @param {string} question - The new question text.
+ * @param {number} duration - The new time limit for the question in seconds.
+ * @param {number} points - The new points awarded for the question.
+ * @param {Answer[]} answers - An array of new answer options.
+ * @returns {object} An empty object if successful, or an error object if unsuccessful.
+ */
+
+export function adminQuizUpdateQuestionV1(token: number, quizId: number, questionId: number,
+  questionBody: QuestionBody
+): Record<string, never> {
+  const data = getData();
+
+  const session = data.sessions.find(session => session.sessionId === token);
+  if (!session) {
+    throw new Error('Token is invalid or empty');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== session.authUserId) {
+    throw new Error('Token is valid, but quizId is not owned or invalid');
+  }
+
+  const question = questionBody.question;
+  const duration = questionBody.timeLimit;
+  const points = questionBody.points;
+  const answers = questionBody.answerOptions;
+
+  if (question.length < 5 || question.length > 50) {
+    throw new Error('Question is less than length 5 or greater than length 50');
+  }
+
+  if (answers.length < 2 || answers.length > 6) {
+    throw new Error('The question has more than 6 answers or less than 2 answers');
+  }
+
+  if (duration <= 0) {
+    throw new Error('The question timeLimit is not positive');
+  }
+
+  const totalDuration = quiz.questions.reduce((sum, question) => sum + question.timeLimit, 0) +
+    duration;
+  if (totalDuration > 180) {
+    throw new Error('The quiz is longer than 3 minutes');
+  }
+
+  if (points < 1 || points > 10) {
+    throw new Error('The points awarded for the question are less than 1 or greater than 10');
+  }
+
+  if (answers.some(answer => answer.answer.length < 1 || answer.answer.length > 30)) {
+    throw new Error('The length of an answer is invalid');
+  }
+
+  if (answers.length !== new Set(answers.map(answer => answer.answer)).size) {
+    throw new Error(' Any two answers are the same (within the same question)');
+  }
+
+  if (!answers.some(answer => answer.correct)) {
+    throw new Error(' There are no correct answers');
+  }
+
+  const questionIndex = quiz.questions.findIndex(q => q.questionId === questionId);
+  if (questionIndex === -1) {
+    throw new Error('questionId not found/invalid');
+  }
+
+  const colouredAnswers = answers.map((answer:Answer): Answer => ({
+    ...answer,
+    colour: randomColour(),
+    answerId: random5DigitNumber()
+  }));
+
+  quiz.questions[questionIndex] = {
+    questionId,
+    question,
+    timeLimit: duration,
+    points,
+    answerOptions: colouredAnswers,
+  };
+
+  quiz.timeLastEdited = Math.floor(Date.now() / 1000);
+  setData(data);
+
+  return {};
 }

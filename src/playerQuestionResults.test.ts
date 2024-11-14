@@ -9,7 +9,7 @@ import {
   serverAnswerSubmit,
   serverPlayerStatus,
 } from './ServerTestCallHelper';
-import { GameStage } from './interfaces';
+import { GameStage, QuestionBody } from './interfaces';
 import { getAnswerId, setAnswerShow, setOpen } from './helper';
 
 const ERROR = { error: expect.any(String) };
@@ -17,6 +17,16 @@ const ERROR = { error: expect.any(String) };
 beforeEach(() => {
   ServerClear();
 });
+
+const questionBody: QuestionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ],
+};
 
 describe('Error Cases', () => {
   let userToken: { token: string };
@@ -30,10 +40,7 @@ describe('Error Cases', () => {
     userToken = ServerAuthRegister('neev.saikia123@icloud.com', '1234abcd', 'Neev', 'Saikia').body;
     quizId = ServerQuizCreate(userToken.token, 'functional quiz', 'a test quiz').body;
     questionId = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]).body;
+      quizId.quizId, questionBody).body;
 
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
     playerId = serverPlayerJoin(sessionId.sessionId, 'Neev').body;
@@ -89,10 +96,7 @@ describe('Success cases', () => {
     userToken = ServerAuthRegister('neev.saikia123@icloud.com', '1234abcd', 'Neev', 'Saikia').body;
     quizId = ServerQuizCreate(userToken.token, 'functional quiz', 'a test quiz').body;
     questionId = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]).body;
+      quizId.quizId, questionBody).body;
 
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
     playerId = serverPlayerJoin(sessionId.sessionId, 'Neev').body;

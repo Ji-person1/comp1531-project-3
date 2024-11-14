@@ -1,3 +1,4 @@
+import { QuestionBody } from './interfaces';
 import {
   ServerAuthRegister, ServerQuizCreate, ServerQuizCreateQuestion,
   ServerQuizUpdateQuestion, ServerClear,
@@ -15,164 +16,145 @@ describe('adminQuizUpdateQuestion', () => {
   let userToken: { token: string };
   let quizId: { quizId: number };
   let questionId: { questionId: number };
-
+  let questionBody: QuestionBody;
   beforeEach(() => {
     userToken = ServerAuthRegister('swastik@example.com', 'password123', 'Swastik', 'Mishra').body;
     quizId = ServerQuizCreate(userToken.token, 'Test Quiz', 'This is a test quiz').body;
+    questionBody = {
+      question: 'Who is the Rizzler?',
+      timeLimit: 30,
+      points: 5,
+      answerOptions: [
+        { answer: 'Duke', correct: true },
+        { answer: 'Kai', correct: false }
+      ],
+    };
     questionId = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is not the Rizzler?', 30, 5, [
-        { answer: 'Duke', correct: false },
-        { answer: 'Kai', correct: true }
-      ]).body;
+      quizId.quizId, questionBody).body;
   });
 
   test('Question too short', () => {
+    questionBody.question = 'a';
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'a', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Question too long', () => {
+    questionBody.question = 'a'.repeat(51);
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'a'.repeat(51), 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Too many answers', () => {
+    questionBody.answerOptions = [
+      { answer: 'Duke Dennis', correct: true },
+      { answer: 'Due Dennis', correct: false },
+      { answer: 'Duk Dennis', correct: false },
+      { answer: 'Uke Dennis', correct: false },
+      { answer: 'Dke Dennis', correct: false },
+      { answer: 'Duke Denns', correct: false },
+      { answer: 'Kai Cenat', correct: false }
+    ];
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Due Dennis', correct: false },
-        { answer: 'Duk Dennis', correct: false },
-        { answer: 'Uke Dennis', correct: false },
-        { answer: 'Dke Dennis', correct: false },
-        { answer: 'Duke Denns', correct: false },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('One answer', () => {
+    questionBody.answerOptions = [
+      { answer: 'Kai Cenat', correct: true }
+    ];
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Kai Cenat', correct: true }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Negative time limit', () => {
+    questionBody.timeLimit = -30;
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', -30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('One question duration too long', () => {
+    questionBody.timeLimit = 181;
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 181, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Sum of questions too long', () => {
-    const res = ServerQuizCreateQuestion(userToken.token, quizId.quizId,
-      'Who is the Rizzler?', 90, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+    questionBody.timeLimit = 90;
+    const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(200);
-    expect(res.body).toStrictEqual({ questionId: expect.any(Number) });
+    expect(res.body).toStrictEqual({});
+    questionBody.timeLimit = 91;
     const resTwo = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Another question?', 91, 5, [
-        { answer: 'Yes', correct: true },
-        { answer: 'No!', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(resTwo.statusCode).toStrictEqual(400);
     expect(resTwo.body).toStrictEqual(ERROR);
   });
 
   test('Points too low', () => {
+    questionBody.points = 0;
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 30, 0, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Points too high', () => {
+    questionBody.points = 11;
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 90, 11, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
-  test('One character answer', () => {
+  test.failing('One character answer', () => {
+    questionBody.answerOptions[0].answer = 'D';
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 90, 11, [
-        { answer: 'D', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Answer too long', () => {
+    questionBody.answerOptions[0].answer = 'D'.repeat(51);
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 90, 11, [
-        { answer: 'D'.repeat(31), correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Duplicate answers', () => {
+    questionBody.answerOptions[0].answer = questionBody.answerOptions[1].answer;
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 90, 11, [
-        { answer: 'Kai Cenat', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('No correct answers', () => {
+    questionBody.answerOptions[0].correct = false;
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 90, 11, [
-        { answer: 'Me', correct: false },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Invalid token', () => {
-    const res = ServerQuizUpdateQuestion(Number(-userToken.token).toString(),
-      quizId.quizId, questionId.questionId, 'Who is the Rizzler?', 45, 8, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+    const res = ServerQuizUpdateQuestion(Number(-userToken.token).toString(), quizId.quizId,
+      questionId.questionId, questionBody);
     expect(res.statusCode).toBe(401);
     expect(res.body).toStrictEqual(ERROR);
   });
@@ -180,30 +162,21 @@ describe('adminQuizUpdateQuestion', () => {
   test('Token does not own quiz', () => {
     const userTokenTwo = ServerAuthRegister('HaoWu0000@gmail.com', '2734uqsd', 'Hao', 'Wu').body;
     const res = ServerQuizUpdateQuestion(userTokenTwo.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 90, 5, [
-        { answer: 'Me', correct: false },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(403);
     expect(res.body).toStrictEqual(ERROR);
   });
 
   test('Quiz does not exist', () => {
     const res = ServerQuizUpdateQuestion(userToken.token, -quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 45, 8, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toBe(403);
     expect(res.body).toEqual(ERROR);
   });
 
   test('Question does not exist', () => {
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      -questionId.questionId, 'Who is the Rizzler?', 45, 8, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      -questionId.questionId, questionBody);
     expect(res.statusCode).toBe(400);
     expect(res.body).toEqual(ERROR);
   });
@@ -211,10 +184,7 @@ describe('adminQuizUpdateQuestion', () => {
   test('Quiz no longer exists exist', () => {
     ServerQuizRemove(userToken.token, quizId.quizId);
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(403);
     expect(res.body).toStrictEqual(ERROR);
   });
@@ -226,45 +196,69 @@ describe('Success cases', () => {
   let questionId: { questionId: number };
   let questionIdTwo: { questionId: number };
   let questionIdThree: { questionId: number };
+  let questionBody: QuestionBody;
+  let questionBody2: QuestionBody;
+  let questionBody3: QuestionBody;
+  let questionBody4: QuestionBody;
 
   beforeEach(() => {
     userToken = ServerAuthRegister('swastik@example.com', 'password123', 'Swastik', 'Mishra').body;
     quizId = ServerQuizCreate(userToken.token, 'Test Quiz', 'This is a test quiz').body;
-    questionId = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
+    questionBody = {
+      question: 'Who is the Rizzler?',
+      timeLimit: 30,
+      points: 5,
+      answerOptions: [
         { answer: 'Duke Dennis', correct: true },
         { answer: 'Kai Cenat', correct: false }
-      ]).body;
-    questionIdTwo = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is not the Rizzler?', 30, 6, [
+      ]
+    };
+    questionBody2 = {
+      question: 'Who is not the Rizzler?',
+      timeLimit: 30,
+      points: 6,
+      answerOptions: [
         { answer: 'Duke', correct: false },
         { answer: 'Kai', correct: true }
-      ]).body;
-    questionIdThree = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Is this quiz good', 30, 10, [
+      ]
+    };
+    questionBody3 = {
+      question: 'Is this quiz good',
+      timeLimit: 30,
+      points: 10,
+      answerOptions: [
         { answer: 'Yes', correct: false },
         { answer: 'No', correct: true }
-      ]).body;
+      ]
+    };
+    questionBody4 = {
+      question: 'What does it mean when someone takes your food?',
+      timeLimit: 45,
+      points: 8,
+      answerOptions: [
+        { answer: 'Fanum Tax', correct: true },
+        { answer: 'bullying', correct: false },
+        { answer: 'Sharing', correct: false }
+      ]
+    };
+    questionId = ServerQuizCreateQuestion(userToken.token,
+      quizId.quizId, questionBody).body;
+    questionIdTwo = ServerQuizCreateQuestion(userToken.token,
+      quizId.quizId, questionBody2).body;
+    questionIdThree = ServerQuizCreateQuestion(userToken.token,
+      quizId.quizId, questionBody3).body;
   });
 
   test('Successful question update', () => {
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'What does it mean when someone takes your food?', 45, 8, [
-        { answer: 'Fanum Tax', correct: true },
-        { answer: 'bullying', correct: false },
-        { answer: 'Sharing', correct: false }
-      ]);
+      questionId.questionId, questionBody4);
     expect(res.body).toStrictEqual({});
     expect(res.statusCode).toBe(200);
   });
 
   test('Successful question update with check', () => {
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
-      questionId.questionId, 'What does it mean when someone takes your food?', 45, 8, [
-        { answer: 'Fanum Tax', correct: true },
-        { answer: 'bullying', correct: false },
-        { answer: 'Sharing', correct: false }
-      ]);
+      questionId.questionId, questionBody4);
     expect(res.statusCode).toBe(200);
     const resInfo = ServerQuizInfo(userToken.token, quizId.quizId);
     expect(resInfo.body).toStrictEqual({

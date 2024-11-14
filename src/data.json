@@ -2,10 +2,10 @@
   "users": [
     {
       "id": 1,
-      "email": "example@unsw.edu.au",
-      "nameFirst": "hao",
-      "nameLast": "wu",
-      "password": "221b37fcdb52d0f7c39bbd0be211db0e1c00ca5fbecd5788780463026c6b964b",
+      "email": "swastik@example.com",
+      "nameFirst": "Swastik",
+      "nameLast": "Mishra",
+      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
@@ -13,16 +13,36 @@
   ],
   "quizzes": [
     {
-      "quizId": 36391,
+      "quizId": 89483,
       "creatorId": 1,
-      "name": "functional quiz",
-      "description": "a test quiz",
-      "timeCreated": 1731497359,
-      "timeLastEdited": 1731497359,
-      "numQuestions": 1,
+      "name": "Test Quiz",
+      "description": "This is a test quiz",
+      "timeCreated": 1731575741,
+      "timeLastEdited": 1731575741,
+      "numQuestions": 3,
       "questions": [
         {
-          "questionId": 25403,
+          "questionId": 96119,
+          "question": "Is hawk tuah funny?",
+          "timeLimit": 30,
+          "points": 10,
+          "answerOptions": [
+            {
+              "answer": "yes",
+              "correct": false,
+              "colour": "purple",
+              "answerId": 56595
+            },
+            {
+              "answer": "no",
+              "correct": true,
+              "colour": "orange",
+              "answerId": 48905
+            }
+          ]
+        },
+        {
+          "questionId": 70688,
           "question": "Who is the Rizzler?",
           "timeLimit": 30,
           "points": 5,
@@ -30,14 +50,34 @@
             {
               "answer": "Duke Dennis",
               "correct": true,
-              "colour": "red",
-              "answerId": 47130
+              "colour": "blue",
+              "answerId": 72224
             },
             {
               "answer": "Kai Cenat",
               "correct": false,
               "colour": "yellow",
-              "answerId": 30046
+              "answerId": 95338
+            }
+          ]
+        },
+        {
+          "questionId": 90985,
+          "question": "Who is not the Rizzler?",
+          "timeLimit": 30,
+          "points": 6,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": false,
+              "colour": "yellow",
+              "answerId": 18066
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": true,
+              "colour": "orange",
+              "answerId": 50039
             }
           ]
         }
@@ -46,80 +86,13 @@
   ],
   "sessions": [
     {
-      "sessionId": 40344,
+      "sessionId": 35777,
       "authUserId": 1,
-      "createdAt": 1731497359
+      "createdAt": 1731575741
     }
   ],
   "bin": [],
-  "quizSession": [
-    {
-      "state": "LOBBY",
-      "quizSessionId": 17172,
-      "authUserId": 1,
-      "createdAt": 1731497359,
-      "quiz": {
-        "quizId": 36391,
-        "creatorId": 1,
-        "name": "functional quiz",
-        "description": "a test quiz",
-        "timeCreated": 1731497359,
-        "timeLastEdited": 1731497359,
-        "numQuestions": 1,
-        "questions": [
-          {
-            "questionId": 25403,
-            "question": "Who is the Rizzler?",
-            "timeLimit": 30,
-            "points": 5,
-            "answerOptions": [
-              {
-                "answer": "Duke Dennis",
-                "correct": true,
-                "colour": "red",
-                "answerId": 47130
-              },
-              {
-                "answer": "Kai Cenat",
-                "correct": false,
-                "colour": "yellow",
-                "answerId": 30046
-              }
-            ]
-          }
-        ]
-      },
-      "players": [
-        {
-          "playerId": 90778,
-          "playerName": "hao",
-          "score": 0,
-          "numQuestions": 0,
-          "atQuestion": 0,
-          "quizsessionId": 17172
-        }
-      ],
-      "questionResults": [
-        {
-          "questionId": 25403,
-          "playersCorrect": [],
-          "averageAnswerTime": 0,
-          "percentCorrect": 0,
-          "numRight": 0,
-          "numWrong": 0
-        }
-      ]
-    }
-  ],
-  "players": [
-    {
-      "playerId": 90778,
-      "playerName": "hao",
-      "score": 0,
-      "numQuestions": 0,
-      "atQuestion": 0,
-      "quizsessionId": 17172
-    }
-  ],
+  "quizSession": [],
+  "players": [],
   "chat": []
 }

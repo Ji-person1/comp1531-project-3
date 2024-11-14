@@ -52,11 +52,20 @@ export interface Quiz {
 }
 
 export interface Questions {
-    questionId: number
+    questionId: number;
     question: string;
     timeLimit: number;
     points: number;
     answerOptions: Answer[];
+    thumbnailUrl?: string;
+}
+
+export interface QuestionBody {
+    question: string;
+    timeLimit: number;
+    points: number;
+    answerOptions: Answer[];
+    thumbnailUrl?: string;
 }
 
 export interface Answer {

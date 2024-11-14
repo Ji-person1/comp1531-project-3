@@ -1,3 +1,4 @@
+import { QuestionBody } from './interfaces';
 import {
   ServerAuthRegister,
   ServerQuizCreate,
@@ -12,7 +13,15 @@ const ERROR = { error: expect.any(String) };
 beforeEach(() => {
   ServerClear();
 });
-
+const questionBody: QuestionBody = {
+  question: 'Heads or Tails?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Head', correct: true },
+    { answer: 'Tail', correct: false }
+  ]
+};
 describe('Error Cases', () => {
   let userToken: { token: string };
   let quizId: { quizId: number };
@@ -24,13 +33,7 @@ describe('Error Cases', () => {
     ServerQuizCreateQuestion(
       userToken.token,
       quizId.quizId,
-      'Heads or Tails?',
-      30,
-      5,
-      [
-        { answer: 'Head', correct: true },
-        { answer: 'Tail', correct: false }
-      ]
+      questionBody
     );
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
   });
@@ -102,13 +105,7 @@ describe('Success Cases', () => {
     ServerQuizCreateQuestion(
       userToken.token,
       quizId.quizId,
-      'Heads or Tails?',
-      30,
-      5,
-      [
-        { answer: 'Head', correct: true },
-        { answer: 'Tail', correct: false }
-      ]
+      questionBody
     );
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
   });

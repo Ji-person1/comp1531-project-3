@@ -20,7 +20,9 @@ import {
   adminQuestionMove, adminQuestionDuplicate, adminQuizTrashEmpty, adminQuizTrashView,
   adminQuizRestore, quizQuestionDelete,
   adminSessionStart, adminQuizSessions, adminQuizThumbnailUpdate, adminQuizSessionUpdate,
-  quizSessionResults
+  quizSessionResults,
+  adminQuizCreateQuestionV1,
+  adminQuizUpdateQuestionV1
 } from './quiz';
 import { clear } from './other';
 import {
@@ -361,7 +363,7 @@ app.post('/v1/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
 // adminQuizCreateQuestionV1
 app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  const { question, duration, points, answers } = req.body;
+  const { questionBody } = req.body;
   const token = Number(req.body.token);
   try {
     checkValidToken(token);
@@ -376,7 +378,7 @@ app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   }
 
   try {
-    const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);
+    const result = adminQuizCreateQuestionV1(token, quizId, questionBody);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
@@ -387,7 +389,7 @@ app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
 app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
-  const { question, duration, points, answers } = req.body;
+  const { questionBody } = req.body;
   const token = Number(req.body.token);
   try {
     checkValidToken(token);
@@ -402,8 +404,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Respo
   }
 
   try {
-    const result = adminQuizUpdateQuestion(token, quizId, questionId, question,
-      duration, points, answers);
+    const result = adminQuizUpdateQuestionV1(token, quizId, questionId, questionBody);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
@@ -846,7 +847,7 @@ app.post('/v2/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
 // adminQuizCreateQuestion
 app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  const { question, duration, points, answers } = req.body;
+  const { questionBody } = req.body;
   const token = Number(req.headers.token);
   try {
     checkValidToken(token);
@@ -861,7 +862,7 @@ app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
   }
 
   try {
-    const result = adminQuizCreateQuestion(token, quizId, question, duration, points, answers);
+    const result = adminQuizCreateQuestion(token, quizId, questionBody);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });
@@ -872,7 +873,7 @@ app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
 app.put('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
-  const { question, duration, points, answers } = req.body;
+  const { questionBody } = req.body;
   const token = Number(req.headers.token);
   try {
     checkValidToken(token);
@@ -887,8 +888,7 @@ app.put('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Respo
   }
 
   try {
-    const result = adminQuizUpdateQuestion(token, quizId, questionId, question,
-      duration, points, answers);
+    const result = adminQuizUpdateQuestion(token, quizId, questionId, questionBody);
     return res.status(200).json(result);
   } catch (e) {
     return res.status(400).json({ error: e.message });

@@ -6,7 +6,7 @@ import {
   SessionResponse, PLayerStatusResponse, QsInfoResponse,
   ChatResponse, QuestionResultsResponse, SessionResultResponse
 } from './serverInterfaces';
-import { Answer, errorObject } from './interfaces';
+import { errorObject, QuestionBody } from './interfaces';
 
 const SERVER_URL = `${url}:${port}`;
 const TIMEOUT_MS = 5 * 1000;
@@ -281,14 +281,11 @@ export function ServerQuizTransfer(token: string, quizId: number, userEmail: str
 
 // adminQuizQuestionCreate
 export function ServerQuizCreateQuestion(token: string, quizId: number,
-  question: string, duration: number, points: number, answers: Answer[]): QuestionIdResponse {
+  questionBody: QuestionBody): QuestionIdResponse {
   const response = request('POST', `${SERVER_URL}/v2/admin/quiz/${quizId}/question`, {
     headers: { token: token },
     json: {
-      question: question,
-      duration: duration,
-      points: points,
-      answers: answers
+      questionBody: questionBody
     },
     timeout: TIMEOUT_MS
   });
@@ -301,15 +298,11 @@ export function ServerQuizCreateQuestion(token: string, quizId: number,
 
 // adminQuizQuestionUpdate
 export function ServerQuizUpdateQuestion(token: string, quizId: number,
-  questionId: number, question: string, duration: number,
-  points: number, answers: Answer[]): EmptyBody {
+  questionId: number, questionBody: QuestionBody): EmptyBody {
   const response = request('PUT', `${SERVER_URL}/v2/admin/quiz/${quizId}/question/${questionId}`, {
     headers: { token: token },
     json: {
-      question: question,
-      duration: duration,
-      points: points,
-      answers: answers
+      questionBody: questionBody
     },
     timeout: TIMEOUT_MS
   });
