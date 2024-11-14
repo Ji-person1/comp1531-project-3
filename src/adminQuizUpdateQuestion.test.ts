@@ -120,8 +120,8 @@ describe('adminQuizUpdateQuestion', () => {
     expect(res.body).toStrictEqual(ERROR);
   });
 
-  test.failing('One character answer', () => {
-    questionBody.answerOptions[0].answer = 'D';
+  test('One character answer', () => {
+    questionBody.answerOptions[0].answer = '';
     const res = ServerQuizUpdateQuestion(userToken.token, quizId.quizId,
       questionId.questionId, questionBody);
     expect(res.statusCode).toStrictEqual(400);

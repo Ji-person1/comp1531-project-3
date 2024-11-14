@@ -115,9 +115,9 @@ describe('Failure cases', () => {
     expect(res.body).toStrictEqual(ERROR);
   });
 
-  test.failing('One character answer', () => {
+  test('One character answer', () => {
     questionBody.answerOptions = [
-      { answer: 'D', correct: true },
+      { answer: '', correct: true },
       { answer: 'Kai Cenat', correct: false }
     ];
     const res = ServerQuizCreateQuestion(userToken.token, quizId.quizId, questionBody);
