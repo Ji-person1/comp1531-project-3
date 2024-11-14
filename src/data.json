@@ -1,18 +1,64 @@
 {
-    "users": [
-      {
-        "id": 1,
-        "email": "example@unsw.edu.au",
-        "nameFirst": "hao",
-        "nameLast": "wu",
-        "password": "221b37fcdb52d0f7c39bbd0be211db0e1c00ca5fbecd5788780463026c6b964b",
-        "numSuccessfulLogins": 1,
-        "numFailedPasswordsSinceLastLogin": 0,
-        "prevPasswords": []
-      }
-    ],
-    "quizzes": [
-      {
+  "users": [
+    {
+      "id": 1,
+      "email": "example@unsw.edu.au",
+      "nameFirst": "hao",
+      "nameLast": "wu",
+      "password": "221b37fcdb52d0f7c39bbd0be211db0e1c00ca5fbecd5788780463026c6b964b",
+      "numSuccessfulLogins": 1,
+      "numFailedPasswordsSinceLastLogin": 0,
+      "prevPasswords": []
+    }
+  ],
+  "quizzes": [
+    {
+      "quizId": 39771,
+      "creatorId": 1,
+      "name": "functional quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731535267,
+      "timeLastEdited": 1731535267,
+      "numQuestions": 1,
+      "questions": [
+        {
+          "questionId": 20377,
+          "question": "Who is the Rizzler?",
+          "timeLimit": 30,
+          "points": 5,
+          "answerOptions": [
+            {
+              "answer": "Duke Dennis",
+              "correct": true,
+              "colour": "blue",
+              "answerId": 33811
+            },
+            {
+              "answer": "Kai Cenat",
+              "correct": false,
+              "colour": "purple",
+              "answerId": 83904
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "sessions": [
+    {
+      "sessionId": 56509,
+      "authUserId": 1,
+      "createdAt": 1731535267
+    }
+  ],
+  "bin": [],
+  "quizSession": [
+    {
+      "state": "LOBBY",
+      "quizSessionId": 52026,
+      "authUserId": 1,
+      "createdAt": 1731535267,
+      "quiz": {
         "quizId": 39771,
         "creatorId": 1,
         "name": "functional quiz",
@@ -42,85 +88,39 @@
             ]
           }
         ]
-      }
-    ],
-    "sessions": [
-      {
-        "sessionId": 56509,
-        "authUserId": 1,
-        "createdAt": 1731535267
-      }
-    ],
-    "bin": [],
-    "quizSession": [
-      {
-        "state": "LOBBY",
-        "quizSessionId": 52026,
-        "authUserId": 1,
-        "createdAt": 1731535267,
-        "quiz": {
-          "quizId": 39771,
-          "creatorId": 1,
-          "name": "functional quiz",
-          "description": "a test quiz",
-          "timeCreated": 1731535267,
-          "timeLastEdited": 1731535267,
-          "numQuestions": 1,
-          "questions": [
-            {
-              "questionId": 20377,
-              "question": "Who is the Rizzler?",
-              "timeLimit": 30,
-              "points": 5,
-              "answerOptions": [
-                {
-                  "answer": "Duke Dennis",
-                  "correct": true,
-                  "colour": "blue",
-                  "answerId": 33811
-                },
-                {
-                  "answer": "Kai Cenat",
-                  "correct": false,
-                  "colour": "purple",
-                  "answerId": 83904
-                }
-              ]
-            }
-          ]
-        },
-        "players": [
-          {
-            "playerId": 16896,
-            "playerName": "hao",
-            "score": 0,
-            "numQuestions": 0,
-            "atQuestion": 0,
-            "quizsessionId": 52026
-          }
-        ],
-        "questionResults": [
-          {
-            "questionId": 20377,
-            "playersCorrect": [],
-            "averageAnswerTime": 0,
-            "percentCorrect": 0,
-            "numRight": 0,
-            "numWrong": 0
-          }
-        ]
-      }
-    ],
-    "players": [
-      {
-        "playerId": 16896,
-        "playerName": "hao",
-        "score": 0,
-        "numQuestions": 0,
-        "atQuestion": 0,
-        "quizsessionId": 52026
-      }
-    ],
-    "chat": []
+      },
+      "players": [
+        {
+          "playerId": 16896,
+          "playerName": "hao",
+          "score": 0,
+          "numQuestions": 0,
+          "atQuestion": 0,
+          "quizsessionId": 52026
+        }
+      ],
+      "questionResults": [
+        {
+          "questionId": 20377,
+          "playersCorrect": [],
+          "averageAnswerTime": 0,
+          "percentCorrect": 0,
+          "numRight": 0,
+          "numWrong": 0
+        }
+      ]
+    }
+  ],
+  "players": [
+    {
+      "playerId": 16896,
+      "playerName": "hao",
+      "score": 0,
+      "numQuestions": 0,
+      "atQuestion": 0,
+      "quizsessionId": 52026
+    }
+  ],
+  "chat": []
 }
   
