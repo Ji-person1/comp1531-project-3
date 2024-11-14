@@ -2,10 +2,10 @@
   "users": [
     {
       "id": 1,
-      "email": "swastik@example.com",
-      "nameFirst": "Swastik",
-      "nameLast": "Mishra",
-      "password": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+      "email": "1dq11333@gmail.com",
+      "nameFirst": "Hao",
+      "nameLast": "Wu",
+      "password": "221b37fcdb52d0f7c39bbd0be211db0e1c00ca5fbecd5788780463026c6b964b",
       "numSuccessfulLogins": 1,
       "numFailedPasswordsSinceLastLogin": 0,
       "prevPasswords": []
@@ -13,82 +13,21 @@
   ],
   "quizzes": [
     {
-      "quizId": 89483,
+      "quizId": 13868,
       "creatorId": 1,
-      "name": "Test Quiz",
-      "description": "This is a test quiz",
-      "timeCreated": 1731575741,
-      "timeLastEdited": 1731575741,
-      "numQuestions": 3,
-      "questions": [
-        {
-          "questionId": 96119,
-          "question": "Is hawk tuah funny?",
-          "timeLimit": 30,
-          "points": 10,
-          "answerOptions": [
-            {
-              "answer": "yes",
-              "correct": false,
-              "colour": "purple",
-              "answerId": 56595
-            },
-            {
-              "answer": "no",
-              "correct": true,
-              "colour": "orange",
-              "answerId": 48905
-            }
-          ]
-        },
-        {
-          "questionId": 70688,
-          "question": "Who is the Rizzler?",
-          "timeLimit": 30,
-          "points": 5,
-          "answerOptions": [
-            {
-              "answer": "Duke Dennis",
-              "correct": true,
-              "colour": "blue",
-              "answerId": 72224
-            },
-            {
-              "answer": "Kai Cenat",
-              "correct": false,
-              "colour": "yellow",
-              "answerId": 95338
-            }
-          ]
-        },
-        {
-          "questionId": 90985,
-          "question": "Who is not the Rizzler?",
-          "timeLimit": 30,
-          "points": 6,
-          "answerOptions": [
-            {
-              "answer": "Duke Dennis",
-              "correct": false,
-              "colour": "yellow",
-              "answerId": 18066
-            },
-            {
-              "answer": "Kai Cenat",
-              "correct": true,
-              "colour": "orange",
-              "answerId": 50039
-            }
-          ]
-        }
-      ]
+      "name": "first quiz",
+      "description": "a test quiz",
+      "timeCreated": 1731577989,
+      "timeLastEdited": 1731577989,
+      "numQuestions": 0,
+      "questions": []
     }
   ],
   "sessions": [
     {
-      "sessionId": 35777,
+      "sessionId": 77389,
       "authUserId": 1,
-      "createdAt": 1731575741
+      "createdAt": 1731577989
     }
   ],
   "bin": [],

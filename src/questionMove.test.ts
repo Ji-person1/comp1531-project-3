@@ -115,8 +115,8 @@ describe('Success cases', () => {
       timeLimit: 30,
       points: 5,
       answerOptions: [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
+        { answer: 'Duke', correct: true },
+        { answer: 'Kai', correct: false }
       ],
     };
     const questionBody2 = {
@@ -124,17 +124,17 @@ describe('Success cases', () => {
       timeLimit: 30,
       points: 6,
       answerOptions: [
-        { answer: 'Duke Dennis', correct: false },
-        { answer: 'Kai Cenat', correct: true }
+        { answer: 'Duke', correct: false },
+        { answer: 'Kai', correct: true }
       ],
     };
     const questionBody3 = {
-      question: 'Is hawk tuah funny?',
+      question: 'Is this quiz good?',
       timeLimit: 30,
       points: 10,
       answerOptions: [
-        { answer: 'yes', correct: false },
-        { answer: 'no', correct: true }
+        { answer: 'Yes', correct: false },
+        { answer: 'No', correct: true }
       ]
     };
     questionId = ServerQuizCreateQuestion(userToken.token,
@@ -200,7 +200,7 @@ describe('Success cases', () => {
         },
         {
           questionId: expect.any(Number),
-          question: 'Is this quiz good',
+          question: 'Is this quiz good?',
           timeLimit: 30,
           points: 10,
           answerOptions: [
@@ -264,13 +264,13 @@ describe('Success cases', () => {
           answerOptions: [
             {
               answerId: expect.any(Number),
-              answer: 'Duke Dennis',
+              answer: 'Duke',
               colour: expect.any(String),
               correct: true
             },
             {
               answerId: expect.any(Number),
-              answer: 'Kai Cenat',
+              answer: 'Kai',
               colour: expect.any(String),
               correct: false
             }
@@ -278,7 +278,7 @@ describe('Success cases', () => {
         },
         {
           questionId: expect.any(Number),
-          question: 'Is this quiz good',
+          question: 'Is this quiz good?',
           timeLimit: 30,
           points: 10,
           answerOptions: [
@@ -316,7 +316,7 @@ describe('Success cases', () => {
       questions: [
         {
           questionId: expect.any(Number),
-          question: 'Is this quiz good',
+          question: 'Is this quiz good?',
           timeLimit: 30,
           points: 10,
           answerOptions: [
@@ -342,13 +342,13 @@ describe('Success cases', () => {
           answerOptions: [
             {
               answerId: expect.any(Number),
-              answer: 'Duke Dennis',
+              answer: 'Duke',
               colour: expect.any(String),
               correct: true
             },
             {
               answerId: expect.any(Number),
-              answer: 'Kai Cenat',
+              answer: 'Kai',
               colour: expect.any(String),
               correct: false
             }
