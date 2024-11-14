@@ -23,21 +23,39 @@ describe('Error cases', () => {
   beforeEach(() => {
     UserToken = ServerAuthRegister('HaoWu0000@gmail.com', '2734uqsd', 'Hao', 'Wu').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
-    questionId = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
-      'Who is the Rizzler?', 30, 5, [
+    const questionBody = {
+      question: 'Who is the Rizzler?',
+      timeLimit: 30,
+      points: 5,
+      answerOptions: [
         { answer: 'Duke Dennis', correct: true },
         { answer: 'Kai Cenat', correct: false }
-      ]).body;
-    questionIdTwo = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
-      "Who isn't the Rizzler?", 30, 5, [
+      ],
+    };
+    const questionBody2 = {
+      question: 'Who is not the Rizzler?',
+      timeLimit: 30,
+      points: 6,
+      answerOptions: [
         { answer: 'Duke Dennis', correct: false },
         { answer: 'Kai Cenat', correct: true }
-      ]).body;
-    questionIdThree = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
-      'Is hawk tuah funny?', 30, 500, [
+      ],
+    };
+    const questionBody3 = {
+      question: 'Is hawk tuah funny?',
+      timeLimit: 30,
+      points: 500,
+      answerOptions: [
         { answer: 'yes', correct: false },
         { answer: 'no', correct: true }
-      ]).body;
+      ]
+    };
+    questionId = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
+      questionBody).body;
+    questionIdTwo = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
+      questionBody2).body;
+    questionIdThree = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
+      questionBody3).body;
   });
 
   test('invalid token', () => {
@@ -92,21 +110,39 @@ describe('Success cases', () => {
   beforeEach(() => {
     userToken = ServerAuthRegister('swastik@example.com', 'password123', 'Swastik', 'Mishra').body;
     quizId = ServerQuizCreate(userToken.token, 'Test Quiz', 'This is a test quiz').body;
-    questionId = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]).body;
-    questionIdTwo = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Who is not the Rizzler?', 30, 6, [
+    const questionBody = {
+      question: 'Who is the Rizzler?',
+      timeLimit: 30,
+      points: 5,
+      answerOptions: [
+        { answer: 'Duke', correct: true },
+        { answer: 'Kai', correct: false }
+      ],
+    };
+    const questionBody2 = {
+      question: 'Who is not the Rizzler?',
+      timeLimit: 30,
+      points: 6,
+      answerOptions: [
         { answer: 'Duke', correct: false },
         { answer: 'Kai', correct: true }
-      ]).body;
-    questionIdThree = ServerQuizCreateQuestion(userToken.token,
-      quizId.quizId, 'Is this quiz good', 30, 10, [
+      ],
+    };
+    const questionBody3 = {
+      question: 'Is this quiz good?',
+      timeLimit: 30,
+      points: 10,
+      answerOptions: [
         { answer: 'Yes', correct: false },
         { answer: 'No', correct: true }
-      ]).body;
+      ]
+    };
+    questionId = ServerQuizCreateQuestion(userToken.token,
+      quizId.quizId, questionBody).body;
+    questionIdTwo = ServerQuizCreateQuestion(userToken.token,
+      quizId.quizId, questionBody2).body;
+    questionIdThree = ServerQuizCreateQuestion(userToken.token,
+      quizId.quizId, questionBody3).body;
   });
 
   test('position 0 to 1', () => {
@@ -150,13 +186,13 @@ describe('Success cases', () => {
           answerOptions: [
             {
               answerId: expect.any(Number),
-              answer: 'Duke Dennis',
+              answer: 'Duke',
               colour: expect.any(String),
               correct: true
             },
             {
               answerId: expect.any(Number),
-              answer: 'Kai Cenat',
+              answer: 'Kai',
               colour: expect.any(String),
               correct: false
             }
@@ -164,7 +200,7 @@ describe('Success cases', () => {
         },
         {
           questionId: expect.any(Number),
-          question: 'Is this quiz good',
+          question: 'Is this quiz good?',
           timeLimit: 30,
           points: 10,
           answerOptions: [
@@ -228,13 +264,13 @@ describe('Success cases', () => {
           answerOptions: [
             {
               answerId: expect.any(Number),
-              answer: 'Duke Dennis',
+              answer: 'Duke',
               colour: expect.any(String),
               correct: true
             },
             {
               answerId: expect.any(Number),
-              answer: 'Kai Cenat',
+              answer: 'Kai',
               colour: expect.any(String),
               correct: false
             }
@@ -242,7 +278,7 @@ describe('Success cases', () => {
         },
         {
           questionId: expect.any(Number),
-          question: 'Is this quiz good',
+          question: 'Is this quiz good?',
           timeLimit: 30,
           points: 10,
           answerOptions: [
@@ -280,7 +316,7 @@ describe('Success cases', () => {
       questions: [
         {
           questionId: expect.any(Number),
-          question: 'Is this quiz good',
+          question: 'Is this quiz good?',
           timeLimit: 30,
           points: 10,
           answerOptions: [
@@ -306,13 +342,13 @@ describe('Success cases', () => {
           answerOptions: [
             {
               answerId: expect.any(Number),
-              answer: 'Duke Dennis',
+              answer: 'Duke',
               colour: expect.any(String),
               correct: true
             },
             {
               answerId: expect.any(Number),
-              answer: 'Kai Cenat',
+              answer: 'Kai',
               colour: expect.any(String),
               correct: false
             }

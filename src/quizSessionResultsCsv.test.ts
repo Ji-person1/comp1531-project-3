@@ -12,6 +12,17 @@ const ERROR = { error: expect.any(String) };
 beforeEach(() => {
   ServerClear();
 });
+
+const questionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ],
+};
+
 describe('quizSessionResultCsv error test', () => {
   let userToken: { token: string };
   let userTokenTwo: { token: string };
@@ -25,13 +36,7 @@ describe('quizSessionResultCsv error test', () => {
     ServerQuizCreateQuestion(
       userToken.token,
       quizId.quizId,
-      'Heads or Tails?',
-      30,
-      5,
-      [
-        { answer: 'Head', correct: true },
-        { answer: 'Tail', correct: false }
-      ]
+      questionBody
     );
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
     ServerSessionUpdate(userToken.token, quizId.quizId, sessionId.sessionId, 'NEXT_QUESTION');

@@ -14,6 +14,16 @@ beforeEach(() => {
   ServerClear();
 });
 
+const questionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ],
+};
+
 describe('Error cases', () => {
   let UserToken: { token: string };
   let quizId: { quizId: number };
@@ -23,10 +33,7 @@ describe('Error cases', () => {
     UserToken = ServerAuthRegister('HaoWu0000@gmail.com', '2734uqsd', 'Hao', 'Wu').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     questionId = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
-      'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]).body;
+      questionBody).body;
   });
 
   test('question does not exist', () => {
@@ -72,10 +79,7 @@ describe('Success cases', () => {
     UserToken = ServerAuthRegister('1dq11333@gmail.com', '1234abcd', 'Hao', 'Wu').body;
     quizId = ServerQuizCreate(UserToken.token, 'first quiz', 'a test quiz').body;
     questionId = ServerQuizCreateQuestion(UserToken.token, quizId.quizId,
-      'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]).body;
+      questionBody).body;
   });
 
   test('Basic return success check', () => {

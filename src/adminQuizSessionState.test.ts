@@ -14,6 +14,16 @@ beforeEach(() => {
   ServerClear();
 });
 
+const questionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ]
+};
+
 describe('Error Cases', () => {
   let userToken: { token: string };
   let quizId: { quizId: number };
@@ -25,13 +35,7 @@ describe('Error Cases', () => {
     ServerQuizCreateQuestion(
       userToken.token,
       quizId.quizId,
-      'Heads or Tails?',
-      30,
-      5,
-      [
-        { answer: 'Heads', correct: true },
-        { answer: 'Tails', correct: false }
-      ]
+      questionBody
     );
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
   });
@@ -90,13 +94,7 @@ describe('Success Cases', () => {
     ServerQuizCreateQuestion(
       userToken.token,
       quizId.quizId,
-      'Heads or Tails?',
-      30,
-      5,
-      [
-        { answer: 'Heads', correct: true },
-        { answer: 'Tails', correct: false }
-      ]
+      questionBody
     );
     sessionId = serverStartSession(userToken.token, quizId.quizId, 0).body;
   });

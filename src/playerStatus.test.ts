@@ -12,6 +12,16 @@ beforeEach(() => {
   ServerClear();
 });
 
+const questionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ],
+};
+
 describe('Error Cases of playerStatus', () => {
   let UserToken: { token: string };
   let quizId: { quizId: number };
@@ -21,10 +31,7 @@ describe('Error Cases of playerStatus', () => {
     UserToken = ServerAuthRegister('example@unsw.edu.au', '1234abcd', 'hao', 'wu').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      quizId.quizId, questionBody);
     sessionId = serverStartSession(UserToken.token, quizId.quizId, 20).body;
     playerId = serverPlayerJoin(sessionId.sessionId, 'hao').body;
   });
@@ -46,10 +53,7 @@ describe('successful cases for playerStatus', () => {
     UserToken = ServerAuthRegister('example@unsw.edu.au', '1234abcd', 'hao', 'wu').body;
     quizId = ServerQuizCreate(UserToken.token, 'functional quiz', 'a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      quizId.quizId, questionBody);
     sessionId = serverStartSession(UserToken.token, quizId.quizId, 20).body;
     playerId = serverPlayerJoin(sessionId.sessionId, 'hao').body;
   });
