@@ -14,6 +14,16 @@ beforeEach(() => {
   ServerClear();
 });
 
+const questionBody = {
+  question: 'Who is the Rizzler?',
+  timeLimit: 30,
+  points: 5,
+  answerOptions: [
+    { answer: 'Duke Dennis', correct: true },
+    { answer: 'Kai Cenat', correct: false }
+  ]
+};
+
 describe('Error Cases', () => {
   let UserToken: { token: string };
   let UserTokenTwo: { token: string };
@@ -24,10 +34,7 @@ describe('Error Cases', () => {
     UserTokenTwo = ServerAuthRegister('Swastik2@gmail.com', 'password456', 'Neo', 'Mishra').body;
     quizId = ServerQuizCreate(UserToken.token, 'Test Quiz', 'This is a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      quizId.quizId, questionBody);
   });
 
   test('Invalid token', () => {
@@ -70,10 +77,7 @@ describe('Success Cases', () => {
     UserToken = ServerAuthRegister('swastik1@gmail.com', 'password123', 'Swastik', 'Mishra').body;
     quizId = ServerQuizCreate(UserToken.token, 'Test Quiz', 'This is a test quiz').body;
     ServerQuizCreateQuestion(UserToken.token,
-      quizId.quizId, 'Who is the Rizzler?', 30, 5, [
-        { answer: 'Duke Dennis', correct: true },
-        { answer: 'Kai Cenat', correct: false }
-      ]);
+      quizId.quizId, questionBody);
   });
 
   test('Empty session list', () => {
