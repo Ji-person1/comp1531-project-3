@@ -209,3 +209,20 @@ export interface QuestionResultOutput {
     averageAnswerTime: number,
     percentCorrect: number
 }
+
+export interface SessionStatus {
+    state: GameStage;
+    atQuestion: number;
+    players: string[];
+    metadata: {
+      quizId: number;
+      name: string;
+      timeCreated: number;
+      timeLastEdited: number;
+      description: string;
+      numQuestions: number;
+      questions: Questions[];
+      timeLimit?: number;
+      thumbnailUrl?: string;
+    };
+  }
