@@ -1,3 +1,4 @@
+import { Url } from 'url';
 import {
   DuplicatedId, QuestionId, quizDetails, PlayerId,
   QuizId, quizList, quizSessionId, Token, UserDetails, SessionsResponse, PlayerStatusResponse,
@@ -81,5 +82,10 @@ export interface ChatResponse {
 
 export interface SessionResultResponse {
     body: SessionReslut,
+    statusCode: number
+}
+
+export interface CsvResponse {
+    body: Url,
     statusCode: number
 }
