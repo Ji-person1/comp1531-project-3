@@ -1,5 +1,5 @@
 import { getData, setData } from './datastore';
-import { findToken, random5DigitNumber, randomColour } from './helper';
+import { findToken, random5DigitNumber, randomColour, generateCsvHeaders } from './helper';
 import {
   quizDetails, QuestionId, Questions, Answer,
   quizList, QuizId, DuplicatedId,
@@ -7,9 +7,9 @@ import {
   QuizSession,
   quizSessionId, SessionsResponse,
   UsersRankedByScore, QuestionResultOutput,
-  QuestionBody
+  QuestionBody, SessionStatus
 } from './interfaces';
-
+import fs from 'fs';
 /**
  * Update the description of the relevant quiz.
  *
@@ -1157,4 +1157,89 @@ export function adminQuizUpdateQuestionV1(token: number, quizId: number, questio
   setData(data);
 
   return {};
+}
+
+/**
+ * Allows the authuser to download a CSV for a given sessions results
+ * @param {number} token - The authUserId of the quiz owner
+ * @param {number} quizId - The ID number of the quiz
+ * @param {number} sessionId - The ID number of the session
+ * @returns {url} - which the authuser can paste into a webbrowser so that the csv can download
+ */
+export function quizSessionResultsCSV(token: number, quizId: number, sessionId: number):
+{url: string} {
+  const data = getData();
+  const user = findToken(data, token);
+  if ('error' in user) {
+    throw new Error('Token is invalid');
+  }
+
+  const quiz = data.quizzes.find(quiz => quiz.quizId === quizId);
+  if (!quiz || quiz.creatorId !== user.id) {
+    throw new Error('Quiz not found or user is not the owner');
+  }
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session || session.quiz.quizId !== quizId) {
+    throw new Error('Session Id does not refer to a valid session within this quiz');
+  }
+
+  if (session.state !== GameStage.FINAL_RESULTS) {
+    throw new Error('400: Session is not in FINAL_RESULTS state');
+  }
+
+  const csv: string = generateCsvHeaders(session);
+  fs.writeFileSync('./src/results.csv', csv);
+
+  return { url: 'http://google.com/some/png/results.csv' };
+}
+
+/**
+ * Get the status of a particular quiz session
+ *
+ * @param {number} token - The session token of the current user
+ * @param {number} quizId - The ID of the quiz
+ * @param {number} sessionId - The ID of the session to check
+ * @returns {SessionStatus} Session status details if successful
+ */
+export function adminQuizSessionStatus(
+  token: number,
+  quizId: number,
+  sessionId: number
+): SessionStatus {
+  const data = getData();
+
+  const user = findToken(data, token);
+  if ('error' in user) {
+    throw new Error('Token is invalid');
+  }
+
+  const quiz = data.quizzes.find(q => q.quizId === quizId);
+  if (!quiz || quiz.creatorId !== user.id) {
+    throw new Error('Quiz not found or user is not the owner');
+  }
+
+  const session = data.quizSession.find(s => s.quizSessionId === sessionId);
+  if (!session || session.quiz.quizId !== quizId) {
+    throw new Error('Session Id does not refer to a valid session within this quiz');
+  }
+
+  const timeLimit = quiz.questions.reduce((sum, q) => sum + q.timeLimit, 0);
+
+  return {
+    state: session.state,
+    atQuestion: session.players[0]?.atQuestion || 0,
+    players: session.players.map(player => player.playerName),
+    metadata: {
+      quizId: quiz.quizId,
+      name: quiz.name,
+      timeCreated: quiz.timeCreated,
+      timeLastEdited: quiz.timeLastEdited,
+      description: quiz.description,
+      numQuestions: quiz.numQuestions,
+      questions: quiz.questions,
+      timeLimit,
+      thumbnailUrl: quiz.thumbnailUrl
+    }
+  };
 }
