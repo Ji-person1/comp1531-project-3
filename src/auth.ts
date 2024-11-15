@@ -7,8 +7,9 @@ import {
   UserDetails, Token,
   PlayerId,
   GameStage, Chat,
-  QuestionInfo, QuestionResults,
+  QuestionInfo,
   Answer,
+  PlayerQuestionResults,
 } from './interfaces';
 
 /**
@@ -375,7 +376,7 @@ export function playerJoin (sessionId: number, playerName: string): PlayerId {
  * - the results of the question
  */
 export function playerQuestionResults (playerId: number,
-  questionposition: number): QuestionResults {
+  questionposition: number): PlayerQuestionResults {
   const data = getData();
 
   const player = data.players.find(p => p.playerId === playerId);
@@ -401,13 +402,18 @@ export function playerQuestionResults (playerId: number,
     throw new Error('Question results not found');
   }
 
+  const correctName = [];
+  if (!questionResult.playersCorrect.includes(player.playerName)) {
+    correctName.push('');
+  } else {
+    correctName.push(player.playerName);
+  }
+
   return {
     questionId: questionResult.questionId,
-    playersCorrect: questionResult.playersCorrect,
+    playersCorrect: correctName,
     averageAnswerTime: questionResult.averageAnswerTime,
     percentCorrect: questionResult.percentCorrect,
-    numWrong: questionResult.numWrong,
-    numRight: questionResult.numRight
   };
 }
 
@@ -454,7 +460,7 @@ Record<string, never> {
     }
     const correct = seshResults[questionPosition - 1].numRight;
     const incorrect = seshResults[questionPosition - 1].numWrong;
-    seshResults[questionPosition - 1].percentCorrect = correct / incorrect * 100;
+    seshResults[questionPosition - 1].percentCorrect = correct / (correct + incorrect) * 100;
     setData(data);
   });
   return {};

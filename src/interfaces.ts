@@ -110,6 +110,12 @@ export interface QuestionResults {
   numRight: number;
 }
 
+export interface PlayerQuestionResults {
+  questionId: number;
+  playersCorrect: string[];
+  averageAnswerTime: number;
+  percentCorrect: number;
+}
 export interface DataStore {
     users: User[];
     quizzes: Quiz[];
