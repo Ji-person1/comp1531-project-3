@@ -885,47 +885,71 @@ export function adminQuizSessionUpdate(
     throw new Error('Action provided is not a valid Action enum');
   }
 
-  const stateTransitions: Record<GameStage, Record<string, GameStage>> = {
-    [GameStage.LOBBY]: {
-      NEXT_QUESTION: GameStage.QUESTION_COUNTDOWN,
-      END: GameStage.END
-    },
-    [GameStage.QUESTION_COUNTDOWN]: {
-      SKIP_COUNTDOWN: GameStage.QUESTION_OPEN,
-      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
-      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
-      END: GameStage.END
-    },
-    [GameStage.QUESTION_OPEN]: {
-      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
-      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
-      END: GameStage.END
-    },
-    [GameStage.QUESTION_CLOSE]: {
-      GO_TO_ANSWER: GameStage.ANSWER_SHOW,
-      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
-      END: GameStage.END
-    },
-    [GameStage.ANSWER_SHOW]: {
-      NEXT_QUESTION: GameStage.QUESTION_COUNTDOWN,
-      GO_TO_FINAL_RESULTS: GameStage.FINAL_RESULTS,
-      END: GameStage.END
-    },
-    [GameStage.FINAL_RESULTS]: {
-      END: GameStage.END
-    },
-    [GameStage.END]: {}
-  };
-  const validTransitions = stateTransitions[session.state];
-  if (!validTransitions || !validTransitions[action]) {
+  let canContinue = false;
+  const { state } = session;
+
+  if (
+    (state === GameStage.LOBBY && action === 'NEXT_QUESTION') ||
+    (state === GameStage.QUESTION_COUNTDOWN && action === 'SKIP_COUNTDOWN') ||
+    (state === GameStage.QUESTION_OPEN && action === 'GO_TO_ANSWER') ||
+    (state === GameStage.QUESTION_CLOSE && action === 'GO_TO_ANSWER') ||
+    (state === GameStage.ANSWER_SHOW && action === 'NEXT_QUESTION') ||
+    (state === GameStage.ANSWER_SHOW && action === 'GO_TO_FINAL_RESULTS') ||
+    (state === GameStage.FINAL_RESULTS && action === 'END') ||
+    action === 'END'
+  ) {
+    canContinue = true;
+  }
+
+  if (!canContinue) {
     throw new Error('Action enum cannot be applied in the current state');
   }
 
-  session.state = validTransitions[action];
+  if (action === 'END') {
+    session.state = GameStage.END;
+    setData(data);
+    return {};
+  }
 
-  if (validTransitions[action] === GameStage.QUESTION_OPEN) {
+  const questionPosition = session.players[0]?.atQuestion || 0;
+
+  if (action === 'NEXT_QUESTION') {
+    if (questionPosition >= session.quiz.questions.length) {
+      throw new Error('No more questions available');
+    }
+    session.state = GameStage.QUESTION_COUNTDOWN;
+
+    setTimeout(() => {
+      session.state = GameStage.QUESTION_OPEN;
+      session.questionStartTime = Date.now();
+
+      const question = session.quiz.questions[questionPosition];
+      setTimeout(() => {
+        session.state = GameStage.QUESTION_CLOSE;
+        setData(data);
+      }, question.timeLimit * 1000);
+
+      setData(data);
+    }, 3000);
+  } else if (action === 'SKIP_COUNTDOWN') {
+    session.state = GameStage.QUESTION_OPEN;
+    session.questionStartTime = Date.now();
+
+    const question = session.quiz.questions[questionPosition];
+    setTimeout(() => {
+      session.state = GameStage.QUESTION_CLOSE;
+      setData(data);
+    }, question.timeLimit * 1000);
+  } else if (action === 'GO_TO_ANSWER') {
+    session.state = GameStage.ANSWER_SHOW;
+  } else if (action === 'GO_TO_FINAL_RESULTS') {
+    session.state = GameStage.FINAL_RESULTS;
+  }
+
+  if (action === 'SKIP_COUNTDOWN') {
     session.players.forEach(player => {
       player.atQuestion++;
+      player.numQuestions = Math.max(player.numQuestions, player.atQuestion);
     });
   }
 

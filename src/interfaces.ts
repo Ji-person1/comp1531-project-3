@@ -91,15 +91,16 @@ export interface PlayerSession {
 }
 
 export interface QuizSession {
-  state: GameStage;
-  quizSessionId: number;
-  authUserId: number;
-  createdAt: number;
-  quiz: Quiz;
-  players: PlayerSession[];
-  questionResults: QuestionResults[];
-  thumbnailUrl?: string;
-}
+    state: GameStage;
+    quizSessionId: number;
+    authUserId: number;
+    createdAt: number;
+    quiz: Quiz;
+    players: PlayerSession[];
+    questionResults: QuestionResults[];
+    thumbnailUrl?: string;
+    questionStartTime?: number;
+  }
 
 export interface QuestionResults {
   questionId: number;
