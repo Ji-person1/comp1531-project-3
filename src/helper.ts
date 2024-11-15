@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { getData, setData } from './datastore';
 import { DataStore, errorObject, GameStage, User, QuizSession } from './interfaces';
+import { playerQuestionResults } from './auth';
 
 export function generateSessionId(): number {
   const data = getData();
@@ -239,4 +240,23 @@ export function generateCsvHeaders(session: QuizSession):string {
     headers.push(`question${i}rank`);
   }
   return headers.join();
+}
+
+// add a player to csv
+export function addPlayerCsv(playerId: number) {
+  const data = getData();
+  const session = data.quizSession.find((s) => s.players.find((p) => p.playerId === playerId));
+  const player = session.players.find(p => p.playerId === playerId);
+  const num = player.numQuestions;
+  const csv: string[] = [player.playerName];
+  for (let position = 0; position < num; position++) {
+    const playerQuestion = playerQuestionResults(playerId, position + 1);
+    if (playerQuestion.playersCorrect[0] === '') {
+      csv.push('0');
+    } else {
+      csv.push(`${session.quiz.questions[position].points}`);
+    }
+    csv.push('unknow rank');
+  }
+  return csv.join();
 }

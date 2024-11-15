@@ -4,7 +4,8 @@ import {
   DuplicateIdResponse, EmptyBody, ListResponse, PLayerIdResponse, QuestionIdResponse,
   QuizIdResponse, QuizInfoResponse, QuizSessionId, TokenResponse, UserDetailResponse,
   SessionResponse, PLayerStatusResponse, QsInfoResponse,
-  ChatResponse, QuestionResultsResponse, SessionResultResponse, CsvResponse
+  ChatResponse, SessionResultResponse, CsvResponse,
+  PlayerQuestionResultsResponse
 } from './serverInterfaces';
 import { errorObject, QuestionBody } from './interfaces';
 
@@ -413,7 +414,7 @@ export function serverPlayerJoin(sessionId: number, playerName: string): PLayerI
 
 // playerQuestionResults
 export function serverPlayerQuestionResults(playerId: number,
-  questionposition: number): QuestionResultsResponse {
+  questionposition: number): PlayerQuestionResultsResponse {
   const response = request('GET',
     `${SERVER_URL}/v1/player/${playerId}/question/${questionposition}/results`, {
       json: {

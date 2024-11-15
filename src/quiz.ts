@@ -1,5 +1,8 @@
 import { getData, setData } from './datastore';
-import { findToken, random5DigitNumber, randomColour, generateCsvHeaders } from './helper';
+import {
+  findToken, random5DigitNumber,
+  randomColour, generateCsvHeaders, addPlayerCsv
+} from './helper';
 import {
   quizDetails, QuestionId, Questions, Answer,
   quizList, QuizId, DuplicatedId,
@@ -1188,7 +1191,11 @@ export function quizSessionResultsCSV(token: number, quizId: number, sessionId: 
     throw new Error('400: Session is not in FINAL_RESULTS state');
   }
 
-  const csv: string = generateCsvHeaders(session);
+  let csv: string = generateCsvHeaders(session);
+  for (const player of session.players) {
+    csv += '\n';
+    csv += addPlayerCsv(player.playerId);
+  }
   fs.writeFileSync('./src/results.csv', csv);
 
   return { url: 'http://google.com/some/png/results.csv' };

@@ -116,9 +116,7 @@ describe('Success cases', () => {
       questionId: expect.any(Number),
       playersCorrect: expect.any(Array),
       averageAnswerTime: expect.any(Number),
-      percentCorrect: expect.any(Number),
-      numWrong: expect.any(Number),
-      numRight: expect.any(Number)
+      percentCorrect: expect.any(Number)
     }));
   });
 
