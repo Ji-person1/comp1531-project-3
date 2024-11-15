@@ -77,7 +77,7 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 
 // UserDetailsV1
 app.get('/v1/admin/user/details', (req: Request, res: Response) => {
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
   try {
     checkValidToken(token);
   } catch (e) {
@@ -130,7 +130,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 
 // adminquizListV1
 app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
   try {
     checkValidToken(token);
   } catch (e) {
@@ -166,7 +166,7 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 // adminQuizRemoveV1
 app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId as string);
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
   try {
     checkValidToken(token);
   } catch (e) {
@@ -184,7 +184,7 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 // adminQuizInfoV1
 app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
   try {
     checkValidToken(token);
   } catch (e) {
@@ -257,7 +257,7 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 
 // adminQuizTrashViewV1
 app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
   try {
     checkValidToken(token);
   } catch (e) {
@@ -298,7 +298,7 @@ app.post('/v1/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
 // trashempty
 app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
   const { quizIds } = req.query;
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
 
   try {
     checkValidToken(token);
@@ -416,7 +416,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Respo
 app.delete('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
-  const token = Number(req.body.token);
+  const token = Number(req.query.token);
   try {
     checkValidToken(token);
   } catch (e) {
