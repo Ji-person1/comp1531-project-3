@@ -454,7 +454,7 @@ Record<string, never> {
     }
     const correct = seshResults[questionPosition - 1].numRight;
     const incorrect = seshResults[questionPosition - 1].numWrong;
-    seshResults[questionPosition - 1].percentCorrect = correct / incorrect * 100;
+    seshResults[questionPosition - 1].percentCorrect = correct / (correct + incorrect) * 100;
     setData(data);
   });
   return {};
