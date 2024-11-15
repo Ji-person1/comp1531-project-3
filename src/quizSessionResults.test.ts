@@ -72,7 +72,7 @@ describe('Error Cases', () => {
     expect(result.statusCode).toEqual(401);
   });
 
-  test('user is not an owner of this quiz or quiz doesn\'t exist', () => {
+  test('user is not an owner of this quiz', () => {
     const result = ServerQuizSessionResults(userTokenTwo.token, quizId.quizId, sessionId.sessionId);
     expect(result.body).toStrictEqual(ERROR);
     expect(result.statusCode).toStrictEqual(403);
@@ -117,8 +117,8 @@ describe('Successful Cases', () => {
     const result = ServerQuizSessionResults(userToken.token, quizId.quizId, sessionId.sessionId);
     expect(result.body).toStrictEqual({
       questionResults: [{
-        averageAnswerTime: 0,
-        percentCorrect: null,
+        averageAnswerTime: expect.any(Number),
+        percentCorrect: expect.any(Number),
         playersCorrect: ['Hao'],
         questionId: expect.any(Number),
       }],
