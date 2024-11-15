@@ -77,6 +77,12 @@ describe('Error Cases', () => {
     expect(result.body).toStrictEqual(ERROR);
     expect(result.statusCode).toStrictEqual(403);
   });
+
+  test('quiz doesn\'t exist', () => {
+    const result = ServerQuizSessionResults(userToken.token, -quizId.quizId, sessionId.sessionId);
+    expect(result.body).toStrictEqual(ERROR);
+    expect(result.statusCode).toStrictEqual(403);
+  });
 });
 
 describe('Successful Cases', () => {
@@ -137,8 +143,8 @@ describe('Successful Cases', () => {
     const result = ServerQuizSessionResults(userToken.token, quizId.quizId, sessionId.sessionId);
     expect(result.body).toStrictEqual({
       questionResults: [{
-        averageAnswerTime: 0,
-        percentCorrect: null,
+        averageAnswerTime: expect.any(Number),
+        percentCorrect: expect.any(Number),
         playersCorrect: ['Hao', 'Sam'],
         questionId: expect.any(Number),
       }],

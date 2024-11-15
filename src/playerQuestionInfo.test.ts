@@ -6,6 +6,7 @@ import {
   serverStartSession,
   serverPlayerJoin,
   serverPlayerQuestionInfo,
+  ServerSessionUpdate,
 } from './ServerTestCallHelper';
 const ERROR = { error: expect.any(String) };
 
@@ -42,22 +43,57 @@ describe('Error Cases of playerQuestionInfo', () => {
     questionPosition = 1;
   });
   test('Player ID does not exist', () => {
-    const restoreResult = serverPlayerQuestionInfo(-playerId, questionPosition);
-    expect(restoreResult.body).toStrictEqual(ERROR);
-    expect(restoreResult.statusCode).toStrictEqual(400);
+    const res = serverPlayerQuestionInfo(-playerId, questionPosition);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
   });
 
   test('Question position is not valid for the session this player is in', () => {
-    const restoreResult = serverPlayerQuestionInfo(playerId.playerId, 0);
-    expect(restoreResult.body).toStrictEqual(ERROR);
-    expect(restoreResult.statusCode).toStrictEqual(400);
+    const res = serverPlayerQuestionInfo(playerId.playerId, 0);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
   });
 
   test('Session is not currently on this question', () => {
-    const restoreResult = serverPlayerQuestionInfo(0, questionPosition);
-    expect(restoreResult.body).toStrictEqual(ERROR);
-    expect(restoreResult.statusCode).toStrictEqual(400);
+    const res = serverPlayerQuestionInfo(0, questionPosition);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
   });
-  test.todo('Session is in LOBBY state');
-  test.todo('test successful return');
+
+  test('Session is in LOBBY state', () => {
+    const res = serverPlayerQuestionInfo(playerId.playerId, questionPosition);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('Session is in QUESTION_COUNTDOWN state', () => {
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'NEXT_QUESTION');
+    const res = serverPlayerQuestionInfo(playerId.playerId, questionPosition);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('Session is in FINAL_RESULTS state', () => {
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'NEXT_QUESTION');
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'SKIP_COUNTDOWN');
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'GO_TO_ANSWER');
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'GO_TO_FINAL_RESULTS');
+    const res = serverPlayerQuestionInfo(playerId.playerId, questionPosition);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('Session is in END state', () => {
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'END');
+    const res = serverPlayerQuestionInfo(playerId.playerId, questionPosition);
+    expect(res.body).toStrictEqual(ERROR);
+    expect(res.statusCode).toStrictEqual(400);
+  });
+
+  test('test successful return', () => {
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'NEXT_QUESTION');
+    ServerSessionUpdate(UserToken.token, quizId.quizId, sessionId.sessionId, 'SKIP_COUNTDOWN');
+    const res = serverPlayerQuestionInfo(playerId.playerId, questionPosition);
+    expect(res.statusCode).toStrictEqual(200);
+  });
 });
