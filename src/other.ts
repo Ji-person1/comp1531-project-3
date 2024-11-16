@@ -10,6 +10,5 @@ export function clear(): Record<string, never> {
   data.players = [];
   data.chat = [];
 
-  setData(data);
   return {};
 }
