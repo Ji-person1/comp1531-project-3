@@ -14,7 +14,7 @@ export const getData = (): DataStore => {
       bin: [],
       quizSession: [],
       players: [],
-      chat: []
+      chat: [],
     };
   }
 };
@@ -24,14 +24,15 @@ export const setData = (newData: DataStore): void => {
   try {
     const res = request('PUT', `https://h-15b-eggs.vercel.app/data`, {
       body: JSON.stringify(newData),
+      headers: { 'Content-Type': 'application/json' },
     });
 
     if (res.statusCode >= 400) {
       throw new Error(`Failed to set data: ${res.statusCode} - ${res.body.toString()}`);
     }
-
-    JSON.parse(res.body.toString());
   } catch (e) {
     throw e;
   }
 };
+
+

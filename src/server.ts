@@ -71,13 +71,13 @@ const database = createClient({
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 app.get('/data', async (req: Request, res: Response) => {
-  const data = await database.hgetall('datastore');
+  const data = await database.get('datastore');
   res.status(200).json(data);
 });
 
 app.put('/data', async (req: Request, res: Response) => {
   const data = req.body;
-  await database.hset('datastore', {data});
+  await database.set('datastore', data);
   res.status(200).json(data);
 });
 
