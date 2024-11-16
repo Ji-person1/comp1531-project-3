@@ -30,7 +30,7 @@ linting:
     - npm run lint
 
 deployment:
-  stages: deployment
+  stage: deployment
   needs: [pipeline]
   resource_group: vercel-deploy
   variables:
