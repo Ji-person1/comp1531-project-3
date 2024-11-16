@@ -3,6 +3,7 @@ image: comp1531/automarking:latest
 stages:
   - checks
   - deployment
+  - pipeline
 
 before_script:
   - npm install
@@ -20,6 +21,15 @@ tests:
     - kill -SIGINT %1
     - sleep 2
     - cat $SERVER_LOG
+
+pipeline:
+  stage: pipeline
+  script:
+    - npm install
+    - npm test
+  only:
+    - master
+    - merge_requests
 
 linting:
   stage: checks
