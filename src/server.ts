@@ -39,7 +39,7 @@ app.use(cors());
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
 // for producing the docs that define the API
-const file = fs.readFileSync(path.resolve(__dirname, 'swagger.yaml'), 'utf8');
+const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
 app.get('/', async (req: Request, res: Response) => res.redirect('/docs'));
 app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
   {
@@ -85,7 +85,6 @@ app.get('/data', async (req: Request, res: Response) => {
         players: [],
         chat: [],
       };
-      await database.hset('datastore', defaultData);
       return res.status(200).json(defaultData);
     }
     res.status(200).json(data);
