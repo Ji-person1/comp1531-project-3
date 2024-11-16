@@ -78,7 +78,7 @@ app.get('/data', async (req: Request, res: Response) => {
 app.put('/data', async (req: Request, res: Response) => {
   try {
     const { data } = req.body;
-    await database.hset('datastore', {datastore: data});
+    await database.hset('datastore', {data});
 
     res.status(200).json(data);
   } catch (error) {
