@@ -51,7 +51,7 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
 import { createClient } from '@vercel/kv';
 import { DataStore } from './interfaces';
 
-const PORT: number = parseInt(process.env.PORT || config.port);
+const PORT: number = parseInt(process.env.PORT || '3000')
 const HOST: string = process.env.IP || '127.0.0.1';
 
 // Replace this with your API_URL
@@ -1322,7 +1322,7 @@ app.use((req: Request, res: Response) => {
 });
 
 // start server
-const server = app.listen(PORT, HOST, () => {
+const server = app.listen(PORT, () => {
   // DO NOT CHANGE THIS LINE
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
 });
