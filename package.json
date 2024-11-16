@@ -1,4 +1,8 @@
 {
+    "name": "comp1531_project",
+    "version": "1.0.0",
+    "description": "[TOC]",
+    "main": "src/server.ts",
     "scripts": {
         "test": "jest",
         "tsc": "tsc --project tsconfig.json",
@@ -11,6 +15,9 @@
         "ts-node-coverage": "nyc --reporter=text --reporter=lcov ts-node -T src/server.ts",
         "ts-node-dev": "ts-node-dev -T src/server.ts"
     },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
     "dependencies": {
         "@vercel/kv": "^3.0.0",
         "cors": "^2.8.5",
