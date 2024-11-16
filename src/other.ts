@@ -10,7 +10,7 @@ const database = createClient({
 });
 
 export async function clear(): Promise<Record<string, never>> {
-  const defaultData: DataStore = {
+  const defaultData = {
     users: [],
     quizzes: [],
     sessions: [],
