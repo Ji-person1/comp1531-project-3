@@ -51,9 +51,52 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
 
+import { createClient } from '@vercel/kv';
+
+// Replace this with your API_URL
+// E.g. https://large-poodle-44208.kv.vercel-storage.com
+const KV_REST_API_URL = "https://communal-ray-28417.upstash.io";
+// Replace this with your API_TOKEN
+// E.g. AaywASQgOWE4MTVkN2UtODZh...
+const KV_REST_API_TOKEN = "AW8BAAIjcDFmZDczY2VhYTE2OTc0NDQ3ODJiNzI2YTE1ZmM4ZWVmZnAxMA";
+
+const database = createClient({
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
+});
+
+
 // ====================================================================
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
+app.get('/data', async (req: Request, res: Response) => {
+  // Retrieve the whole datastore
+  const dataStore = {
+    users: await database.hgetall("data:users"),
+    quizzes: await database.hgetall("data:quizzes"),
+    sessions: await database.hgetall("data:sessions"),
+    bin: await database.hgetall("data:bin"),
+    quizSession: await database.hgetall("data:quizSession"),
+    players: await database.hgetall("data:players"),
+    chat: await database.hgetall("data:chat"),
+  };
+  res.status(200).json(dataStore);
+});
+
+app.put('/data', async (req: Request, res: Response) => {
+  const { section, data } = req.body;
+
+  // Validate the section
+  const validSections = ['users', 'quizzes', 'sessions', 'bin', 'quizSession', 'players', 'chat'];
+  if (!validSections.includes(section)) {
+    return res.status(400).json({ error: `Invalid section: ${section}` });
+  }
+
+  // Update the specific section in the datastore
+  await database.hset(`data:${section}`, data);
+  return res.status(200).json({ message: `${section} updated successfully` });
+});
+
 
 // ====================================================================
 // ======================== ITERATION 2 ===============================
