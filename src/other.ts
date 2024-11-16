@@ -10,7 +10,7 @@ const database = createClient({
 });
 
 export async function clear(): Promise<Record<string, never>> {
-  const defaultData = {
+  const defaultData: DataStore = {
     users: [],
     quizzes: [],
     sessions: [],
@@ -19,13 +19,13 @@ export async function clear(): Promise<Record<string, never>> {
     players: [],
     chat: [],
   };
-
+  
   try {
-    // Clear the entire datastore by overwriting it with defaultData
-    await database.hset('datastore', defaultData);
+    await database.hset('datastore', defaultData as unknown as Record<string, unknown>);
     return {};
   } catch (error) {
     console.error('Error clearing datastore:', error);
     throw new Error('Failed to clear datastore');
   }
+  
 }

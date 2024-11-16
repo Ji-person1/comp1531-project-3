@@ -76,7 +76,7 @@ app.get('/data', async (req: Request, res: Response) => {
     const data = await database.hgetall('datastore');
     if (!data) {
       // If no data exists, initialize with the default structure
-      const defaultData: any = {
+      const defaultData: DataStore = {
         users: [],
         quizzes: [],
         sessions: [],
@@ -85,7 +85,7 @@ app.get('/data', async (req: Request, res: Response) => {
         players: [],
         chat: [],
       };
-      await database.hset('datastore', defaultData);
+      await database.hset('datastore', defaultData as unknown as Record<string, unknown>);
       return res.status(200).json(defaultData);
     }
     res.status(200).json(data);
