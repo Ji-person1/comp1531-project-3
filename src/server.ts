@@ -76,9 +76,15 @@ app.get('/data', async (req: Request, res: Response) => {
 });
 
 app.put('/data', async (req: Request, res: Response) => {
-  const data = req.body;
-  await database.hset('datastore', data);
-  res.status(200).json(data);
+  try {
+    const data = req.body;
+    await database.hset('datastore', data);
+
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error updating data:', error);
+    res.status(500).json({ error: 'Failed to update data' });
+  }
 });
 
 // ====================================================================
