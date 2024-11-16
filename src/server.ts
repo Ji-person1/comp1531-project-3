@@ -85,7 +85,7 @@ app.get('/data', async (req: Request, res: Response) => {
         players: [],
         chat: [],
       };
-      await database.hset('datastore', defaultData as unknown as Record<string, unknown>);
+      await database.hset('datastore', defaultData);
       return res.status(200).json(defaultData);
     }
     res.status(200).json(data);
