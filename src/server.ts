@@ -40,7 +40,7 @@ app.use(cors());
 app.use(morgan('dev'));
 // for producing the docs that define the API
 const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
-app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
+app.get('/', async (req: Request, res: Response) => res.redirect('/docs'));
 app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
   {
     swaggerOptions:
@@ -96,7 +96,7 @@ app.put('/data', async (req: Request, res: Response) => {
 // ======================== ITERATION 2 ===============================
 // ====================================================================
 // adminAuthLogoutV1
-app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
+app.post('/v1/admin/auth/logout', async (req: Request, res: Response) => {
   const token = Number(req.body.token);
   try {
     checkValidToken(token);
@@ -113,7 +113,7 @@ app.post('/v1/admin/auth/logout', (req: Request, res: Response) => {
 });
 
 // UserDetailsV1
-app.get('/v1/admin/user/details', (req: Request, res: Response) => {
+app.get('/v1/admin/user/details', async (req: Request, res: Response) => {
   const token = Number(req.query.token);
   try {
     checkValidToken(token);
@@ -130,7 +130,7 @@ app.get('/v1/admin/user/details', (req: Request, res: Response) => {
 });
 
 // adminUserDetailUpdateV1
-app.put('/v1/admin/user/details', (req: Request, res: Response) => {
+app.put('/v1/admin/user/details', async (req: Request, res: Response) => {
   const { email, nameFirst, nameLast } = req.body;
   const token = Number(req.body.token);
   try {
@@ -148,7 +148,7 @@ app.put('/v1/admin/user/details', (req: Request, res: Response) => {
 });
 
 // adminUserPasswordUpdateV1
-app.put('/v1/admin/user/password', (req: Request, res: Response) => {
+app.put('/v1/admin/user/password', async (req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body;
   const token = Number(req.body.token);
   try {
@@ -166,7 +166,7 @@ app.put('/v1/admin/user/password', (req: Request, res: Response) => {
 });
 
 // adminquizListV1
-app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/list', async (req: Request, res: Response) => {
   const token = Number(req.query.token);
   try {
     checkValidToken(token);
@@ -183,7 +183,7 @@ app.get('/v1/admin/quiz/list', (req: Request, res: Response) => {
 });
 
 // adminQuizCreateV1
-app.post('/v1/admin/quiz', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz', async (req: Request, res: Response) => {
   const { name, description } = req.body;
   const token = Number(req.body.token);
   try {
@@ -201,7 +201,7 @@ app.post('/v1/admin/quiz', (req: Request, res: Response) => {
 });
 
 // adminQuizRemoveV1
-app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
+app.delete('/v1/admin/quiz/:quizId', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId as string);
   const token = Number(req.query.token);
   try {
@@ -219,7 +219,7 @@ app.delete('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 });
 
 // adminQuizInfoV1
-app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizId', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = Number(req.query.token);
   try {
@@ -243,7 +243,7 @@ app.get('/v1/admin/quiz/:quizId', (req: Request, res: Response) => {
 });
 
 // adminNameUpdateV1
-app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizId/name', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { name } = req.body;
   const token = Number(req.body.token);
@@ -268,7 +268,7 @@ app.put('/v1/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 });
 
 // adminDescriptionUpdateV1
-app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizId/description', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { description } = req.body;
   const token = Number(req.body.token);
@@ -293,7 +293,7 @@ app.put('/v1/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 });
 
 // adminQuizTrashViewV1
-app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/trash', async (req: Request, res: Response) => {
   const token = Number(req.query.token);
   try {
     checkValidToken(token);
@@ -310,7 +310,7 @@ app.get('/v1/admin/quiz/trash', (req: Request, res: Response) => {
 });
 
 // adminQuizRestoreV1
-app.post('/v1/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/restore', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = Number(req.body.token);
   try {
@@ -333,7 +333,7 @@ app.post('/v1/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
 });
 
 // trashempty
-app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
+app.delete('/v1/admin/quiz/trash/empty', async (req: Request, res: Response) => {
   const { quizIds } = req.query;
   const token = Number(req.query.token);
 
@@ -374,7 +374,7 @@ app.delete('/v1/admin/quiz/trash/empty', (req: Request, res: Response) => {
 });
 
 // adminQuizTransferV1
-app.post('/v1/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/transfer', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = Number(req.body.token);
   const { userEmail } = req.body;
@@ -399,7 +399,7 @@ app.post('/v1/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
 });
 
 // adminQuizCreateQuestionV1
-app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/question', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { questionBody } = req.body;
   const token = Number(req.body.token);
@@ -424,7 +424,7 @@ app.post('/v1/admin/quiz/:quizId/question', (req: Request, res: Response) => {
 });
 
 // adminQuizUpdateQuestionV1
-app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizId/question/:questionid', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const { questionBody } = req.body;
@@ -450,7 +450,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Respo
 });
 
 // quizQuestionDeleteV1
-app.delete('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
+app.delete('/v1/admin/quiz/:quizId/question/:questionid', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const token = Number(req.query.token);
@@ -475,7 +475,7 @@ app.delete('/v1/admin/quiz/:quizId/question/:questionid', (req: Request, res: Re
 });
 
 // questionMoveV1
-app.put('/v1/admin/quiz/:quizId/question/:questionid/move', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizId/question/:questionid/move', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const { newPosition } = req.body;
@@ -501,7 +501,7 @@ app.put('/v1/admin/quiz/:quizId/question/:questionid/move', (req: Request, res: 
 });
 
 // questionDuplicateV1
-app.post('/v1/admin/quiz/:quizId/question/:questionid/duplicate', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/question/:questionid/duplicate', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const token = Number(req.body.token);
@@ -531,7 +531,7 @@ app.post('/v1/admin/quiz/:quizId/question/:questionid/duplicate', (req: Request,
 // ======================== ITERATION 3 ===============================
 // ====================================================================
 // Example get request
-app.get('/echo', (req: Request, res: Response) => {
+app.get('/echo', async (req: Request, res: Response) => {
   const result = echo(req.query.echo as string);
   if ('error' in result) {
     res.status(400);
@@ -541,7 +541,7 @@ app.get('/echo', (req: Request, res: Response) => {
 });
 
 // adminAuthRegister
-app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
+app.post('/v1/admin/auth/register', async (req: Request, res: Response) => {
   const { email, password, nameFirst, nameLast } = req.body;
   try {
     const result = adminAuthRegister(email, password, nameFirst, nameLast);
@@ -552,7 +552,7 @@ app.post('/v1/admin/auth/register', (req: Request, res: Response) => {
 });
 
 // playerJoin
-app.post('/v1/player/join', (req: Request, res: Response) => {
+app.post('/v1/player/join', async (req: Request, res: Response) => {
   const { sessionId, playerName } = req.body;
   try {
     const result = playerJoin(sessionId, playerName);
@@ -564,7 +564,7 @@ app.post('/v1/player/join', (req: Request, res: Response) => {
 
 // AnswerQuestion
 app.post('/v1/player/:playerid/question/:questionposition/answer',
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const { answerIds } = req.body;
     const playerId = parseInt(req.params.playerid as string);
     const questionPosition = parseInt(req.params.questionposition as string);
@@ -601,7 +601,7 @@ app.post('/v1/player/:playerid/question/:questionposition/answer',
   });
 
 // playerStatus
-app.get('/v1/player/:playerid', (req: Request, res: Response) => {
+app.get('/v1/player/:playerid', async (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   try {
     const result = playerStatus(playerId);
@@ -612,7 +612,7 @@ app.get('/v1/player/:playerid', (req: Request, res: Response) => {
 });
 
 // playerQuestionInfo
-app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: Response) => {
+app.get('/v1/player/:playerid/question/:questionposition', async (req: Request, res: Response) => {
   const playerId = parseInt(req.params.playerid);
   const position = parseInt(req.params.questionposition);
   try {
@@ -624,7 +624,7 @@ app.get('/v1/player/:playerid/question/:questionposition', (req: Request, res: R
 });
 
 // adminAuthLogin
-app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
+app.post('/v1/admin/auth/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     const result = adminAuthLogin(email, password);
@@ -635,7 +635,7 @@ app.post('/v1/admin/auth/login', (req: Request, res: Response) => {
 });
 
 // adminUserDetails
-app.get('/v2/admin/user/details', (req: Request, res: Response) => {
+app.get('/v2/admin/user/details', async (req: Request, res: Response) => {
   const token = Number(req.header('token'));
   try {
     checkValidToken(token);
@@ -652,7 +652,7 @@ app.get('/v2/admin/user/details', (req: Request, res: Response) => {
 });
 
 // adminUserDetailUpdate
-app.put('/v2/admin/user/details', (req: Request, res: Response) => {
+app.put('/v2/admin/user/details', async (req: Request, res: Response) => {
   const { email, nameFirst, nameLast } = req.body;
   const token = Number(req.header('token'));
   try {
@@ -670,7 +670,7 @@ app.put('/v2/admin/user/details', (req: Request, res: Response) => {
 });
 
 // adminUserPasswordUpdate
-app.put('/v2/admin/user/password', (req: Request, res: Response) => {
+app.put('/v2/admin/user/password', async (req: Request, res: Response) => {
   const { oldPassword, newPassword } = req.body;
   const token = Number(req.header('token'));
   try {
@@ -689,7 +689,7 @@ app.put('/v2/admin/user/password', (req: Request, res: Response) => {
 
 // adminQuizTrashView
 // moved before the less parameterised one of adminquizinfo
-app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
+app.get('/v2/admin/quiz/trash', async (req: Request, res: Response) => {
   const token = Number(req.header('token'));
   try {
     checkValidToken(token);
@@ -706,7 +706,7 @@ app.get('/v2/admin/quiz/trash', (req: Request, res: Response) => {
 });
 
 // adminquizList
-app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
+app.get('/v2/admin/quiz/list', async (req: Request, res: Response) => {
   const token = Number(req.header('token'));
   try {
     checkValidToken(token);
@@ -723,7 +723,7 @@ app.get('/v2/admin/quiz/list', (req: Request, res: Response) => {
 });
 
 // adminQuizCreate
-app.post('/v2/admin/quiz', (req: Request, res: Response) => {
+app.post('/v2/admin/quiz', async (req: Request, res: Response) => {
   const { name, description } = req.body;
   const token = Number(req.header('token'));
   try {
@@ -741,7 +741,7 @@ app.post('/v2/admin/quiz', (req: Request, res: Response) => {
 });
 
 // adminQuizRemove
-app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
+app.delete('/v2/admin/quiz/:quizId', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId as string);
   const token = Number(req.header('token'));
   try {
@@ -759,7 +759,7 @@ app.delete('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
 });
 
 // adminQuizInfo
-app.get('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
+app.get('/v2/admin/quiz/:quizId', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = Number(req.header('token'));
   try {
@@ -783,7 +783,7 @@ app.get('/v2/admin/quiz/:quizId', (req: Request, res: Response) => {
 });
 
 // adminNameUpdate
-app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
+app.put('/v2/admin/quiz/:quizId/name', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { name } = req.body;
   const token = Number(req.header('token'));
@@ -808,7 +808,7 @@ app.put('/v2/admin/quiz/:quizId/name', (req: Request, res: Response) => {
 });
 
 // adminSessionStart
-app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) => {
+app.post('/v1/admin/quiz/:quizId/session/start', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { autoStartNum } = req.body;
   const token = Number(req.header('token'));
@@ -833,7 +833,7 @@ app.post('/v1/admin/quiz/:quizId/session/start', (req: Request, res: Response) =
 });
 
 // adminDescriptionUpdate
-app.put('/v2/admin/quiz/:quizId/description', (req: Request, res: Response) => {
+app.put('/v2/admin/quiz/:quizId/description', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { description } = req.body;
   const token = Number(req.header('token'));
@@ -858,7 +858,7 @@ app.put('/v2/admin/quiz/:quizId/description', (req: Request, res: Response) => {
 });
 
 // adminQuizTransfer
-app.post('/v2/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
+app.post('/v2/admin/quiz/:quizId/transfer', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = Number(req.header('token'));
   const { userEmail } = req.body;
@@ -883,7 +883,7 @@ app.post('/v2/admin/quiz/:quizId/transfer', (req: Request, res: Response) => {
 });
 
 // adminQuizCreateQuestion
-app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
+app.post('/v2/admin/quiz/:quizId/question', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { questionBody } = req.body;
   const token = Number(req.headers.token);
@@ -908,7 +908,7 @@ app.post('/v2/admin/quiz/:quizId/question', (req: Request, res: Response) => {
 });
 
 // adminQuizUpdateQuestion
-app.put('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
+app.put('/v2/admin/quiz/:quizId/question/:questionid', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const { questionBody } = req.body;
@@ -934,7 +934,7 @@ app.put('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Respo
 });
 
 // questionMove
-app.put('/v2/admin/quiz/:quizId/question/:questionid/move', (req: Request, res: Response) => {
+app.put('/v2/admin/quiz/:quizId/question/:questionid/move', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const { newPosition } = req.body;
@@ -960,7 +960,7 @@ app.put('/v2/admin/quiz/:quizId/question/:questionid/move', (req: Request, res: 
 });
 
 // questionDuplicate
-app.post('/v2/admin/quiz/:quizId/question/:questionid/duplicate', (req: Request, res: Response) => {
+app.post('/v2/admin/quiz/:quizId/question/:questionid/duplicate', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const token = Number(req.headers.token);
@@ -987,7 +987,7 @@ app.post('/v2/admin/quiz/:quizId/question/:questionid/duplicate', (req: Request,
 });
 
 // quizQuestionDelete
-app.delete('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Response) => {
+app.delete('/v2/admin/quiz/:quizId/question/:questionid', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const questionId = parseInt(req.params.questionid);
   const token = Number(req.headers.token);
@@ -1012,13 +1012,13 @@ app.delete('/v2/admin/quiz/:quizId/question/:questionid', (req: Request, res: Re
 });
 
 // clear
-app.delete('/v1/clear', (req: Request, res: Response) => {
+app.delete('/v1/clear', async (req: Request, res: Response) => {
   const result = clear();
   res.status(200).json(result);
 });
 
 // trashempty
-app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
+app.delete('/v2/admin/quiz/trash/empty', async (req: Request, res: Response) => {
   const { quizIds } = req.query;
   const token = Number(req.header('token'));
 
@@ -1059,7 +1059,7 @@ app.delete('/v2/admin/quiz/trash/empty', (req: Request, res: Response) => {
 });
 
 // adminQuizRestore
-app.post('/v2/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
+app.post('/v2/admin/quiz/:quizId/restore', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const token = Number(req.header('token'));
   try {
@@ -1082,7 +1082,7 @@ app.post('/v2/admin/quiz/:quizId/restore', (req: Request, res: Response) => {
 });
 
 // adminAuthLogout
-app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
+app.post('/v2/admin/auth/logout', async (req: Request, res: Response) => {
   const token = Number(req.header('token'));
   try {
     checkValidToken(token);
@@ -1099,7 +1099,7 @@ app.post('/v2/admin/auth/logout', (req: Request, res: Response) => {
 });
 
 // adminquizSessions
-app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid/sessions', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const token = Number(req.header('token'));
 
@@ -1125,7 +1125,7 @@ app.get('/v1/admin/quiz/:quizid/sessions', (req: Request, res: Response) => {
 
 // playerQuestionResults
 app.get('/v1/player/:playerId/question/:questionposition/results',
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const playerId = parseInt(req.params.playerId);
     const questionPosition = parseInt(req.params.questionposition);
 
@@ -1138,7 +1138,7 @@ app.get('/v1/player/:playerId/question/:questionposition/results',
   });
 
 // playerViewChat
-app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
+app.get('/v1/player/:playerId/chat', async (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
 
   try {
@@ -1150,7 +1150,7 @@ app.get('/v1/player/:playerId/chat', (req: Request, res: Response) => {
 });
 
 // playerSendChat
-app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
+app.post('/v1/player/:playerId/chat', async (req: Request, res: Response) => {
   const playerId = Number(req.params.playerId);
   const { message } = req.body;
 
@@ -1163,7 +1163,7 @@ app.post('/v1/player/:playerId/chat', (req: Request, res: Response) => {
 });
 
 // adminQuizThumbnailUpdate
-app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizId/thumbnail', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizId);
   const { thumbnailUrl } = req.body;
   const token = Number(req.header('token'));
@@ -1187,7 +1187,7 @@ app.put('/v1/admin/quiz/:quizId/thumbnail', (req: Request, res: Response) => {
 });
 
 // adminQuizSessionUpdate
-app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+app.put('/v1/admin/quiz/:quizid/session/:sessionid', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);
   const token = Number(req.header('token'));
@@ -1213,7 +1213,7 @@ app.put('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
   }
 });
 
-app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);
   const token = Number(req.header('token'));
@@ -1238,7 +1238,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results', (req: Request, res:
   }
 });
 
-app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);
   const token = Number(req.header('token'));
@@ -1263,7 +1263,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid/results/csv', (req: Request, 
 });
 
 // adminQuizSessionStatus
-app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Response) => {
+app.get('/v1/admin/quiz/:quizid/session/:sessionid', async (req: Request, res: Response) => {
   const quizId = parseInt(req.params.quizid);
   const sessionId = parseInt(req.params.sessionid);
   const token = Number(req.header('token'));
@@ -1292,7 +1292,7 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
 // ====================================================================
 
-app.use((req: Request, res: Response) => {
+app.use(async (req: Request, res: Response) => {
   const error = `
     Route not found - This could be because:
       0. You have defined routes below (not above) this middleware in server.ts
