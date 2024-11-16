@@ -48,6 +48,7 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
   }
 ));
 
+
 import { createClient } from '@vercel/kv';
 import { DataStore } from './interfaces';
 
@@ -62,8 +63,8 @@ const KV_REST_API_URL = "https://communal-ray-28417.upstash.io";
 const KV_REST_API_TOKEN = "AW8BAAIjcDFmZDczY2VhYTE2OTc0NDQ3ODJiNzI2YTE1ZmM4ZWVmZnAxMA";
 
 const database = createClient({
-  url: process.env.KV_REST_API_URL!,
-  token: process.env.KV_REST_API_TOKEN!,
+  url: KV_REST_API_URL,
+  token: KV_REST_API_TOKEN,
 });
 
 
