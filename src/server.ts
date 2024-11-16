@@ -50,7 +50,6 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
 
 
 import { createClient } from '@vercel/kv';
-import { DataStore } from './interfaces';
 
 const PORT: number = parseInt(process.env.PORT || '3000')
 const HOST: string = process.env.IP || '127.0.0.1';

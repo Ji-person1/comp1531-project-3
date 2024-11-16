@@ -1,25 +1,28 @@
 import { DataStore } from './interfaces';
 import request from 'sync-request';
 
-import { port, url } from './config.json';
-const SERVER_URL = `${url}:${port}`;
-
-
-
 export const getData = (): DataStore => {
   try {
-    const res = request('GET', `${SERVER_URL}/data`, {});
+    const res = request('GET', `https://h-15b-eggs.vercel.app/data`, {});
     return JSON.parse(res.body.toString());
   } catch (e) {
     console.error('Error fetching data:', e);
-    throw e;
+    return {
+      users: [],
+      quizzes: [],
+      sessions: [],
+      bin: [],
+      quizSession: [],
+      players: [],
+      chat: []
+    };
   }
 };
 
 
 export const setData = (newData: DataStore): void => {
   try {
-    const res = request('PUT', `${SERVER_URL}/data`, {
+    const res = request('PUT', `https://h-15b-eggs.vercel.app/data`, {
       body: JSON.stringify(newData),
     });
 
