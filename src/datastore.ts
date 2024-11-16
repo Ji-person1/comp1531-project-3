@@ -12,15 +12,7 @@ export const getData = (): DataStore => {
     return JSON.parse(res.body.toString());
   } catch (e) {
     console.error('Error fetching data:', e);
-    return {
-      users: [],
-      quizzes: [],
-      sessions: [],
-      bin: [],
-      quizSession: [],
-      players: [],
-      chat: []
-    };
+    throw e;
   }
 };
 
@@ -28,9 +20,6 @@ export const getData = (): DataStore => {
 export const setData = (newData: DataStore): void => {
   try {
     const res = request('PUT', `${SERVER_URL}/data`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
       body: JSON.stringify(newData),
     });
 
