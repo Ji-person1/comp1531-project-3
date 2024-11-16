@@ -39,15 +39,6 @@ app.use(cors());
 // for logging errors (print to terminal)
 app.use(morgan('dev'));
 // for producing the docs that define the API
-const file = fs.readFileSync(path.join(process.cwd(), 'swagger.yaml'), 'utf8');
-app.get('/', (req: Request, res: Response) => res.redirect('/docs'));
-app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
-  {
-    swaggerOptions:
-    { docExpansion: config.expandDocs ? 'full' : 'list' }
-  }
-));
-
 
 import { createClient } from '@vercel/kv';
 import { getData } from './datastore';
