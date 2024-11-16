@@ -52,6 +52,7 @@ const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
 
 import { createClient } from '@vercel/kv';
+import { getData } from './datastore';
 
 // Replace this with your API_URL
 // E.g. https://large-poodle-44208.kv.vercel-storage.com
@@ -71,15 +72,7 @@ const database = createClient({
 // ====================================================================
 app.get('/data', async (req: Request, res: Response) => {
   // Retrieve the whole datastore
-  const dataStore = {
-    users: await database.hgetall("data:users"),
-    quizzes: await database.hgetall("data:quizzes"),
-    sessions: await database.hgetall("data:sessions"),
-    bin: await database.hgetall("data:bin"),
-    quizSession: await database.hgetall("data:quizSession"),
-    players: await database.hgetall("data:players"),
-    chat: await database.hgetall("data:chat"),
-  };
+  const dataStore = getData(); 
   res.status(200).json(dataStore);
 });
 
@@ -1299,19 +1292,18 @@ app.get('/v1/admin/quiz/:quizid/session/:sessionid', (req: Request, res: Respons
 // ====================================================================
 
 app.use((req: Request, res: Response) => {
-  const error = `
-    Route not found - This could be because:
-      0. You have defined routes below (not above) this middleware in server.ts
-      1. You have not implemented the route ${req.method} ${req.path}
-      2. There is a typo in either your test or server, e.g. /posts/list in one
-         and, incorrectly, /post/list in the other
-      3. You are using ts-node (instead of ts-node-dev) to start your server and
-         have forgotten to manually restart to load the new changes
-      4. You've forgotten a leading slash (/), e.g. you have posts/list instead
-         of /posts/list in your server.ts or test file
-  `;
-  res.status(404).json({ error });
+  res.status(404).json({
+    error: `Route not found - ${req.method} ${req.path}`,
+    message: `
+      Possible issues:
+      1. The route is defined below this middleware in server.ts.
+      2. The route ${req.method} ${req.path} is not implemented.
+      3. There's a typo in the route path in either your test or server file.
+      4. The leading slash (/) is missing from the route path.
+    `,
+  });
 });
+
 
 // start server
 const server = app.listen(PORT, HOST, () => {
