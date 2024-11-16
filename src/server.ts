@@ -72,39 +72,14 @@ const database = createClient({
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 app.get('/data', async (req: Request, res: Response) => {
-  try {
-    // Retrieve the entire datastore
-    const data = await database.hgetall('datastore');
-    if (!data) {
-      // If no data exists, initialize with the default structure
-      const defaultData: DataStore = {
-        users: [],
-        quizzes: [],
-        sessions: [],
-        bin: [],
-        quizSession: [],
-        players: [],
-        chat: [],
-      };
-      return res.status(200).json(defaultData);
-    }
-    res.status(200).json(data);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    res.status(500).json({ error: 'Failed to retrieve data' });
-  }
+  const data = await database.hgetall('datastore');
+  res.status(200).json(data);
 });
 
 app.put('/data', async (req: Request, res: Response) => {
-  try {
-    // Directly overwrite the entire datastore with the provided data
-    const data = req.body;
-    await database.hset('datastore', data);
-    res.status(200).json(data);
-  } catch (error) {
-    console.error('Error updating data:', error);
-    res.status(500).json({ error: 'Failed to update data' });
-  }
+  const data = req.body;
+  await database.hset('datastore', {data});
+  res.status(200).json(data);
 });
 
 // ====================================================================
