@@ -2,8 +2,8 @@ image: comp1531/automarking:latest
 
 stages:
   - checks
-  - deployment
   - pipeline
+  - deployment
 
 before_script:
   - npm install
