@@ -76,9 +76,8 @@ app.get('/data', async (req: Request, res: Response) => {
 });
 
 app.put('/data', async (req: Request, res: Response) => {
-  const { data } = req.body;
+  const data = req.body;
   await database.hset('datastore', {data});
-
   res.status(200).json(data);
 });
 
