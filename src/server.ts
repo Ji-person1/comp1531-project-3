@@ -50,7 +50,7 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
 
 
 import { createClient } from '@vercel/kv';
-import { getData } from './datastore';
+import { getData, setData } from './datastore';
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
@@ -78,17 +78,9 @@ app.get('/data', async (req: Request, res: Response) => {
 });
 
 app.put('/data', async (req: Request, res: Response) => {
-  const { section, data } = req.body;
-
-  // Validate the section
-  const validSections = ['users', 'quizzes', 'sessions', 'bin', 'quizSession', 'players', 'chat'];
-  if (!validSections.includes(section)) {
-    return res.status(400).json({ error: `Invalid section: ${section}` });
-  }
-
-  // Update the specific section in the datastore
-  await database.hset(`data:${section}`, data);
-  return res.status(200).json({ message: `${section} updated successfully` });
+  const data = req.body; 
+  setData(data); 
+  res.status(200).json(data);
 });
 
 
