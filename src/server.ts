@@ -48,9 +48,8 @@ app.use('/docs', sui.serve, sui.setup(YAML.parse(file),
   }
 ));
 
-
 import { createClient } from '@vercel/kv';
-import { getData, setData } from './datastore';
+import { DataStore } from './interfaces';
 
 const PORT: number = parseInt(process.env.PORT || config.port);
 const HOST: string = process.env.IP || '127.0.0.1';
@@ -72,16 +71,41 @@ const database = createClient({
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 app.get('/data', async (req: Request, res: Response) => {
-  const data = await database.hgetall("data:names");
-  res.status(200).json(data);
+  try {
+    // Retrieve the entire datastore
+    const data = await database.hgetall('datastore');
+    if (!data) {
+      // If no data exists, initialize with the default structure
+      const defaultData: DataStore = {
+        users: [],
+        quizzes: [],
+        sessions: [],
+        bin: [],
+        quizSession: [],
+        players: [],
+        chat: [],
+      };
+      await database.hset('datastore', defaultData);
+      return res.status(200).json(defaultData);
+    }
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Failed to retrieve data' });
+  }
 });
 
 app.put('/data', async (req: Request, res: Response) => {
-  const { data } = req.body;
-  await database.hset("data:names", { data });
-  return res.status(200).json({});
+  try {
+    // Directly overwrite the entire datastore with the provided data
+    const data = req.body;
+    await database.hset('datastore', data);
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error updating data:', error);
+    res.status(500).json({ error: 'Failed to update data' });
+  }
 });
-
 
 // ====================================================================
 // ======================== ITERATION 2 ===============================
