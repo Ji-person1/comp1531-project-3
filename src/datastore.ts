@@ -1,12 +1,49 @@
-import * as fs from 'fs';
-const DATA_PATH = './src/data.json';
 import { DataStore } from './interfaces';
+import request, { HttpVerb } from 'sync-request';
 
-export function getData(): DataStore {
-  const data = fs.readFileSync(DATA_PATH, 'utf-8');
-  return JSON.parse(data);
-}
+import { port, url } from './config.json';
+const SERVER_URL = `${url}:${port}`;
+const TIMEOUT_MS = 5 * 1000;
 
-export function setData(data: DataStore): void {
-  fs.writeFileSync(DATA_PATH, JSON.stringify(data, null, 2), 'utf-8');
-}
+const requestHelper = (method: HttpVerb, path: string, payload: object) => {
+  let json = {};
+  let qs = {};
+  if (['POST', 'DELETE'].includes(method)) {
+    qs = payload;
+  } else {
+    json = payload;
+  }
+
+  const res = request(method, "https://h-15b-eggs.vercel.app/" + path, { qs, json, timeout: 20000 });
+  return JSON.parse(res.body.toString());
+};
+
+
+export const getData = (): DataStore => {
+  try {
+    const res = request('GET', `${SERVER_URL}/data`, {});
+    return JSON.parse(res.body.toString());
+  } catch (e) {
+    console.error('Error fetching data:', e);
+    return {
+      users: [],
+      quizzes: [],
+      sessions: [],
+      bin: [],
+      quizSession: [],
+      players: [],
+      chat: []
+    };
+  }
+};
+
+
+export const setData = (newData: DataStore): void => {
+  try {
+    const res = request('PUT', `${SERVER_URL}/data`, {});
+    return JSON.parse(res.body.toString());
+  } catch (e) {
+    console.error('Error setting data:', e);
+    throw e;
+  }
+};
