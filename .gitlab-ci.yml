@@ -22,15 +22,6 @@ tests:
     - sleep 2
     - cat $SERVER_LOG
 
-pipeline:
-  stage: pipeline
-  script:
-    - npm install
-    - npm test
-  only:
-    - master
-    - merge_requests
-
 linting:
   stage: checks
   only:
@@ -39,7 +30,15 @@ linting:
   script:
     - npm run lint
 
-deployment:
+pipeline:
+  stage: pipeline
+  script:
+    - npm install
+    - npm test
+  only:
+    - master
+    - merge_requests
+  deployment:
   stage: deployment
   needs: [pipeline]
   resource_group: vercel-deploy
