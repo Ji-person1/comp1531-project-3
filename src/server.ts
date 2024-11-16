@@ -76,7 +76,7 @@ app.get('/data', async (req: Request, res: Response) => {
     const data = await database.hgetall('datastore');
     if (!data) {
       // If no data exists, initialize with the default structure
-      const defaultData = {
+      const defaultData: any = {
         users: [],
         quizzes: [],
         sessions: [],
